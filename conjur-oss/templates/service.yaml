@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "conjur-oss.fullname" . }}
+  labels:
+    app: {{ template "conjur-oss.name" . }}
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "conjur-oss.name" . }}
+    release: {{ .Release.Name }}

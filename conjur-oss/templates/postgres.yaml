@@ -1,0 +1,37 @@
+---
+{{ if eq .Values.databaseUrl "" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-postgres
+  labels: &AppPostgresLabels
+    app: {{ template "conjur-oss.name" . }}
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  ports:
+  - port: 5432
+  selector: *AppPostgresLabels
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-postgres
+  labels: &AppPostgresLabels
+    app: {{ template "conjur-oss.name" . }}
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels: *AppPostgresLabels
+    spec:
+      containers:
+      - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+        imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+        name: postgres
+---
+{{ end }}
