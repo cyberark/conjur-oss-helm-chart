@@ -14,7 +14,7 @@ replicaCount: 1
 image:
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 postgres:
   image:

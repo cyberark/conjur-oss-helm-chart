@@ -6,9 +6,27 @@
 
 ### Install
 
+#### Default, latest Conjur with integrated postgres
+
 ```sh-session
 $ helm install ./conjur-oss
 ```
+
+#### Install a specific version of Conjur
+
+```sh-session
+$ helm install --set-string image.tag=1.0.1-stable,image.pullPolicy=IfNotPresent ./conjur-oss
+```
+
+#### Install using a remote database
+
+```sh-session
+$ helm install --set-string databaseUrl=TODO ./conjur-oss
+```
+
+#### Install and expose Conjur service outside cluster
+
+TODO
 
 ### Uninstall
 
