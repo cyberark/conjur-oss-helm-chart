@@ -15,7 +15,7 @@ $ helm install ./conjur-oss
 This will deploy the latest version of `cyberark/conjur`.
 A PostgreSQL deployment is created to store Conjur state.
 
-#### Install a specific version of Conjur, expose it outside the cluster, use a remote database
+#### Install a specific version of Conjur, expose it outside the cluster, use letsencrypt domain name, use a remote database
 
 ```sh-session
 $ helm install \

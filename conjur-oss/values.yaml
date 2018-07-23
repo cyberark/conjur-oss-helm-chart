@@ -28,12 +28,14 @@ service:
 
 ingress:
   enabled: false
-  annotations: {}
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: conjur-dustinc.itd-google.conjur.net.
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   path: /
   hosts:
-    - conjur-oss.local
+    - conjur-dustinc.itd-google.conjur.net
+    # - conjur-oss.local
   # tls: []
   #  - secretName: chart-example-tls
   #    hosts:
