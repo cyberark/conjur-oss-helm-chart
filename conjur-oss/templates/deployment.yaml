@@ -2,7 +2,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: {{ template "conjur-oss.fullname" . }}
-  labels:
+  labels: &AppConjurLabels
     app: {{ template "conjur-oss.name" . }}
     chart: {{ template "conjur-oss.chart" . }}
     release: {{ .Release.Name }}
@@ -10,14 +10,10 @@ metadata:
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
-    matchLabels:
-      app: {{ template "conjur-oss.name" . }}
-      release: {{ .Release.Name }}
+    matchLabels: *AppConjurLabels
   template:
     metadata:
-      labels:
-        app: {{ template "conjur-oss.name" . }}
-        release: {{ .Release.Name }}
+      labels: *AppConjurLabels
     spec:
       containers:
         - name: {{ .Chart.Name }}
