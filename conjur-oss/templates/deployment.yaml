@@ -28,12 +28,14 @@ spec:
             httpGet:
               path: /
               port: http
-            initialDelaySeconds: 30
+            initialDelaySeconds: 20
+            periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /
               port: http
             initialDelaySeconds: 30
+            periodSeconds: 10
           env:
           - name: CONJUR_DATA_KEY
             valueFrom:

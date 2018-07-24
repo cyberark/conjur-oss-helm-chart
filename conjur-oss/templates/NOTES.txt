@@ -1,8 +1,12 @@
 1. Get the application URL by running these commands:
 {{- if .Values.ingress.enabled }}
 {{- range .Values.ingress.hosts }}
-  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ . }}{{ $.Values.ingress.path }}
+  http{{ if $.Values.ingress.tls.letsencrypt.enabled }}s{{ end }}://{{ . }}
 {{- end }}
+  This may take up to 10 minutes for GKE ingress when using GCE load balancers.
+
+  Run watch "kc describe ingress {{ template "conjur-oss.fullname" . }} | grep backends"
+  until status changes from "Unknown" to "HEALTHY".
 {{- else if contains "NodePort" .Values.service.type }}
   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "conjur-oss.fullname" . }})
   export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
@@ -17,3 +21,22 @@
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl port-forward $POD_NAME 8080:80
 {{- end }}
+2. Configure Conjur
+  To create an initial account and login, follow the instructions here:
+  https://www.conjur.org/get-started/install-conjur.html#install-and-configure
+
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ template "conjur-oss.name" . }},release={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  kubectl exec $POD_NAME conjurctl account create <ACCOUNT>
+
+  Note that the conjurctl account create command gives you the
+  public key and admin API key for the account you created.
+  Back them up in a safe location.
+3. Connect to Conjur
+  docker run --rm -it --entrypoint bash cyberark/conjur-cli:5
+
+  conjur init -u <ENDPOINT> conjur init -u conjur-helm.itd-google.conjur.net -a <ACCOUNT>
+  conjur authn login -u admin -p <API_KEY>
+  conjur authn whoami
+4. Next Steps
+  - Go through the Conjur Tutorials: https://www.conjur.org/tutorials/
+  - View Conjur’s API Documentation: https://www.conjur.org/api.html
