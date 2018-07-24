@@ -1,4 +1,6 @@
-image: lachlanevenson/k8s-helm:v2.9.1
+image:
+  name: lachlanevenson/k8s-helm:v2.9.1
+  entrypoint: ["sh"]
 
 stages:
   - test
