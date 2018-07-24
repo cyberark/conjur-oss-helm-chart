@@ -11,7 +11,7 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
 
 ## Installing the Chart
 
-### Simple install,
+### Simple install
 
 Install latest Conjur with integrated Postgres.
 
