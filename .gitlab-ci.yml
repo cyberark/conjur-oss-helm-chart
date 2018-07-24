@@ -16,7 +16,7 @@ package-tarballs:
   stage: package
   script:
     - mkdir -p output
-    - helm package -d ./output ./conjur-oss
+    - helm package --save=false --destination ./output ./conjur-oss
   artifacts:
     paths:
       - output/*.tgz
