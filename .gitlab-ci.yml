@@ -1,36 +1,20 @@
-image: tmaier/docker-compose:18
-
-services:
-  - docker:dind
+image: lachlanevenson/k8s-helm:v2.9.1
 
 stages:
-  - build
   - test
   - package
-
-# before_script:
-#   - apk add --no-cache bash
-
-build:
-  stage: build
-  script:
-    - exit 0
-  # artifacts:
-  #   paths:
-  #     - output/summon-conjur-linux-amd64
 
 test-unit:
   stage: test
   script:
-    - exit 0
-  # artifacts:
-  #   paths:
-  #     - output/junit.xml
+    - helm lint --set dataKey=BLOB ./conjur-oss
+    - helm install --set dataKey=BLOB --debug --dry-run ./conjur-oss
 
 package-tarballs:
   stage: package
   script:
-    - exit 0
-  # artifacts:
-  #   paths:
-  #     - output/dist/*
+    - mkdir -p output
+    - helm package -d ./output ./conjur-oss
+  artifacts:
+    paths:
+      - output/*.tgz

@@ -1,5 +1,5 @@
 conjur-oss-*.tgz
 
 conjur-oss/charts/*.tgz
-
+output/
 values-private.yaml
