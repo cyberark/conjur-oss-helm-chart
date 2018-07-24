@@ -16,9 +16,7 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
 Install latest Conjur with integrated Postgres.
 
 ```sh-session
-$ helm install \
-  --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" \
-  ./conjur-oss
+$ helm install --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" .
 ```
 
 This will deploy the latest version of `cyberark/conjur`.
