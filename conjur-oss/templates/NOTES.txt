@@ -34,7 +34,7 @@
 3. Connect to Conjur
   docker run --rm -it --entrypoint bash cyberark/conjur-cli:5
 
-  conjur init -u <ENDPOINT> conjur init -u conjur-helm.itd-google.conjur.net -a <ACCOUNT>
+  conjur init -u <ENDPOINT> -a <ACCOUNT>
   conjur authn login -u admin -p <API_KEY>
   conjur authn whoami
 4. Next Steps
