@@ -5,7 +5,7 @@
 {{- end }}
   This may take up to 10 minutes for GKE ingress when using GCE load balancers.
 
-  Run watch "kc describe ingress {{ template "conjur-oss.fullname" . }} | grep backends"
+  Run watch "kubectl describe ingress {{ template "conjur-oss.fullname" . }} | grep backends"
   until status changes from "Unknown" to "HEALTHY".
 {{- else if contains "NodePort" .Values.service.type }}
   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "conjur-oss.fullname" . }})
