@@ -71,7 +71,8 @@ ingress:
 ```
 
 ```sh-session
-$ helm install -f custom-values.yaml .
+$ helm install -f custom-values.yaml \
+  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.1.0/conjur-oss-0.1.0.tgz
 ```
 
 Note that this requires:
