@@ -12,7 +12,8 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
 ## Installing the Chart
 
 The Chart can be installed from a GitHub release Chart tarball or from source.
-All releases: https://github.com/cyberark/conjur-oss-helm-chart/releases.
+
+All releases: https://github.com/cyberark/conjur-oss-helm-chart/releases
 
 ### Simple install
 
