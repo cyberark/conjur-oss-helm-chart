@@ -11,19 +11,31 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
 
 ## Installing the Chart
 
+The Chart can be installed from a GitHub release Chart tarball or from source.
+All releases: https://github.com/cyberark/conjur-oss-helm-chart/releases.
+
 ### Simple install
 
 Install latest Conjur with integrated Postgres.
 
 ```sh-session
-$ helm install --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" .
+$ helm install \
+  --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" \
+  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.1.0/conjur-oss-0.1.0.tgz
 ```
 
 This will deploy the latest version of `cyberark/conjur`.
 The Conjur `ClusterIP` service is not exposed outside the cluster.
 Conjur is running HTTP on port 80, with no TLS security.
-
 A PostgreSQL deployment is created to store Conjur state.
+
+Note that you can also install from source by cloning this repository and running
+
+```sh-session
+helm install \
+  --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" \
+  ./conjur-oss
+```
 
 ### Recommended install
 
