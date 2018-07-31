@@ -7,8 +7,6 @@ dataKey: ""
 # PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.
 databaseUrl: ""
 
-replicaCount: 1
-
 image:
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
   tag: latest
@@ -19,6 +17,9 @@ postgres:
     repository: postgres  # https://hub.docker.com/_/postgres/
     tag: '10.1'
     pullPolicy: IfNotPresent
+
+deployment:
+  annotations: {}
 
 service:
   type: ClusterIP  # Use NodePort when ingress is enabled, https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer#step_2_expose_your_deployment_as_a_service_internally
@@ -44,6 +45,8 @@ ingress:
 
 conjurLabels: {}  # Additional labels to apply to all conjur resources
 postgresLabels: {}  # Additional labels to apply to all conjur resources
+
+replicaCount: 1  # Number of Conjur pods to run
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

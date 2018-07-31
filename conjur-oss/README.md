@@ -108,6 +108,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
 |`postgres.image.tag`|postgres Docker image tag|`"10.1"`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
+|`deployment.annotations`|Annotations for Conjur deployment|`{}`|
 |`service.type`|Conjur service type|`"ClusterIP"`|
 |`service.port`|Conjur service port|`80`|
 |`service.annotations`|Annotations for Conjur service|`{}`|
