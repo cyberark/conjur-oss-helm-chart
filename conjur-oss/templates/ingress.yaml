@@ -13,6 +13,9 @@ metadata:
     chart: {{ template "conjur-oss.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+{{- with .Values.conjurLabels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
 spec:
   secretName: {{ $fullName }}-certificate-secret
   issuerRef:
@@ -42,6 +45,9 @@ metadata:
     chart: {{ template "conjur-oss.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+{{- with .Values.conjurLabels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
 {{- with .Values.ingress.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}

@@ -118,6 +118,8 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`ingress.tls.letsencrypt.dns01.provider`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer dns01 provider name|`nil`|
 |`ingress.tls.letsencrypt.issuerRef.name`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer name|`nil`|
 |`ingress.tls.letsencrypt.issuerRef.kind`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer kind|`nil`|
+|`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
+|`postgresLabels`|Extra Kubernetes labels to apply to Conjur PostgreSQL resources|`{}`|
 
 ## Contributing
 
