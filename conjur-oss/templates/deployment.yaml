@@ -13,7 +13,7 @@ metadata:
 {{- with .Values.deployment.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
-{{ end -}}
+{{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
