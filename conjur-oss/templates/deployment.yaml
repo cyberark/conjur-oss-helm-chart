@@ -7,6 +7,9 @@ metadata:
     chart: {{ template "conjur-oss.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+{{- with .Values.conjurLabels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -28,8 +31,8 @@ spec:
             httpGet:
               path: /
               port: http
-            initialDelaySeconds: 20
-            periodSeconds: 20
+            initialDelaySeconds: 30
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /

@@ -7,6 +7,9 @@ metadata:
     chart: {{ template "conjur-oss.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+{{- with .Values.conjurLabels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
 {{- with .Values.service.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
