@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.2.0](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v0.2.0) - 2018-08-01
 ### Added
-- Added `deployment.annotations` parameter, optional annotations applied to Conjur deployment.
-- Added `conjurLabels` and `postgresLabels` parameters,
+- New `deployment.annotations` parameter, optional annotations applied to Conjur deployment.
+    [PR #6](https://github.com/cyberark/conjur-oss-helm-chart/pull/6)
+- New `conjurLabels` and `postgresLabels` parameters,
     optional extra labels to apply to respective resources.
+    [PR #5](https://github.com/cyberark/conjur-oss-helm-chart/pull/5)
 
 ## [0.1.0](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v0.1.0) - 2018-07-25
 ### Added

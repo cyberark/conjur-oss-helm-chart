@@ -5,6 +5,13 @@ tailored specifically to the unique infrastructure requirements of
 native cloud, containers, and DevOps environments.
 Conjur Open Source is part of the CyberArk Privileged Access Security Solution which is widely used by enterprises across the globe.
 
+[![GitHub release](https://img.shields.io/github/release/cyberark/conjur-oss-helm-chart.svg)](https://github.com/cyberark/conjur-oss-helm-chart/releases/latest)
+[![pipeline status](https://gitlab.com/cyberark/conjur-oss-helm-chart/badges/master/pipeline.svg)](https://gitlab.com/cyberark/conjur-oss-helm-chart/pipelines)
+
+[![Github commits (since latest release)](https://img.shields.io/github/commits-since/cyberark/conjur-oss-helm-chart/latest.svg)](https://github.com/cyberark/conjur-oss-helm-chart/commits/master)
+
+---
+
 ## Prerequisites
 
 - Kubernetes 1.7+
