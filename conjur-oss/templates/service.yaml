@@ -7,6 +7,8 @@ metadata:
     chart: {{ template "conjur-oss.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/component: service
 {{- with .Values.conjurLabels }}
 {{ toYaml . | indent 4 }}
 {{- end }}
