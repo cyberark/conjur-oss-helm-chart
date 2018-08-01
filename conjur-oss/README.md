@@ -29,7 +29,7 @@ Install latest Conjur with integrated Postgres.
 ```sh-session
 $ helm install \
   --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" \
-  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.1.0/conjur-oss-0.1.0.tgz
+  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.2.0/conjur-oss-0.2.0.tgz
 ```
 
 This will deploy the latest version of `cyberark/conjur`.
@@ -80,7 +80,7 @@ ingress:
 
 ```sh-session
 $ helm install -f custom-values.yaml \
-  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.1.0/conjur-oss-0.1.0.tgz
+  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.2.0/conjur-oss-0.2.0.tgz
 ```
 
 Note that this requires:
