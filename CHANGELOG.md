@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- New [`authenticators` parameter](./conjur-oss#configuration), optionally applied to Conjur through
+    `CONJUR_AUTHENTICATOR` variable.
 
 ## [0.2.1](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v0.2.1) - 2018-08-01
 ### Added

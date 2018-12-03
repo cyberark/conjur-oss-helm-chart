@@ -1,5 +1,8 @@
 # Default values for conjur-oss.
 
+# Conjur whitelisted authenticators. Maps as CONJUR_AUTHENTICATORS env variable.
+authenticators: "authn"
+
 # Conjur data key, 32 byte base-64 encoded string for data encryption.
 # Generate one with `docker run --rm cyberark/conjur data-key generate`.
 dataKey: ""
