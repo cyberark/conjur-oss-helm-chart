@@ -52,6 +52,7 @@ Install a specific version of Conjur, expose it outside the cluster with externa
 **custom-values.yaml**
 
 ```yaml
+authenticators: "authn-k8s/minikube,authn"
 dataKey: "GENERATED_DATAKEY"  # docker run --rm -it cyberark/conjur data-key generate
 databaseUrl: "postgres://postgres:PASSWORD@POSTGRES_ENDPOINT/postgres"
 
@@ -106,6 +107,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 
 |Parameter|Description|Default|
 |---------|-----------|-------|
+|`authenticators`|List of authenticators that Conjur will whitelist and load.|`"authn"`|
 |`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
 |`databaseUrl`|PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.|`""`|
 |`replicaCount`|Number of desired Conjur pods|`1`|

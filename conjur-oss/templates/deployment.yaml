@@ -46,6 +46,11 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 10
           env:
+          - name: CONJUR_AUTHENTICATORS
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-conjur-authenticators
+                key: key
           - name: CONJUR_DATA_KEY
             valueFrom:
               secretKeyRef:
