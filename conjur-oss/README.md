@@ -34,7 +34,7 @@ $ helm install \
 
 This will deploy the latest version of `cyberark/conjur`.
 The Conjur `ClusterIP` service is not exposed outside the cluster.
-Conjur is running HTTP on port 80, with no TLS security.
+Conjur is running HTTPS on port 9443 with a self-signed certificate.
 A PostgreSQL deployment is created to store Conjur state.
 
 Note that you can also install from source by cloning this repository and running
