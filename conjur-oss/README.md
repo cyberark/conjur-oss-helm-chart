@@ -67,6 +67,7 @@ ingress:
   enabled: true
   annotations:
     external-dns.alpha.kubernetes.io/hostname: conjur-oss.itd.mydomain.com.
+    kubernetes.io/ingress.allow-http: "true"
   hosts:
     - conjur-oss.itd.mydomain.com
   tls:
