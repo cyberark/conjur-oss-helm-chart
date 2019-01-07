@@ -59,7 +59,7 @@ metadata:
 spec:
   backend:
     serviceName: {{ $fullName }}
-    servicePort: http
+    servicePort: https
 {{- if $letsencrypt.enabled }}
   tls:
     - secretName: {{ $fullName }}-certificate-secret

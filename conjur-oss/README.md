@@ -29,13 +29,13 @@ Install latest Conjur with integrated Postgres.
 ```sh-session
 $ helm install \
   --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" \
-  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.2.0/conjur-oss-0.2.0.tgz
+  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
 ```
 
 This will deploy the latest version of `cyberark/conjur`.
 The Conjur `ClusterIP` service is not exposed outside the cluster.
-Conjur is running HTTPS on port 9443 with a self-signed certificate.
-A PostgreSQL deployment is created to store Conjur state.
+Conjur is running HTTPS on port 443 (9443 within the cluster) with a self-signed
+certificate. A PostgreSQL deployment is created to store Conjur state.
 
 Note that you can also install from source by cloning this repository and running
 
@@ -45,7 +45,7 @@ helm install \
   ./conjur-oss
 ```
 
-### Recommended install
+### Custom install
 
 Install a specific version of Conjur, expose it outside the cluster with external domain name, automatic LetsEncrypt certificates, connect to a remote database.
 
@@ -60,16 +60,15 @@ image:
   tag: "1.0.1-stable"
   pullPolicy: IfNotPresent
 
-service:
-  type: NodePort
-
 ingress:
   enabled: true
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: conjur-oss.itd.mydomain.com.
-    kubernetes.io/ingress.allow-http: "true"
+    external-dns.alpha.kubernetes.io/hostname: conjur.myorg.com.
+    ingress.kubernetes.io/ssl-passthrough: "false"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
+    kubernetes.io/tls-acme: "true"
   hosts:
-    - conjur-oss.itd.mydomain.com
+    - conjur.myorg.com
   tls:
     letsencrypt:
       enabled: true
@@ -82,7 +81,7 @@ ingress:
 
 ```sh-session
 $ helm install -f custom-values.yaml \
-  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.2.0/conjur-oss-0.2.0.tgz
+  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
 ```
 
 Note that this requires:
@@ -119,12 +118,12 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`postgres.image.tag`|postgres Docker image tag|`"10.1"`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
 |`deployment.annotations`|Annotations for Conjur deployment|`{}`|
-|`service.type`|Conjur service type|`"ClusterIP"`|
-|`service.port`|Conjur service port|`80`|
+|`service.type`|Conjur service type|`"NodePort"`|
+|`service.port`|Conjur service port|`443`|
 |`service.annotations`|Annotations for Conjur service|`{}`|
-|`ingress.enabled`|Create an Ingress resource for Conjur service|`false`|
-|`ingress.annotations`|Annotations for Ingress|`{}`|
-|`ingress.hosts`|Hostnames for Ingress|`[]`|
+|`ingress.enabled`|Create an Ingress resource for Conjur service|`true`|
+|`ingress.annotations`|Annotations for Ingress|[See here](values.yaml#L39)|
+|`ingress.hosts`|Hostnames for Ingress|`["conjur.myorg.com"]`|
 |`ingress.tls.letsencrypt.enabled`|Automatically terminate TLS with LetsEncrypt certificates|`false`|
 |`ingress.tls.letsencrypt.dns01.provider`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer dns01 provider name|`nil`|
 |`ingress.tls.letsencrypt.issuerRef.name`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer name|`nil`|
