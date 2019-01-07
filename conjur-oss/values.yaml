@@ -10,6 +10,11 @@ dataKey: ""
 # PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.
 databaseUrl: ""
 
+ssl:
+  expiration: 365 # days
+  hostname: "conjur.myorg.com"
+  altnames: []
+
 image:
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
   tag: latest

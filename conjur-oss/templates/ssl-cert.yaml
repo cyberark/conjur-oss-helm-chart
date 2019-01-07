@@ -1,0 +1,39 @@
+{{- $ssl := . }}
+{{- include "conjur-oss.ssl-cert-gen" $ssl }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-conjur-ssl-ca-cert
+  labels:
+    app: {{ template "conjur-oss.name" . }}
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/component: ssl-cert
+{{- with .Values.conjurLabels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+type: kubernetes.io/tls
+data:
+  tls.crt: {{ .caCrt }}
+  tls.key: {{ .caKey }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-conjur-ssl-cert
+  labels:
+    app: {{ template "conjur-oss.name" . }}
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/component: ssl-cert
+{{- with .Values.conjurLabels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+type: kubernetes.io/tls
+data:
+  tls.crt: {{ .certCrt }}
+  tls.key: {{ .certKey }}
