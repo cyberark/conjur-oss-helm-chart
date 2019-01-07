@@ -35,7 +35,7 @@ Create chart name and version as used by the chart label.
 Generate CA and end user certificate for NGINX
 */}}
 {{- define "conjur-oss.ssl-cert-gen" -}}
-{{- $altNames := .Values.ssl.altnames -}}
+{{- $altNames := .Values.ssl.altNames -}}
 {{- $altNames := append $altNames .Values.ssl.hostname -}}
 {{- $altNames := append $altNames (include "conjur-oss.fullname" .) -}}
 {{- $altNames := append $altNames ( printf "%s.%s" (include "conjur-oss.fullname" .) .Release.Namespace ) -}}

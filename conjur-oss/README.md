@@ -60,15 +60,15 @@ image:
   tag: "1.0.1-stable"
   pullPolicy: IfNotPresent
 
+ssl:
+  hostname: conjur.myorg.com
+
 ingress:
   enabled: true
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: conjur.myorg.com.
     ingress.kubernetes.io/ssl-passthrough: "false"
     nginx.ingress.kubernetes.io/ssl-passthrough: "false"
     kubernetes.io/tls-acme: "true"
-  hosts:
-    - conjur.myorg.com
   tls:
     letsencrypt:
       enabled: true
@@ -121,9 +121,10 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`service.type`|Conjur service type|`"NodePort"`|
 |`service.port`|Conjur service port|`443`|
 |`service.annotations`|Annotations for Conjur service|`{}`|
+|`ssl.hostname`|Hostname and Common Name for generated certificate and ingress|`"conjur.myorg.com"`|
+|`ssl.altNames`|Subject Alt Names for generated Conjur certificate and ingress|`[]`|
 |`ingress.enabled`|Create an Ingress resource for Conjur service|`true`|
 |`ingress.annotations`|Annotations for Ingress|[See here](values.yaml#L39)|
-|`ingress.hosts`|Hostnames for Ingress|`["conjur.myorg.com"]`|
 |`ingress.tls.letsencrypt.enabled`|Automatically terminate TLS with LetsEncrypt certificates|`false`|
 |`ingress.tls.letsencrypt.dns01.provider`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer dns01 provider name|`nil`|
 |`ingress.tls.letsencrypt.issuerRef.name`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer name|`nil`|

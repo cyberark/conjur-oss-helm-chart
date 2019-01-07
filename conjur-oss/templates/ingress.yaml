@@ -1,6 +1,6 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "conjur-oss.fullname" . -}}
-{{- $hosts := .Values.ingress.hosts -}}
+{{- $altNames := .Values.ssl.altNames -}}
 {{- $letsencrypt := .Values.ingress.tls.letsencrypt -}}
 {{- if $letsencrypt.enabled -}}
 ---
@@ -23,9 +23,10 @@ spec:
   issuerRef:
     name: {{ $letsencrypt.issuerRef.name | quote }}
     kind: {{ $letsencrypt.issuerRef.kind | quote }}
-  commonName: {{ $hosts | first | quote }}
+  commonName: {{ .Values.ssl.hostname | quote }}
   dnsNames:
-  {{- range $hosts }}
+    - {{ .Values.ssl.hostname }}
+  {{- range $altNames }}
     - {{ . }}
   {{- end }}
   acme:
@@ -33,7 +34,8 @@ spec:
     - dns01:
         provider: {{ $letsencrypt.dns01.provider | quote }}
       domains:
-      {{- range $hosts }}
+        - {{ .Values.ssl.hostname }}
+      {{- range $altNames }}
         - {{ . }}
       {{- end }}
 {{- end }}
@@ -52,8 +54,9 @@ metadata:
 {{- with .Values.conjurLabels }}
 {{ toYaml . | indent 4 }}
 {{- end }}
-{{- with .Values.ingress.annotations }}
   annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{ printf "%s." .Values.ssl.hostname }}
+{{- with .Values.ingress.annotations }}
 {{ toYaml . | indent 4 }}
 {{ end -}}
 spec:
@@ -64,7 +67,8 @@ spec:
   tls:
     - secretName: {{ $fullName }}-certificate-secret
       hosts:
-      {{- range $hosts }}
+        - {{ .Values.ssl.hostname }}
+      {{- range $altNames }}
         - {{ . }}
       {{- end }}
 {{- end }}

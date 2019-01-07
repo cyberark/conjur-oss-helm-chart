@@ -1,12 +1,17 @@
-1. Get the application URL by running these commands:
+1. Get the application URLs which should match:
 {{- if .Values.ingress.enabled }}
-{{- range .Values.ingress.hosts }}
-  http{{ if $.Values.ingress.tls.letsencrypt.enabled }}s{{ end }}://{{ . }}
+  - https://{{ $.Values.ssl.hostname }}
+{{- range .Values.ssl.altNames }}
+  - https://{{ . }}
 {{- end }}
+
   This may take up to 10 minutes for GKE ingress when using GCE load balancers.
 
   Run watch "kubectl describe ingress {{ template "conjur-oss.fullname" . }} | grep backends"
-  until status changes from "Unknown" to "HEALTHY".
+  until status changes from "Unknown" to "HEALTHY" or if you are running minikube, you can
+  run "minikube service {{ template "conjur-oss.fullname" . }} --url" though make sure to use
+  "https" scheme instead of the "http" that MiniKube will print out. MiniKube may also take a
+  few minutes to properly route your requests.
 {{- else if contains "NodePort" .Values.service.type }}
   export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ template "conjur-oss.fullname" . }})
   export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
@@ -35,6 +40,8 @@
 
 3. Connect to Conjur
   docker run --rm -it --entrypoint bash cyberark/conjur-cli:5
+  # Or if using MiniKube, use the following command:
+  # docker run --rm -it --network host --entrypoint bash cyberark/conjur-cli:5
 
   # Account here is the one you configured in step #2 while the endpoint
   # is the https endpoint for your Conjur service.

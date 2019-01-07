@@ -13,7 +13,7 @@ databaseUrl: ""
 ssl:
   expiration: 365 # days
   hostname: "conjur.myorg.com"
-  altnames: []
+  altNames: []
 
 image:
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
@@ -37,14 +37,11 @@ service:
 ingress:
   enabled: true
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: conjur.myorg.com.
     ingress.kubernetes.io/ssl-passthrough: "true"
     kubernetes.io/ingress.allow-http: "false"
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     # kubernetes.io/tls-acme: "true"
-  hosts:
-    - conjur.myorg.com
   tls:
     letsencrypt:
       enabled: false
