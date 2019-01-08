@@ -114,6 +114,9 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`image.repository`|Conjur Docker image repository|`"cyberark/conjur"`|
 |`image.tag`|Conjur Docker image tag|`"latest"`|
 |`image.pullPolicy`|Pull policy for Conjur Docker image|`"Always"`|
+|`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
+|`nginx.image.tag`|NGINX Docker image tag|`"1.15"`|
+|`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
 |`postgres.image.tag`|postgres Docker image tag|`"10.1"`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|

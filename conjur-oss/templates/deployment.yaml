@@ -50,8 +50,8 @@ spec:
 
       containers:
       - name: {{ .Release.Name }}-nginx
-        image: "nginx:1.15"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+        imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
         ports:
         - containerPort: 9443
           name: https

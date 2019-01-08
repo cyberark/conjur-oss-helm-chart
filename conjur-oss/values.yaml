@@ -27,6 +27,12 @@ postgres:
     tag: '10.1'
     pullPolicy: IfNotPresent
 
+nginx:
+  image:
+    repository: nginx
+    tag: '1.15'
+    pullPolicy: IfNotPresent
+
 deployment:
   annotations: {}
 
