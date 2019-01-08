@@ -57,7 +57,7 @@ dataKey: "GENERATED_DATAKEY"  # docker run --rm -it cyberark/conjur data-key gen
 databaseUrl: "postgres://postgres:PASSWORD@POSTGRES_ENDPOINT/postgres"
 
 image:
-  tag: "1.0.1-stable"
+  tag: "1.1.1-stable"
   pullPolicy: IfNotPresent
 
 ssl:
