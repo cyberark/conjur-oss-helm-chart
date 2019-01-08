@@ -12,8 +12,9 @@ databaseUrl: ""
 
 ssl:
   expiration: 365 # days
-  hostname: "conjur.myorg.com"
-  altNames: []
+  hostname: "192.168.99.100"
+  altNames:
+    - conjur.myorg.com
 
 image:
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
