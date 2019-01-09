@@ -10,6 +10,9 @@ dataKey: ""
 # PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.
 databaseUrl: ""
 
+# Name of Conjur account to be created
+account: "default"
+
 ssl:
   expiration: 365 # days
   hostname: "192.168.99.100"
