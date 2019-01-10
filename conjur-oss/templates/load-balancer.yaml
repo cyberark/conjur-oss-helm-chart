@@ -1,7 +1,10 @@
+{{- if .Values.service.external.enabled -}}
+{{- $fullName := include "conjur-oss.fullname" . -}}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "conjur-oss.fullname" . }}
+  name: {{ $fullName }}-ingress
   labels: &AppConjurLabels
     app: {{ template "conjur-oss.name" . }}
     chart: {{ template "conjur-oss.chart" . }}
@@ -12,15 +15,16 @@ metadata:
 {{- with .Values.conjurLabels }}
 {{ toYaml . | indent 4 }}
 {{- end }}
-{{- with .Values.service.internal.annotations }}
   annotations:
+{{- with .Values.service.external.annotations }}
 {{ toYaml . | indent 4 }}
-{{- end }}
+{{ end -}}
 spec:
-  type: {{ .Values.service.internal.type }}
-  ports:
-    - port: {{ .Values.service.internal.port }}
-      targetPort: https
-      protocol: TCP
-      name: https
+  type: LoadBalancer
   selector: *AppConjurLabels
+  ports:
+    - name: https
+      protocol: TCP
+      targetPort: https
+      port: {{ .Values.service.external.port }}
+{{- end }}

@@ -15,51 +15,40 @@ account: "default"
 
 ssl:
   expiration: 365 # days
-  hostname: "192.168.99.100"
-  altNames:
-    - conjur.myorg.com
+  hostname: "conjur.myorg.com"
+  altNames: []
 
 image:
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
   tag: latest
   pullPolicy: Always
 
-postgres:
-  image:
-    repository: postgres  # https://hub.docker.com/_/postgres/
-    tag: '10.1'
-    pullPolicy: IfNotPresent
-
 nginx:
   image:
-    repository: nginx
+    repository: nginx          # https://hub.docker.com/_/nginx/
     tag: '1.15'
+    pullPolicy: IfNotPresent
+
+postgres:
+  image:
+    repository: postgres       # https://hub.docker.com/_/postgres/
+    tag: '10.1'
     pullPolicy: IfNotPresent
 
 deployment:
   annotations: {}
 
 service:
-  type: NodePort
-  port: 443
-  annotations: {}
+  internal:
+    type: NodePort
+    port: 443
+    annotations: {}
 
-ingress:
-  enabled: true
-  annotations:
-    ingress.kubernetes.io/ssl-passthrough: "true"
-    kubernetes.io/ingress.allow-http: "false"
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    # kubernetes.io/tls-acme: "true"
-  tls:
-    letsencrypt:
-      enabled: false
-      # dns01:
-      #   provider: cloud-dns-staging  # from ClusterIssuer.spec.acme.dns01.providers.name
-      # issuerRef:
-      #   name: letsencrypt-staging  # from ClusterIssuer.metadata.name
-      #   kind: ClusterIssuer  # Issuer or ClusterIssuer, from cert-manager
+  external:
+    enabled: true
+    port: 443
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
 
 conjurLabels: {}  # Additional labels to apply to all conjur resources
 postgresLabels: {}  # Additional labels to apply to all conjur resources

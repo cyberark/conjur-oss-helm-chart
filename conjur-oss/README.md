@@ -45,9 +45,12 @@ helm install \
   ./conjur-oss
 ```
 
-### Custom install
+### Custom Installation
 
-Install a specific version of Conjur, expose it outside the cluster with external domain name, automatic LetsEncrypt certificates, connect to a remote database.
+All important chart values can be customized and the following shows how to install
+a specific version of Conjur, enable additional Kubernetes-API authentications,
+generate self-signed SSL certificates, expose Conjur outside of the cluster,
+and configure it to connect to a remote database:
 
 **custom-values.yaml**
 
@@ -61,34 +64,13 @@ image:
   pullPolicy: IfNotPresent
 
 ssl:
-  hostname: conjur.myorg.com
-
-ingress:
-  enabled: true
-  annotations:
-    ingress.kubernetes.io/ssl-passthrough: "false"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-    kubernetes.io/tls-acme: "true"
-  tls:
-    letsencrypt:
-      enabled: true
-      dns01:
-        provider: cloud-dns-staging
-      issuerRef:
-        name: "letsencrypt-staging"
-        kind: ClusterIssuer
+  hostname: custom.domainname.com
 ```
 
 ```sh-session
 $ helm install -f custom-values.yaml \
   https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
 ```
-
-Note that this requires:
-- [cert-manager](https://github.com/jetstack/cert-manager) is installed, Issuers or ClusterIssuers created
-- [external-dns](https://github.com/kubernetes-incubator/external-dns) is installed and configured. This may require creating a GKE service account.
-
-This currently only does LetsEncrypt dns-01 validation.
 
 ## Uninstalling the Chart
 
@@ -121,17 +103,15 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`postgres.image.tag`|postgres Docker image tag|`"10.1"`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
 |`deployment.annotations`|Annotations for Conjur deployment|`{}`|
-|`service.type`|Conjur service type|`"NodePort"`|
-|`service.port`|Conjur service port|`443`|
+|`service.internal.type`|Conjur internal service type (ClusterIP and NodePort supported)|`"NodePort"`|
+|`service.internal.port`|Conjur internal service port|`443`|
+|`service.external.enabled`|Expose service to the Internet|`true`|
+|`service.external.port`|Conjur external service port|`443`|
+|`service.external.annotations`|Annotations for the external LoadBalancer|`[service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp]`|
 |`service.annotations`|Annotations for Conjur service|`{}`|
+|`ssl.expiration`|Expiration limit for generated certificates|`365`|
 |`ssl.hostname`|Hostname and Common Name for generated certificate and ingress|`"conjur.myorg.com"`|
 |`ssl.altNames`|Subject Alt Names for generated Conjur certificate and ingress|`[]`|
-|`ingress.enabled`|Create an Ingress resource for Conjur service|`true`|
-|`ingress.annotations`|Annotations for Ingress|[See here](values.yaml#L39)|
-|`ingress.tls.letsencrypt.enabled`|Automatically terminate TLS with LetsEncrypt certificates|`false`|
-|`ingress.tls.letsencrypt.dns01.provider`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer dns01 provider name|`nil`|
-|`ingress.tls.letsencrypt.issuerRef.name`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer name|`nil`|
-|`ingress.tls.letsencrypt.issuerRef.kind`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer kind|`nil`|
 |`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
 |`postgresLabels`|Extra Kubernetes labels to apply to Conjur PostgreSQL resources|`{}`|
 
