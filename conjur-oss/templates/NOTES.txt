@@ -5,57 +5,68 @@
 {{- end }}
 {{- if .Values.service.external.enabled }}
 
-  NOTE: It may take 1-10 minutes for the LoadBalancer IP to be available. You
-        can watch the status of the progress by running:
-        `kubectl get svc -w {{ template "conjur-oss.fullname" . }}-ingress` and
-        waiting until you have a value in "EXTERNAL-IP" column.
+  It may take 1-10 minutes for the LoadBalancer IP to be available. You can watch
+  the status of the progress by running:
+
+      kubectl get svc -w {{ template "conjur-oss.fullname" . }}-ingress
+
+  and waiting until you have a value in "EXTERNAL-IP" column.
 
   If you are running MiniKube, you can run:
-  `minikube service {{ template "conjur-oss.fullname" . }}-ingress --url` to see the external
-  IP and port. If using MiniKube, also make sure to use "https" scheme instead of the "http" that
-  MiniKube will print out.
 
-  To get the service endpoint, you can run the following:
-  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ template "conjur-oss.fullname" . }}-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  echo "Service is at https://${SERVICE_IP}:{{ .Values.service.external.port }}/"
+      minikube service {{ template "conjur-oss.fullname" . }}-ingress --url
 
-  Note: Ensure that you have a DNS name matching the SSL hostname or one of the SSL
-  alternate names rather that the raw IP when connecting to the service with Conjur
-  CLI tool or SSL verification will fail on logging in. If you are just locally testing
-  things, you can work around the DNS mapping by adding the following entry to your
-  /etc/hosts file: "$SERVICE_IP  {{ $.Values.ssl.hostname }}"
+  to see the external IP and port. If using MiniKube, also make sure to use "https"
+  scheme instead of the "http" that MiniKube will print out.
+
+  Once the external ingress is available, you can get the service endpoint by running:
+
+      export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} \
+                                          {{ template "conjur-oss.fullname" . }}-ingress \
+                                          -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+      echo -e " Service is exposed at ${SERVICE_IP}:{{ .Values.service.external.port }}\n" \
+              "Ensure that domain "{{ .Values.ssl.hostname }}" has an A record to ${SERVICE_IP}\n" \
+              "and only use the DNS endpoint https://{{ .Values.ssl.hostname }}:{{ .Values.service.external.port }} to connect.\n"
+
+  Note: You must have a DNS name matching the SSL hostname (or otherwise one of the SSL
+        alternate names) rather that the raw IP when connecting to the service with Conjur
+        CLI tool or SSL verification will fail on logging in. If you are just locally testing
+        things, you can work around the DNS mapping by adding the following entry to your
+        /etc/hosts file: "$SERVICE_IP  {{ $.Values.ssl.hostname }}"
 {{- end }}
 
 2. Configure Conjur
   To create an initial account and login, follow the instructions here:
   https://www.conjur.org/get-started/install-conjur.html#install-and-configure
 
-  Note: If you are planning on using the Kubernetes authenticator for Conjur, the
-        ACCOUNT_NAME in the commands below _must_ match the account value you
-        specified during the chart deployment ("{{ .Values.account }}").
-
-  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ template "conjur-oss.name" . }},release={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  kubectl exec $POD_NAME --container={{ .Chart.Name }} conjurctl account create <ACCOUNT_NAME>
+      export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} \
+                                         -l "app={{ template "conjur-oss.name" . }},release={{ .Release.Name }}" \
+                                         -o jsonpath="{.items[0].metadata.name}")
+      kubectl exec $POD_NAME --container={{ .Chart.Name }} conjurctl account create {{ .Values.account | quote }}
 
   Note that the conjurctl account create command gives you the
-  public key and admin API key for the account you created.
+  public key and admin API key for the account administrator you created.
   Back them up in a safe location.
 
 3. Connect to Conjur
-  docker run --rm -it --entrypoint bash cyberark/conjur-cli:5
-  # Or if using MiniKube, use the following command from the host:
-  # docker run --rm -it --network host --entrypoint bash cyberark/conjur-cli:5
+  Start a container with Conjur CLI and authenticate with the new user:
 
-  # Account here is the one you configured in step #2 while the endpoint
-  # is the https endpoint for your Conjur service.
-  # NOTE: Ensure that the target endpoint matches at least one of the expected server
-  #       SSL certificate names otherwise SSL verification will fail and you will not
-  #       be able to log in.
-  conjur init -u <ENDPOINT> -a <ACCOUNT_NAME>
+      docker run --rm -it --entrypoint bash cyberark/conjur-cli:5
+      # Or if using MiniKube, use the following command from the host:
+      # docker run --rm -it --network host --entrypoint bash cyberark/conjur-cli:5
 
-  # API key here is the key that creation of the account provided you in step #2
-  conjur authn login -u admin -p <API_KEY>
-  conjur authn whoami
+      # Here ENDPOINT is the DNS name https endpoint for your Conjur service.
+      # NOTE: Ensure that the target endpoint matches at least one of the expected server
+      #       SSL certificate names otherwise SSL verification will fail and you will not
+      #       be able to log in.
+      # NOTE: Also ensure that the URL does not contain a slash (`/`) at the end of the URL
+      conjur init -u <ENDPOINT> -a {{ .Values.account | quote }}
+
+      # API key here is the key that creation of the account provided you in step #2
+      conjur authn login -u admin -p <API_KEY>
+
+      # Check that you are identified as the admin user
+      conjur authn whoami
 
 4. Next Steps
   - Go through the Conjur Tutorials: https://www.conjur.org/tutorials/
