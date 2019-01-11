@@ -19,11 +19,11 @@ spec:
   - port: 5432
   selector: *AppPostgresLabels
 ---
-apiVersion: extensions/v1beta1
-kind: Deployment
+apiVersion: v1
+kind: Pod
 metadata:
   name: {{ .Release.Name }}-postgres
-  labels: &AppPostgresLabels
+  labels:
     app: {{ template "conjur-oss.name" . }}-postgres
     chart: {{ template "conjur-oss.chart" . }}
     release: {{ .Release.Name }}
@@ -34,14 +34,16 @@ metadata:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
-  replicas: 1
-  template:
-    metadata:
-      labels: *AppPostgresLabels
-    spec:
-      containers:
-      - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
-        imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
-        name: postgres
+  containers:
+  - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+    imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+    name: postgres
+    volumeMounts:
+    - mountPath: "/var/lib/postgresql"
+      name: postgres-data
+  volumes:
+  - name: postgres-data
+    persistentVolumeClaim:
+      claimName: {{ .Release.Name }}-conjur-oss-pvc
 ---
 {{ end }}

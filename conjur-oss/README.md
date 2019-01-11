@@ -110,6 +110,8 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
 |`nginx.image.tag`|NGINX Docker image tag|`"1.15"`|
 |`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
+|`persistentVolumeSize`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
+|`storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
 |`postgres.image.tag`|postgres Docker image tag|`"10.1"`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|

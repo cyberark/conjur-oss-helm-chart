@@ -13,6 +13,9 @@ databaseUrl: ""
 # Name of Conjur account to be created
 account: "default"
 
+persistentVolumeSize: 8Gi
+# storageClass: ""
+
 ssl:
   expiration: 365 # days
   hostname: "conjur.myorg.com"
