@@ -72,6 +72,16 @@ $ helm install -f custom-values.yaml \
   https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
 ```
 
+*NOTE:* If using the Kubernetes authenticator for Conjur, the `account` value
+(see [Configuration](#Configuration)) must match the initial Conjur account
+created. For example, given the following command:
+
+```sh-session
+$ kubectl exec $POD_NAME --container=conjur-oss conjurctl account create example
+```
+
+The chart value for `account` would be expected to equal `example`.
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `my-release` deployment:
@@ -89,6 +99,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 
 |Parameter|Description|Default|
 |---------|-----------|-------|
+|`account`|Name of the Conjur account to be used by the Kubernetes authenticator|`"default"`|
 |`authenticators`|List of authenticators that Conjur will whitelist and load.|`"authn"`|
 |`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
 |`databaseUrl`|PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.|`""`|

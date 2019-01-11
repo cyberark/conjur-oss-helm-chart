@@ -30,6 +30,10 @@
   To create an initial account and login, follow the instructions here:
   https://www.conjur.org/get-started/install-conjur.html#install-and-configure
 
+  Note: If you are planning on using the Kubernetes authenticator for Conjur, the
+        ACCOUNT_NAME in the commands below _must_ match the account value you
+        specified during the chart deployment ("{{ .Values.account }}").
+
   export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ template "conjur-oss.name" . }},release={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
   kubectl exec $POD_NAME --container={{ .Chart.Name }} conjurctl account create <ACCOUNT_NAME>
 
