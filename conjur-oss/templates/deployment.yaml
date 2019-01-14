@@ -65,7 +65,7 @@ spec:
             port: https
           initialDelaySeconds: 1
           periodSeconds: 5
-          timeoutSeconds: 2
+          timeoutSeconds: 3
           # 1 seconds * 180 = 3 minutes
           failureThreshold: 180
         readinessProbe:
@@ -75,7 +75,7 @@ spec:
             port: https
           initialDelaySeconds: 1
           periodSeconds: 5
-          timeoutSeconds: 2
+          timeoutSeconds: 3
           # 1 seconds * 180 = 3 minutes
           failureThreshold: 180
         volumeMounts:
@@ -111,8 +111,8 @@ spec:
             path: /
             port: http
           initialDelaySeconds: 1
-          periodSeconds: 5
-          timeoutSeconds: 2
+          periodSeconds: 30
+          timeoutSeconds: 30
           # 1 seconds * 180 = 3 minutes
           failureThreshold: 180
         env:
