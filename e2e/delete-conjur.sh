@@ -16,7 +16,7 @@ fi
 
 for conjur_release in ${conjur_releases}; do
   echo "Deleting Conjur release '${conjur_release}'..."
-  helm delete "${conjur_release}"
+  helm delete --purge "${conjur_release}"
 done
 
 echo "Done!"
