@@ -29,13 +29,13 @@ Install latest Conjur with integrated Postgres.
 ```sh-session
 $ helm install \
   --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" \
-  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.2.0/conjur-oss-0.2.0.tgz
+  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
 ```
 
 This will deploy the latest version of `cyberark/conjur`.
 The Conjur `ClusterIP` service is not exposed outside the cluster.
-Conjur is running HTTP on port 80, with no TLS security.
-A PostgreSQL deployment is created to store Conjur state.
+Conjur is running HTTPS on port 443 (9443 within the cluster) with a self-signed
+certificate. A PostgreSQL deployment is created to store Conjur state.
 
 Note that you can also install from source by cloning this repository and running
 
@@ -45,9 +45,12 @@ helm install \
   ./conjur-oss
 ```
 
-### Recommended install
+### Custom Installation
 
-Install a specific version of Conjur, expose it outside the cluster with external domain name, automatic LetsEncrypt certificates, connect to a remote database.
+All important chart values can be customized and the following shows how to install
+a specific version of Conjur, enable additional Kubernetes-API authentications,
+generate self-signed SSL certificates, expose Conjur outside of the cluster,
+and configure it to connect to a remote database:
 
 **custom-values.yaml**
 
@@ -57,38 +60,27 @@ dataKey: "GENERATED_DATAKEY"  # docker run --rm -it cyberark/conjur data-key gen
 databaseUrl: "postgres://postgres:PASSWORD@POSTGRES_ENDPOINT/postgres"
 
 image:
-  tag: "1.0.1-stable"
+  tag: "1.1.1-stable"
   pullPolicy: IfNotPresent
 
-service:
-  type: NodePort
-
-ingress:
-  enabled: true
-  annotations:
-    external-dns.alpha.kubernetes.io/hostname: conjur-oss.itd.mydomain.com.
-  hosts:
-    - conjur-oss.itd.mydomain.com
-  tls:
-    letsencrypt:
-      enabled: true
-      dns01:
-        provider: cloud-dns-staging
-      issuerRef:
-        name: "letsencrypt-staging"
-        kind: ClusterIssuer
+ssl:
+  hostname: custom.domainname.com
 ```
 
 ```sh-session
 $ helm install -f custom-values.yaml \
-  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v0.2.0/conjur-oss-0.2.0.tgz
+  https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
 ```
 
-Note that this requires:
-- [cert-manager](https://github.com/jetstack/cert-manager) is installed, Issuers or ClusterIssuers created
-- [external-dns](https://github.com/kubernetes-incubator/external-dns) is installed and configured. This may require creating a GKE service account.
+*NOTE:* If using the Kubernetes authenticator for Conjur, the `account` value
+(see [Configuration](#Configuration)) must match the initial Conjur account
+created. For example, given the following command:
 
-This currently only does LetsEncrypt dns-01 validation.
+```sh-session
+$ kubectl exec $POD_NAME --container=conjur-oss conjurctl account create example
+```
+
+The chart value for `account` would be expected to equal `example`.
 
 ## Uninstalling the Chart
 
@@ -107,6 +99,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 
 |Parameter|Description|Default|
 |---------|-----------|-------|
+|`account`|Name of the Conjur account to be used by the Kubernetes authenticator|`"default"`|
 |`authenticators`|List of authenticators that Conjur will whitelist and load.|`"authn"`|
 |`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
 |`databaseUrl`|PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.|`""`|
@@ -114,20 +107,24 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`image.repository`|Conjur Docker image repository|`"cyberark/conjur"`|
 |`image.tag`|Conjur Docker image tag|`"latest"`|
 |`image.pullPolicy`|Pull policy for Conjur Docker image|`"Always"`|
+|`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
+|`nginx.image.tag`|NGINX Docker image tag|`"1.15"`|
+|`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
+|`persistentVolumeSize`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
+|`storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
 |`postgres.image.tag`|postgres Docker image tag|`"10.1"`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
 |`deployment.annotations`|Annotations for Conjur deployment|`{}`|
-|`service.type`|Conjur service type|`"ClusterIP"`|
-|`service.port`|Conjur service port|`80`|
+|`service.internal.type`|Conjur internal service type (ClusterIP and NodePort supported)|`"NodePort"`|
+|`service.internal.port`|Conjur internal service port|`443`|
+|`service.external.enabled`|Expose service to the Internet|`true`|
+|`service.external.port`|Conjur external service port|`443`|
+|`service.external.annotations`|Annotations for the external LoadBalancer|`[service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp]`|
 |`service.annotations`|Annotations for Conjur service|`{}`|
-|`ingress.enabled`|Create an Ingress resource for Conjur service|`false`|
-|`ingress.annotations`|Annotations for Ingress|`{}`|
-|`ingress.hosts`|Hostnames for Ingress|`[]`|
-|`ingress.tls.letsencrypt.enabled`|Automatically terminate TLS with LetsEncrypt certificates|`false`|
-|`ingress.tls.letsencrypt.dns01.provider`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer dns01 provider name|`nil`|
-|`ingress.tls.letsencrypt.issuerRef.name`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer name|`nil`|
-|`ingress.tls.letsencrypt.issuerRef.kind`|[cert-manager](https://github.com/jetstack/cert-manager) ClusterIssuer kind|`nil`|
+|`ssl.expiration`|Expiration limit for generated certificates|`365`|
+|`ssl.hostname`|Hostname and Common Name for generated certificate and ingress|`"conjur.myorg.com"`|
+|`ssl.altNames`|Subject Alt Names for generated Conjur certificate and ingress|`[]`|
 |`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
 |`postgresLabels`|Extra Kubernetes labels to apply to Conjur PostgreSQL resources|`{}`|
 

@@ -1,0 +1,26 @@
+authenticators: "authn-k8s/minikube,authn"
+dataKey: "GENERATED_DATAKEY"  # docker run --rm -it cyberark/conjur data-key generate
+databaseUrl: "postgres://postgres:PASSWORD@POSTGRES_ENDPOINT/postgres"
+
+image:
+  tag: "1.0.1-stable"
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+
+ingress:
+  enabled: true
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: conjur-oss.itd.mydomain.com.
+    kubernetes.io/ingress.allow-http: "true"
+  hosts:
+    - conjur-oss.itd.mydomain.com
+  tls:
+    letsencrypt:
+      enabled: true
+      dns01:
+        provider: cloud-dns-staging
+      issuerRef:
+        name: "letsencrypt-staging"
+        kind: ClusterIssuer

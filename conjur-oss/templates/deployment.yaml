@@ -24,44 +24,116 @@ spec:
     metadata:
       labels: *AppConjurLabels
     spec:
+      serviceAccountName: {{ .Release.Name }}-conjur-oss
+      volumes:
+      - name: {{ .Release.Name }}-conjur-ssl-cert-volume
+        secret:
+          secretName: {{ .Release.Name }}-conjur-ssl-cert
+          # Permission == 0400. JSON spec doesn’t support octal notation.
+          defaultMode: 256
+      - name: {{ .Release.Name }}-conjur-ssl-ca-cert-volume
+        secret:
+          secretName: {{ .Release.Name }}-conjur-ssl-ca-cert
+          # Permission == 0400. JSON spec doesn’t support octal notation.
+          defaultMode: 256
+      - name: {{ .Release.Name }}-conjur-configmap-volume
+        configMap:
+          name: {{ .Release.Name }}-conjur-nginx-configmap
+          items:
+            - key: nginx_conf
+              path: nginx.conf
+            - key: mime_types
+              path: mime.types
+            - key: dhparams
+              path: dhparams.pem
+            - key: conjur_site
+              path: sites-enabled/conjur.conf
+
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          args: ["server"]
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          env:
-          - name: CONJUR_AUTHENTICATORS
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-conjur-authenticators
-                key: key
-          - name: CONJUR_DATA_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-conjur-data-key
-                key: key
-          - name: DATABASE_URL
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Release.Name }}-conjur-database-url
-                key: key
-          resources:
+      - name: {{ .Release.Name }}-nginx
+        image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
+        imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
+        ports:
+        - containerPort: 9443
+          name: https
+        - containerPort: 9000
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /status
+            scheme: HTTPS
+            port: https
+          initialDelaySeconds: 1
+          periodSeconds: 5
+          timeoutSeconds: 2
+          # 1 seconds * 180 = 3 minutes
+          failureThreshold: 180
+        readinessProbe:
+          httpGet:
+            path: /status
+            scheme: HTTPS
+            port: https
+          initialDelaySeconds: 1
+          periodSeconds: 5
+          timeoutSeconds: 2
+          # 1 seconds * 180 = 3 minutes
+          failureThreshold: 180
+        volumeMounts:
+        - name: {{ .Release.Name }}-conjur-ssl-cert-volume
+          mountPath: /opt/conjur/etc/ssl/cert
+          readOnly: true
+        - name: {{ .Release.Name }}-conjur-ssl-ca-cert-volume
+          mountPath: /opt/conjur/etc/ssl/ca
+          readOnly: true
+        - name: {{ .Release.Name }}-conjur-configmap-volume
+          mountPath: /etc/nginx
+          readOnly: true
+
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: ["server"]
+        ports:
+          - name: http
+            containerPort: 80
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 1
+          periodSeconds: 5
+          timeoutSeconds: 2
+          # 1 seconds * 180 = 3 minutes
+          failureThreshold: 180
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 5
+          timeoutSeconds: 2
+          # 1 seconds * 180 = 3 minutes
+          failureThreshold: 180
+        env:
+        - name: CONJUR_AUTHENTICATORS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-conjur-authenticators
+              key: key
+        - name: CONJUR_DATA_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-conjur-data-key
+              key: key
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-conjur-database-url
+              key: key
+        - name: CONJUR_ACCOUNT
+          value: {{ .Values.account }}
+        resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
       nodeSelector:

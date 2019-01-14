@@ -10,14 +10,31 @@ dataKey: ""
 # PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.
 databaseUrl: ""
 
+# Name of Conjur account to be created
+account: "default"
+
+persistentVolumeSize: 8Gi
+# storageClass: ""
+
+ssl:
+  expiration: 365 # days
+  hostname: "conjur.myorg.com"
+  altNames: []
+
 image:
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
   tag: latest
   pullPolicy: Always
 
+nginx:
+  image:
+    repository: nginx          # https://hub.docker.com/_/nginx/
+    tag: '1.15'
+    pullPolicy: IfNotPresent
+
 postgres:
   image:
-    repository: postgres  # https://hub.docker.com/_/postgres/
+    repository: postgres       # https://hub.docker.com/_/postgres/
     tag: '10.1'
     pullPolicy: IfNotPresent
 
@@ -25,26 +42,16 @@ deployment:
   annotations: {}
 
 service:
-  type: ClusterIP  # Use NodePort when ingress is enabled, https://cloud.google.com/kubernetes-engine/docs/tutorials/http-balancer#step_2_expose_your_deployment_as_a_service_internally
-  port: 80
-  annotations: {}
+  internal:
+    type: NodePort
+    port: 443
+    annotations: {}
 
-ingress:
-  enabled: false
-  annotations: {}
-    # external-dns.alpha.kubernetes.io/hostname: conjur.it.mydomain.com.
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts: []
-    # - conjur.it.mydomain.com
-  tls:
-    letsencrypt:
-      enabled: false
-      # dns01:
-      #   provider: cloud-dns-staging  # from ClusterIssuer.spec.acme.dns01.providers.name
-      # issuerRef:
-      #   name: letsencrypt-staging  # from ClusterIssuer.metadata.name
-      #   kind: ClusterIssuer  # Issuer or ClusterIssuer, from cert-manager
+  external:
+    enabled: true
+    port: 443
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
 
 conjurLabels: {}  # Additional labels to apply to all conjur resources
 postgresLabels: {}  # Additional labels to apply to all conjur resources
