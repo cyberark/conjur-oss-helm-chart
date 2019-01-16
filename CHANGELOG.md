@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     `CONJUR_AUTHENTICATOR` variable.
 - Added SSL termination to Conjur [Issue #11](https://github.com/cyberark/conjur-oss-helm-chart/issues/11).
 - Added self-signed certificate generation to the deployment.
+- Added values to control usage of an existing service account or creation
+- Added values to control creation of RBAC resources
 ### Changed
 - Made ingress enabled by default.
 - Changed exposed ports to be strictly https.
