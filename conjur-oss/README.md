@@ -101,9 +101,10 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |---------|-----------|-------|
 |`account`|Name of the Conjur account to be used by the Kubernetes authenticator|`"default"`|
 |`authenticators`|List of authenticators that Conjur will whitelist and load.|`"authn"`|
-|`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
+|`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
 |`databaseUrl`|PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.|`""`|
-|`replicaCount`|Number of desired Conjur pods|`1`|
+|`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
+|`deployment.annotations`|Annotations for Conjur deployment|`{}`|
 |`image.repository`|Conjur Docker image repository|`"cyberark/conjur"`|
 |`image.tag`|Conjur Docker image tag|`"latest"`|
 |`image.pullPolicy`|Pull policy for Conjur Docker image|`"Always"`|
@@ -111,21 +112,23 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`nginx.image.tag`|NGINX Docker image tag|`"1.15"`|
 |`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
 |`persistentVolumeSize`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
-|`storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
+|`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
 |`postgres.image.tag`|postgres Docker image tag|`"10.1"`|
-|`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
-|`deployment.annotations`|Annotations for Conjur deployment|`{}`|
-|`service.internal.type`|Conjur internal service type (ClusterIP and NodePort supported)|`"NodePort"`|
-|`service.internal.port`|Conjur internal service port|`443`|
+|`rbac.create`|Controls whether or not RBAC resources are created|`true`|
+|`replicaCount`|Number of desired Conjur pods|`1`|
+|`service.external.annotations`|Annotations for the external LoadBalancer|`[service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp]`|
 |`service.external.enabled`|Expose service to the Internet|`true`|
 |`service.external.port`|Conjur external service port|`443`|
-|`service.external.annotations`|Annotations for the external LoadBalancer|`[service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp]`|
-|`service.annotations`|Annotations for Conjur service|`{}`|
+|`service.internal.annotations`|Annotations for Conjur service|`{}`|
+|`service.internal.port`|Conjur internal service port|`443`|
+|`service.internal.type`|Conjur internal service type (ClusterIP and NodePort supported)|`"NodePort"`|
+|`serviceAccount.create`|Controls whether or not a service account is created|`true`|
+|`serviceAccount.name`|Name of the ServiceAccount to be used by access-controlled resources created by the chart|`nil`|
+|`ssl.altNames`|Subject Alt Names for generated Conjur certificate and ingress|`[]`|
 |`ssl.expiration`|Expiration limit for generated certificates|`365`|
 |`ssl.hostname`|Hostname and Common Name for generated certificate and ingress|`"conjur.myorg.com"`|
-|`ssl.altNames`|Subject Alt Names for generated Conjur certificate and ingress|`[]`|
-|`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
+|`storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
 |`postgresLabels`|Extra Kubernetes labels to apply to Conjur PostgreSQL resources|`{}`|
 
 ## Contributing
