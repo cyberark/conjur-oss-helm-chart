@@ -62,3 +62,14 @@ Return the most recent RBAC API available
 {{- printf "rbac.authorization.k8s.io/v1" -}}
 {{- end }}
 {{- end }}
+
+{{/*
+Returns the service account name for this deployment
+*/}}
+{{- define "conjur-oss.service-account" -}}
+{{- if .Values.serviceAccount.create -}}
+  {{ default (include "conjur-oss.fullname" .) .Values.serviceAccount.name }}
+{{- else -}}
+  {{ default "default" .Values.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
