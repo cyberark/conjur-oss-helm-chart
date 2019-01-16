@@ -1,7 +1,9 @@
+---
+{{- if .Values.serviceAccount.create }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ .Release.Name }}-conjur-oss
+  name: {{ template "conjur-oss.service-account" . }}
   labels:
     app: {{ template "conjur-oss.name" . }}
     chart: {{ template "conjur-oss.chart" . }}
@@ -11,7 +13,9 @@ metadata:
 {{- with .Values.conjurLabels }}
 {{ toYaml . | indent 4 }}
 {{- end }}
+{{- end }}
 ---
+{{- if .Values.rbac.create }}
 apiVersion: {{ include "conjur-oss.rbac-api" . }}
 kind: ClusterRole
 metadata:
@@ -54,9 +58,10 @@ metadata:
 {{- end }}
 subjects:
 - kind: ServiceAccount
-  name: {{ .Release.Name }}-conjur-oss
+  name: {{ template "conjur-oss.service-account" . }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ .Release.Name }}-conjur-authenticator
   apiGroup: rbac.authorization.k8s.io
+{{- end }}

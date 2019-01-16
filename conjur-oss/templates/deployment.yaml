@@ -24,7 +24,7 @@ spec:
     metadata:
       labels: *AppConjurLabels
     spec:
-      serviceAccountName: {{ .Release.Name }}-conjur-oss
+      serviceAccountName: {{ template "conjur-oss.service-account" . }}
       volumes:
       - name: {{ .Release.Name }}-conjur-ssl-cert-volume
         secret:

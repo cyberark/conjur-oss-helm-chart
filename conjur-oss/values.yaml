@@ -1,77 +1,89 @@
 # Default values for conjur-oss.
 
+# Name of Conjur account to be created
+account: "default"
+
+affinity: {}
+
 # Conjur whitelisted authenticators. Maps as CONJUR_AUTHENTICATORS env variable.
 authenticators: "authn"
+
+# Additional labels to apply to all conjur resources
+conjurLabels: {}
+
+# PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.
+databaseUrl: ""
 
 # Conjur data key, 32 byte base-64 encoded string for data encryption.
 # Generate one with `docker run --rm cyberark/conjur data-key generate`.
 dataKey: ""
 
-# PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.
-databaseUrl: ""
+deployment:
+  annotations: {}
 
-# Name of Conjur account to be created
-account: "default"
+image:
+  pullPolicy: Always
+  repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
+  tag: latest
+
+nodeSelector: {}
+
+nginx:
+  image:
+    pullPolicy: IfNotPresent
+    repository: nginx          # https://hub.docker.com/_/nginx/
+    tag: '1.15'
 
 persistentVolumeSize: 8Gi
-# storageClass: ""
+
+postgres:
+  image:
+    pullPolicy: IfNotPresent
+    repository: postgres       # https://hub.docker.com/_/postgres/
+    tag: '10.1'
+
+# Additional labels to apply to all conjur resources
+postgresLabels: {}
+
+rbac:
+  create: true
+
+# Number of Conjur pods to run
+replicaCount: 1
+
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#  cpu: 100m
+#  memory: 128Mi
+# requests:
+#  cpu: 100m
+#  memory: 128Mi
+resources: {}
+
+storageClass:
+
+service:
+  external:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+    enabled: true
+    port: 443
+
+  internal:
+    annotations: {}
+    port: 443
+    type: NodePort
 
 ssl:
   expiration: 365 # days
   hostname: "conjur.myorg.com"
   altNames: []
 
-image:
-  repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
-  tag: latest
-  pullPolicy: Always
-
-nginx:
-  image:
-    repository: nginx          # https://hub.docker.com/_/nginx/
-    tag: '1.15'
-    pullPolicy: IfNotPresent
-
-postgres:
-  image:
-    repository: postgres       # https://hub.docker.com/_/postgres/
-    tag: '10.1'
-    pullPolicy: IfNotPresent
-
-deployment:
-  annotations: {}
-
-service:
-  internal:
-    type: NodePort
-    port: 443
-    annotations: {}
-
-  external:
-    enabled: true
-    port: 443
-    annotations:
-      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
-
-conjurLabels: {}  # Additional labels to apply to all conjur resources
-postgresLabels: {}  # Additional labels to apply to all conjur resources
-
-replicaCount: 1  # Number of Conjur pods to run
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
-
-nodeSelector: {}
+serviceAccount:
+  create: true
+  name:
 
 tolerations: []
-
-affinity: {}
