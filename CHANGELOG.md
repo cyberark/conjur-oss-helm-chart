@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.3.4.1](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v1.3.4.1) - 2019-01-18
+### Fixed
+- Fixed the test service name to use the exact name template
+
 ## [1.3.4](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v1.3.4) - 2019-01-08
 ### Added
 - New [`authenticators` parameter](./conjur-oss#configuration), optionally applied to Conjur through
