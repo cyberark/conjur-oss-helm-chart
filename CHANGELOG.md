@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.3.5](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v1.3.5) - 2019-01-22
+### Added
+- Made Postgres able to store data on a persistent volume [Issue #15](https://github.com/cyberark/conjur-oss-helm-chart/issues/15).
+### Changed
+- Detached the Helm chart version from docker image version.
+
 ## [1.3.4](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v1.3.4) - 2019-01-08
 ### Added
 - New [`authenticators` parameter](./conjur-oss#configuration), optionally applied to Conjur through
