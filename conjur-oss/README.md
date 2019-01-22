@@ -111,10 +111,12 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
 |`nginx.image.tag`|NGINX Docker image tag|`"1.15"`|
 |`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
-|`persistentVolumeSize`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
 |`postgres.image.tag`|postgres Docker image tag|`"10.1"`|
+|`postgres.persistentVolume.create`|Create a peristent volume to back the PostgreSQL data|`true`|
+|`postgres.persistentVolume.size`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
+|`postgres.persistentVolume.storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
 |`rbac.create`|Controls whether or not RBAC resources are created|`true`|
 |`replicaCount`|Number of desired Conjur pods|`1`|
 |`service.external.annotations`|Annotations for the external LoadBalancer|`[service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp]`|
@@ -128,7 +130,6 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`ssl.altNames`|Subject Alt Names for generated Conjur certificate and ingress|`[]`|
 |`ssl.expiration`|Expiration limit for generated certificates|`365`|
 |`ssl.hostname`|Hostname and Common Name for generated certificate and ingress|`"conjur.myorg.com"`|
-|`storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
 |`postgresLabels`|Extra Kubernetes labels to apply to Conjur PostgreSQL resources|`{}`|
 
 ## Contributing
