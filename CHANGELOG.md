@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.3.6](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v1.3.6) - 2019-01-22
+### Changed
+- Changed the default Postgres resource from Pod to Deployment to fix GKE marketplace app
+
 ## [1.3.5](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v1.3.5) - 2019-01-22
 ### Added
 - Made Postgres able to store data on a persistent volume [Issue #15](https://github.com/cyberark/conjur-oss-helm-chart/issues/15).

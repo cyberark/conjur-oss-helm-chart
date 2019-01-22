@@ -1,7 +1,26 @@
----
 {{ if eq .Values.databaseUrl "" }}
+---
 apiVersion: v1
 kind: Service
+metadata:
+  name: {{ .Release.Name }}-postgres
+  labels: &AppPostgresServiceLabels
+    app: {{ template "conjur-oss.name" . }}-postgres
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    app.kubernetes.io/name: {{ .Release.Name }}
+    app.kubernetes.io/component: postgres
+{{- with .Values.postgresLabels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  ports:
+  - port: 5432
+  selector: *AppPostgresServiceLabels
+---
+apiVersion: apps/v1beta2
+kind: Deployment
 metadata:
   name: {{ .Release.Name }}-postgres
   labels: &AppPostgresLabels
@@ -15,37 +34,25 @@ metadata:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
-  ports:
-  - port: 5432
-  selector: *AppPostgresLabels
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: {{ .Release.Name }}-postgres
-  labels:
-    app: {{ template "conjur-oss.name" . }}-postgres
-    chart: {{ template "conjur-oss.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
-    app.kubernetes.io/name: {{ .Release.Name }}
-    app.kubernetes.io/component: postgres
-{{- with .Values.postgresLabels }}
-{{ toYaml . | indent 4 }}
-{{- end }}
-spec:
-  containers:
-  - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
-    imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
-    name: postgres
+  replicas: 1
+  selector:
+    matchLabels: *AppPostgresLabels
+  template:
+    metadata:
+      labels: *AppPostgresLabels
+    spec:
+      containers:
+      - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+        imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
+        name: postgres
 {{ if .Values.postgres.persistentVolume.create }}
-    volumeMounts:
-    - mountPath: "/var/lib/postgresql"
-      name: postgres-data
-  volumes:
-  - name: postgres-data
-    persistentVolumeClaim:
-      claimName: {{ .Release.Name }}-conjur-oss-pvc
+        volumeMounts:
+        - mountPath: "/var/lib/postgresql"
+          name: postgres-data
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-conjur-oss-pvc
 {{- end }}
 ---
 {{ end }}
