@@ -38,6 +38,7 @@ spec:
   - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
     imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
     name: postgres
+{{ if .Values.postgres.persistentVolume.create }}
     volumeMounts:
     - mountPath: "/var/lib/postgresql"
       name: postgres-data
@@ -45,5 +46,6 @@ spec:
   - name: postgres-data
     persistentVolumeClaim:
       claimName: {{ .Release.Name }}-conjur-oss-pvc
+{{- end }}
 ---
 {{ end }}

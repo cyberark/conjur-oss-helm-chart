@@ -34,13 +34,15 @@ nginx:
     repository: nginx          # https://hub.docker.com/_/nginx/
     tag: '1.15'
 
-persistentVolumeSize: 8Gi
-
 postgres:
   image:
     pullPolicy: IfNotPresent
     repository: postgres       # https://hub.docker.com/_/postgres/
     tag: '10.1'
+  persistentVolume:
+    create: true
+    size: 8Gi
+    storageClass:
 
 # Additional labels to apply to all conjur resources
 postgresLabels: {}
@@ -62,8 +64,6 @@ replicaCount: 1
 #  cpu: 100m
 #  memory: 128Mi
 resources: {}
-
-storageClass:
 
 service:
   external:

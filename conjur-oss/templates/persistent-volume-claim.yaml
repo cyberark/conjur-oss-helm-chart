@@ -1,4 +1,4 @@
-{{ if .Values.persistentVolumeSize }}
+{{ if .Values.postgres.persistentVolume.create }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -18,8 +18,8 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.persistentVolumeSize }}
-  {{ if .Values.storageClass }}
-  storageClassName: {{ .Values.storageClass }}
+      storage: {{ .Values.postgres.persistentVolume.size }}
+  {{ if .Values.postgres.persistentVolume.storageClass }}
+  storageClassName: {{ .Values.postgres.persistentVolume.storageClass }}
   {{ end }}
 {{ end }}
