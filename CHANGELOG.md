@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.3.7](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v1.3.7) - 2019-01-31
+### Changed
+- Server ciphers have been upgraded to TLS1.2 levels.
+
 ## [1.3.6](https://github.com/cyberark/conjur-oss-helm-chart/releases/tag/v1.3.6) - 2019-01-22
 ### Changed
 - Changed the default Postgres resource from Pod to Deployment to fix GKE marketplace app
