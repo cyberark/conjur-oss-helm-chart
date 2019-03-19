@@ -7,7 +7,16 @@ if [ "$(which jq)" == "" ]; then
   exit 1
 fi
 
-conjur_releases=$(helm list -c --output=json | jq -r '.Releases[] | select(.Chart | match("conjur-oss-.*")) | .Name')
+CURRENT_CONTEXT="$(kubectl config current-context)"
+CURRENT_CONTEXT="${CURRENT_CONTEXT%%\/*}"
+if [ "$CURRENT_CONTEXT" == "" ]; then
+  echo "ERROR: Could not find current kubectl context!"
+  exit 1
+fi
+
+echo "WARN: Deleting all charts in '$CURRENT_CONTEXT' context..."
+
+conjur_releases=$(helm list -c --namespace "$CURRENT_CONTEXT" --output=json | jq -r '.Releases[] | select(.Chart | match("conjur-oss-.*")) | .Name')
 
 if [ "${conjur_releases}" == "" ]; then
   echo "ERROR: Could not find any deployed Conjur releases!"
