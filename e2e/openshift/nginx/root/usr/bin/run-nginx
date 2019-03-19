@@ -1,0 +1,67 @@
+#!/bin/bash -e
+
+CERT_WAIT_TIME=1
+
+SSL_FILES=( "/opt/conjur/etc/ssl/ca/tls.crt"
+            "/opt/conjur/etc/ssl/cert/tls.crt"
+            "/opt/conjur/etc/ssl/cert/tls.key" )
+
+# Generate passwd file based on current uid
+function generate_passwd_file() {
+  export USER_ID=$(id -u)
+  export GROUP_ID=$(id -g)
+  grep -v ^www-data /etc/passwd > "$HOME/passwd"
+  echo "www-data:x:${USER_ID}:${GROUP_ID}:WWW Data:${HOME}:/bin/bash" >> "$HOME/passwd"
+  export LD_PRELOAD=libnss_wrapper.so
+  export NSS_WRAPPER_PASSWD=${HOME}/passwd
+  export NSS_WRAPPER_GROUP=/etc/group
+}
+
+generate_passwd_file
+
+echo "Verifying that all certs are in place..."
+all_certs_available="false"
+
+while [ "$all_certs_available" != "true" ]; do
+  all_certs_available="true"
+
+  for ssl_file in ${SSL_FILES[@]}; do
+    echo "Checking existence of $ssl_file..."
+    cert_dir=$(dirname "$ssl_file")
+    if [ ! -f "${ssl_file}" ] && [ ! -L "${ssl_file}" ]; then
+      echo "SSL file $ssl_file is not a regular file and not a link to one! Aborting!"
+      echo "Content of $cert_dir:"
+      ls -la "${cert_dir}"
+      all_certs_available="false"
+    elif [ ! -r "${ssl_file}" ]; then
+      echo "SSL file $ssl_file is present but is not readable! Aborting!"
+      echo "Content of $cert_dir:"
+      ls -la "${cert_dir}"
+      all_certs_available="false"
+    fi
+  done
+
+  if [ "$all_certs_available" != "true" ]; then
+    echo "Certs are not configured properly yet. Sleeping $CERT_WAIT_TIME second..."
+    sleep "$CERT_WAIT_TIME"
+  fi
+done
+
+if [ ! -f /etc/nginx/dhparams.pem ]; then
+  echo "Cannot find dhparams. Current state:"
+  ls -la /etc/nginx
+
+  echo "Rebuilding dhparams..."
+  openssl dhparam -out /etc/nginx/dhparams.pem 2048
+fi
+
+echo "Checking NGINX config..."
+nginx -t
+
+if [ "$DEBUG_CONTAINER" != "" ] && [ "$DEBUG_CONTAINER" != "false" ]; then
+  echo "Container debugging activated... Waiting..."
+  sleep 999d
+fi
+
+echo "Starting NGINX..."
+exec nginx -g 'daemon off;'
