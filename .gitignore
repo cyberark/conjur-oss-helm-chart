@@ -6,3 +6,6 @@ values-private.yaml
 
 # Vim swapfiles
 *.sw[po]
+
+# OSX files
+.DS_Store
