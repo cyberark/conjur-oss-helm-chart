@@ -1,0 +1,56 @@
+#!/bin/bash -e
+
+if [ $# -lt 3 ]; then
+  echo "Usage: $0 <org_account> <master_host> <role>"
+fi
+
+ORG_ACCOUNT="$1"
+MASTER_HOST="$2"
+ROLE="$3"
+
+echo "Using org account: $ORG_ACCOUNT"
+echo "Using master host: $MASTER_HOST"
+echo "Using role: $ROLE"
+
+CLUSTER_NAME="main"
+PG_BASEDIR="/var/lib/postgresql/9.4/$CLUSTER_NAME"
+UPSTREAM_PORT="5432"
+
+CERT_PATH="/opt/conjur/etc/ssl/cert/tls.crt"
+ORIG_KEY_PATH="/opt/conjur/etc/ssl/cert/tls.key"
+KEY_PATH="/tmp/cert.key"
+
+# We need this to work around UID/GID issues in OpenShift
+cp "$ORIG_KEY_PATH" "$KEY_PATH"
+chmod 600 "$KEY_PATH"
+
+sn_cert_line=$(openssl x509 -in $CERT_PATH -subject -noout)
+pg_user=$(echo "$sn_cert_line" | sed -e 's/.*[=\ \/]CN\ *=\ *\+\(.*\)[\/]*.*/\1/')
+echo "Using PG user: $pg_user"
+
+pg_connstring="host=$MASTER_HOST " \
+pg_connstring+="port=$UPSTREAM_PORT " \
+pg_connstring+="replication=yes " \
+pg_connstring+="sslcert=${CERT_PATH} " \
+pg_connstring+="sslkey=${KEY_PATH} " \
+pg_connstring+="sslmode=require " \
+pg_connstring+="user=$pg_user " \
+pg_connstring+="application_name=$ROLE"
+
+echo "Connection string:"
+echo "$pg_connstring"
+
+# TODO: Figure out why there are files here
+echo "Removing old files from ${PG_BASEDIR}..."
+find "$PG_BASEDIR" -mindepth 1 -delete
+
+echo "Replicating $CLUSTER_NAME state into ${PG_BASEDIR}..."
+set -x
+pg_basebackup -D "${PG_BASEDIR}" \
+              -d "${pg_connstring}" \
+              -R \
+              --xlog-method=stream \
+              --verbose \
+              --progress
+set -x
+echo "Replication done!"

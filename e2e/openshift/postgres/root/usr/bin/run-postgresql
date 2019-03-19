@@ -1,0 +1,89 @@
+#!/bin/bash -e
+
+CERT_WAIT_TIME=1
+CLUSTER_NAME="main"
+PG_VERSION="9.4"
+INSTANCE="$version-$cluster"
+
+SSL_FILES=( "/opt/conjur/etc/ssl/ca/tls.crt"
+            "/opt/conjur/etc/ssl/cert/tls.crt"
+            "/opt/conjur/etc/ssl/cert/tls.key" )
+
+export PG_DATA="$HOME/$PG_VERSION/$CLUSTER_NAME"
+
+# Sanity check
+if [ "$CONJUR_ACCOUNT" == "" ]; then
+  echo "ERROR: CONJUR_ACCOUNT env var not defined!"
+  exit 1
+fi
+
+if [ "$CONJUR_MASTER_HOST" == "" ]; then
+  echo "ERROR: CONJUR_MASTER env var not defined!"
+  exit 1
+fi
+
+echo "Using master host: $CONJUR_MASTER_HOST"
+echo "Using account: $CONJUR_ACCOUNT"
+
+# Generate passwd file based on current uid
+function generate_passwd_file() {
+  export USER_ID=$(id -u)
+  export GROUP_ID=$(id -g)
+  grep -v ^postgres /etc/passwd > "$HOME/passwd"
+  echo "postgres:x:${USER_ID}:${GROUP_ID}:PostgreSQL Server:${HOME}:/bin/bash" >> "$HOME/passwd"
+  export LD_PRELOAD=libnss_wrapper.so
+  export NSS_WRAPPER_PASSWD=${HOME}/passwd
+  export NSS_WRAPPER_GROUP=/etc/group
+}
+
+generate_passwd_file
+
+mkdir -m 700 \
+      -p "$PG_DATA"
+
+cp /etc/postgresql/postgresql.conf "$PG_DATA/postgresql.conf"
+cp /etc/postgresql/pg_hba.conf  "$PG_DATA/pg_hba.conf"
+
+echo "Verifying that all certs are in place..."
+all_certs_available="false"
+
+while [ "$all_certs_available" != "true" ]; do
+  all_certs_available="true"
+
+  for ssl_file in ${SSL_FILES[@]}; do
+    echo "Checking existence of $ssl_file..."
+    cert_dir=$(dirname "$ssl_file")
+    if [ ! -f "${ssl_file}" ] && [ ! -L "${ssl_file}" ]; then
+      echo "SSL file $ssl_file is not a regular file and not a link to one! Aborting!"
+      echo "Content of $cert_dir:"
+      ls -la "${cert_dir}"
+      all_certs_available="false"
+    elif [ ! -r "${ssl_file}" ]; then
+      echo "SSL file $ssl_file is present but is not readable! Aborting!"
+      echo "Content of $cert_dir:"
+      ls -la "${cert_dir}"
+      all_certs_available="false"
+    fi
+  done
+
+  if [ "$all_certs_available" != "true" ]; then
+    echo "Certs are not configured properly yet. Sleeping $CERT_WAIT_TIME second..."
+    sleep "$CERT_WAIT_TIME"
+  fi
+done
+
+echo "Doing a cluster initial base backup..."
+run-pg-basebackup "$CONJUR_ACCOUNT" "$CONJUR_MASTER_HOST" "follower"
+
+# Overwrite fetched postgresql.conf and pg_hba since we want to use our own
+ln -fs /etc/postgresql/postgresql.conf "/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/postgresql.conf"
+ln -fs /etc/postgresql/pg_hba.conf "/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/pg_hba.conf"
+
+if [ "$DEBUG_CONTAINER" != "" ] && [ "$DEBUG_CONTAINER" != "false" ]; then
+  echo "Container debugging activated... Waiting..."
+  sleep 999d
+fi
+
+echo "Starting PG..."
+exec /usr/lib/postgresql/$PG_VERSION/bin/postgres \
+  -c config_file="/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/postgresql.conf"
