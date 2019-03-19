@@ -1,0 +1,50 @@
+#!/bin/bash
+SERVICE="$1"
+
+ROOT=/opt/conjur/"$SERVICE"
+VENDOR_PATH="$ROOT"/vendor/bundle
+RUBY_VERSION="$(ruby -v | grep -o '[0-9]\.[0-9]').0"
+GEMS_PATH="$VENDOR_PATH"/ruby/$RUBY_VERSION
+
+set -ea
+
+cd /opt/conjur/etc
+
+# Use the plaintext key if its available
+if [ -f "$SERVICE".key ]; then
+        source "$SERVICE".key
+# Otherwise check the keyring
+elif [ -f "$SERVICE".key.enc ]; then
+        >&2 echo Searching 'conjur' keyring for key "$SERVICE"
+        KEYRING=`keyctl search @s keyring conjur`
+        KEY=`keyctl search $KEYRING user $SERVICE`
+        eval "`keyctl pipe $KEY`"
+        >&2 echo Read key for "$SERVICE"
+fi
+
+[ -f conjur.conf ] && source conjur.conf
+[ -f "$SERVICE".conf ] && source "$SERVICE".conf
+
+PATH="$GEMS_PATH"/bin:$PATH
+GEM_PATH="$GEMS_PATH":$GEM_PATH
+RACK_ENV=${RACK_ENV:-appliance}
+RAILS_ENV=${RAILS_ENV:-appliance}
+
+echo "PATH: $PATH"
+echo "GEM PATH: $GEMS_PATH"
+echo "RACK ENV: $RACK_ENV"
+echo "RAILS ENV: $RAILS_ENV"
+
+echo "Switching directory to $ROOT..."
+cd "$ROOT"
+
+echo "Starting app..."
+if [ -z "$2" ]; then
+  # send any stderr output to syslog with critical severity
+  # (these are likely uncaught runtime errors)
+  # other stuff goes to info
+  exec bundle exec puma -t $PUMA_THREAD_MIN:$PUMA_THREAD_MAX -e $RAILS_ENV -b "tcp://0.0.0.0:$PORT"
+else
+  shift
+  exec bundle exec "$@"
+fi

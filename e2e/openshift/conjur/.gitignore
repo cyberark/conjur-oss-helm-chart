@@ -1,0 +1,6 @@
+# Ignore cached packages
+cached_packages/
+*.deb
+
+# Ignore VIM swapfiles
+*.sw[po]

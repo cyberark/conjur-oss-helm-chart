@@ -1,0 +1,45 @@
+#!/bin/bash -e
+
+PG_SOCKET=/var/run/postgresql/.s.PGSQL.5432
+PG_PORT=5432
+DATA_KEY_PATH="/opt/conjur/etc/conjur_data_key/conjur_data_key.txt"
+
+SLEEP_TIME=1
+
+# while [ ! -e "${PG_SOCKET}" ]; do
+while ! nc -z -v -w1 localhost "$PG_PORT" >/dev/null; do
+  echo "PG socket not found yet. Waiting $SLEEP_TIME seconds..."
+  sleep $SLEEP_TIME
+done
+echo "PG socket found. Continuing..."
+
+while [ ! -e "$DATA_KEY_PATH" ]; do
+  echo "Data key not found yet. Waiting $SLEEP_TIME seconds..."
+  sleep $SLEEP_TIME
+done
+echo "Data key found. Continuing..."
+export CONJUR_DATA_KEY="$(cat $DATA_KEY_PATH)"
+
+# Generate passwd file based on current uid
+function generate_passwd_file() {
+  export USER_ID=$(id -u)
+  export GROUP_ID=$(id -g)
+  grep -v ^conjur /etc/passwd > "$HOME/passwd"
+  echo "conjur:x:${USER_ID}:${GROUP_ID}:Conjur runner:${HOME}:/bin/bash" >> "$HOME/passwd"
+  export LD_PRELOAD=libnss_wrapper.so
+  export NSS_WRAPPER_PASSWD=${HOME}/passwd
+  export NSS_WRAPPER_GROUP=/etc/group
+}
+generate_passwd_file
+
+if [ "$DATABASE_URL" == "" ]; then
+  echo "DATABASE_URL not specified. Setting localhost:$PG_PORT as the value."
+  export DATABASE_URL="postgresql://conjur:conjur@localhost:$PG_PORT"
+fi
+
+if [ "$DEBUG_CONTAINER" != "" ] && [ "$DEBUG_CONTAINER" != "false" ]; then
+  echo "Container debugging activated... Waiting..."
+  sleep 999d
+fi
+
+exec conjur-plugin-service possum
