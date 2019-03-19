@@ -41,18 +41,38 @@ spec:
     metadata:
       labels: *AppPostgresLabels
     spec:
+      volumes:
+      - name: {{ .Release.Name }}-conjur-ssl-cert-pg-volume
+        secret:
+          secretName: {{ .Release.Name }}-conjur-ssl-cert
+          # Permission == 0400. JSON spec doesn’t support octal notation.
+          defaultMode: 256
+      - name: {{ .Release.Name }}-conjur-ssl-ca-cert-pg-volume
+        secret:
+          secretName: {{ .Release.Name }}-conjur-ssl-ca-cert
+          # Permission == 0400. JSON spec doesn’t support octal notation.
+          defaultMode: 256
+{{ if .Values.postgres.persistentVolume.create }}
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-conjur-oss-pvc
+{{- end }}
+
       containers:
       - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
         imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
         name: postgres
-{{ if .Values.postgres.persistentVolume.create }}
+        # TODO: Allow all combos of PV and certs volume mounts
         volumeMounts:
+        - name: {{ .Release.Name }}-conjur-ssl-cert-pg-volume
+          mountPath: /opt/conjur/etc/ssl/cert
+          readOnly: true
+        - name: {{ .Release.Name }}-conjur-ssl-ca-cert-pg-volume
+          mountPath: /opt/conjur/etc/ssl/ca
+          readOnly: true
+{{ if .Values.postgres.persistentVolume.create }}
         - mountPath: "/var/lib/postgresql"
           name: postgres-data
-      volumes:
-      - name: postgres-data
-        persistentVolumeClaim:
-          claimName: {{ .Release.Name }}-conjur-oss-pvc
 {{- end }}
 ---
 {{ end }}
