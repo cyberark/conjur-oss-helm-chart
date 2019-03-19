@@ -27,6 +27,6 @@ IMAGE_PARAMS+=",image.tag=$TAG_NAME"
 IMAGE_PARAMS+=",image.pullPolicy=Always"
 
 set -x
-helm install -n testing \
+helm install -n "$USER-oc-testing" \
   --set dataKey="$(docker run --rm cyberark/conjur data-key generate)",postgres.persistentVolume.create="false"$IMAGE_PARAMS \
   ../conjur-oss
