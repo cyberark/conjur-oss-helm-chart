@@ -1,0 +1,52 @@
+#!/bin/bash -e
+
+set -o pipefail
+
+if [ "$CONJUR_SEED_FILE" == "" ]; then
+  echo "ERROR! CONJUR_SEED_FILE env var not provided!"
+  exit 1
+fi
+
+if [ ! -f "$CONJUR_SEED_FILE" ]; then
+  echo "ERROR: Seedfile not found in path '$CONJUR_SEED_FILE'!"
+  echo "Current state of that path:"
+  ls -la $(dirname $CONJUR_SEED_FILE)
+  exit 1
+fi
+
+if [ $# -lt 2 ]; then
+  echo "ERROR: Source path or destination path not provided"
+  echo "Usage: $0 <source_tar_path> <output_file>"
+  exit 1
+fi
+
+SOURCE_PATH="$1"
+TARGET_PATH="$2"
+
+SOURCE_FILENAME=$(basename $SOURCE_PATH)
+TARGET_FILENAME=$(basename $TARGET_PATH)
+TARGET_BASEDIR=$(dirname $TARGET_PATH)
+
+echo "Removing target file (if exists): $TARGET_PATH ..."
+rm -f "$TARGET_PATH"
+
+echo "Creating parent directories: $TARGET_BASEDIR ..."
+mkdir -p "$TARGET_BASEDIR"
+
+# The strip-components flag is to avoid extraction into the nested directories
+# matching the archive
+STRIP_LEVELS=$(echo $SOURCE_PATH | awk -F"/" '{print NF-1}')
+echo "Path levels: $STRIP_LEVELS"
+
+echo "Extracting $CONJUR_SEED_FILE:$SOURCE_PATH into $TARGET_PATH ..."
+tar -xf "$CONJUR_SEED_FILE" \
+    "--strip-components=$STRIP_LEVELS" \
+    -C "$TARGET_BASEDIR" \
+    "$SOURCE_PATH"
+
+if [ "$TARGET_FILENAME" != "$SOURCE_FILENAME" ]; then
+  echo "Renaming source file to match desired one..."
+  mv "$TARGET_BASEDIR/$SOURCE_FILENAME" "$TARGET_PATH"
+fi
+
+echo "Seedfile '$SOURCE_PATH' extracted to '$TARGET_PATH'!"
