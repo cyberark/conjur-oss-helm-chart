@@ -48,6 +48,13 @@ spec:
               path: dhparams.pem
             - key: conjur_site
               path: sites-enabled/conjur.conf
+{{- if .Values.seedfile }}
+      - name: {{ .Release.Name }}-conjur-seedfile-volume
+        secret:
+          secretName: {{ .Release.Name }}-conjur-seedfile
+          # Permission == 0400. JSON spec doesn’t support octal notation.
+          defaultMode: 256
+{{- end }}
 
       containers:
       - name: {{ .Release.Name }}-nginx
@@ -78,13 +85,24 @@ spec:
           timeoutSeconds: 3
           # 1 seconds * 180 = 3 minutes
           failureThreshold: 180
+{{- if .Values.seedfile }}
+        env:
+        - name: CONJUR_SEED_FILE
+          value: /opt/conjur/seedfile/seed
+{{- end }}
         volumeMounts:
+{{- if .Values.seedfile }}
+        - name: {{ .Release.Name }}-conjur-seedfile-volume
+          mountPath: /opt/conjur/seedfile
+          readOnly: true
+{{- else }}
         - name: {{ .Release.Name }}-conjur-ssl-cert-volume
           mountPath: /opt/conjur/etc/ssl/cert
           readOnly: true
         - name: {{ .Release.Name }}-conjur-ssl-ca-cert-volume
           mountPath: /opt/conjur/etc/ssl/ca
           readOnly: true
+{{- end }}
         - name: {{ .Release.Name }}-conjur-configmap-volume
           mountPath: /etc/nginx
           readOnly: true
