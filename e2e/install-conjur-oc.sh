@@ -45,8 +45,13 @@ HELM_VALUES="dataKey=\"$(docker run --rm cyberark/conjur data-key generate)\","
 HELM_VALUES+="postgres.persistentVolume.create=false"
 HELM_VALUES+="$IMAGE_PARAMS"
 
+HELM_COMMAND="install"
+if [ "$DEBUG" != "" ]; then
+  HELM_COMMAND="template"
+fi
+
 set -x
-helm install -n "$USER-oc-testing" \
+helm "$HELM_COMMAND" -n "$USER-oc-testing" \
   --set $HELM_VALUES \
   --set-file "seedfile=$SEED_FILE" \
   ../conjur-oss
