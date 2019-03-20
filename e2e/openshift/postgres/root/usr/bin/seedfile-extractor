@@ -35,7 +35,7 @@ mkdir -p "$TARGET_BASEDIR"
 
 # The strip-components flag is to avoid extraction into the nested directories
 # matching the archive
-STRIP_LEVELS=$(echo $SOURCE_PATH | awk -F"/" '{print NF-1}')
+STRIP_LEVELS=$(echo $SOURCE_PATH | awk -F"/" '{print NF-2}')
 echo "Path levels: $STRIP_LEVELS"
 
 echo "Extracting $CONJUR_SEED_FILE:$SOURCE_PATH into $TARGET_PATH ..."
