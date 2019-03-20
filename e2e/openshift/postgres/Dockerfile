@@ -35,7 +35,8 @@ RUN apt-key add /etc/apt/keys.d/apt.2ndquadrant.com_9904CD4BD6BAF0C3.asc && \
             --uid 26 postgres
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y keyutils \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y jq \
+                                                      keyutils \
                                                       libnss-wrapper \
                                                       ntp \
                                                       postgresql-bdr-9.4-bdr-plugin \
@@ -50,11 +51,11 @@ RUN test "$(id postgres)" = "uid=26(postgres) gid=260(postgres) groups=260(postg
              $HOME \
              $SEED_FILE_DIRECTORY \
              $SSL_CERT_DIRECTORY/ca \
-             $SSL_CERT_DIRECTORY/follower && \
+             $SSL_CERT_DIRECTORY/cert && \
     /usr/libexec/fix-permissions $HOME && \
     /usr/libexec/fix-permissions /var/run/postgresql && \
     /usr/libexec/fix-permissions /etc/postgresql && \
-    /usr/libexec/fix-permissions $SEED_FILE_DIRECTORY \
+    /usr/libexec/fix-permissions $SEED_FILE_DIRECTORY && \
     /usr/libexec/fix-permissions $SSL_CERT_DIRECTORY
 
 COPY root /
