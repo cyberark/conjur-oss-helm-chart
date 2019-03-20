@@ -42,7 +42,7 @@ IMAGE_PARAMS+=",image.tag=$TAG_NAME"
 IMAGE_PARAMS+=",image.pullPolicy=Always"
 
 HELM_VALUES="dataKey=\"$(docker run --rm cyberark/conjur data-key generate)\","
-HELM_VALUES+="postgres.persistentVolume.create=\"false\""
+HELM_VALUES+="postgres.persistentVolume.create=false"
 HELM_VALUES+="$IMAGE_PARAMS"
 
 set -x
