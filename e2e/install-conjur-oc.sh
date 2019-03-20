@@ -43,7 +43,7 @@ IMAGE_PARAMS+=",image.pullPolicy=Always"
 
 HELM_VALUES="dataKey=\"$(docker run --rm cyberark/conjur data-key generate)\","
 HELM_VALUES+="postgres.persistentVolume.create=\"false\""
-HEML_VALUES+="$IMAGE_PARAMS"
+HELM_VALUES+="$IMAGE_PARAMS"
 
 set -x
 helm install -n "$USER-oc-testing" \
