@@ -65,6 +65,8 @@ replicaCount: 1
 #  memory: 128Mi
 resources: {}
 
+seedfile: ""
+
 service:
   external:
     annotations:

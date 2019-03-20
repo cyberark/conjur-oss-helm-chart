@@ -119,6 +119,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`postgres.persistentVolume.storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
 |`rbac.create`|Controls whether or not RBAC resources are created|`true`|
 |`replicaCount`|Number of desired Conjur pods|`1`|
+|`seedfile`|Follower seed file generated from master cluster. *Must be used with `--set-file`*|`""`|
 |`service.external.annotations`|Annotations for the external LoadBalancer|`[service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp]`|
 |`service.external.enabled`|Expose service to the Internet|`true`|
 |`service.external.port`|Conjur external service port|`443`|

@@ -1,5 +1,20 @@
 #!/bin/bash -e
 
+# Parameter parsing and validation
+if [ $# -lt 1 ]; then
+  echo "ERROR! Seedfile arg is required!"
+  echo "Usage: $0 <seed_file>"
+  exit 1
+fi
+
+SEED_FILE="$1"
+
+if [ ! -f "$SEED_FILE" ]; then
+  echo "ERROR! Seedfile path '$SEED_FILE' cannot be found!"
+  exit 1
+fi
+
+# Meat of the deployment
 echo "Gathering OpenShift configuration..."
 OC_NAMESPACE="$(oc project -q)"
 if [ "$OC_NAMESPACE" == "" ]; then
@@ -26,7 +41,12 @@ IMAGE_PARAMS+=",image.repository=$OC_REPOSITORY/conjur"
 IMAGE_PARAMS+=",image.tag=$TAG_NAME"
 IMAGE_PARAMS+=",image.pullPolicy=Always"
 
+HELM_VALUES="dataKey=\"$(docker run --rm cyberark/conjur data-key generate)\","
+HELM_VALUES+="postgres.persistentVolume.create=\"false\""
+HEML_VALUES+="$IMAGE_PARAMS"
+
 set -x
 helm install -n "$USER-oc-testing" \
-  --set dataKey="$(docker run --rm cyberark/conjur data-key generate)",postgres.persistentVolume.create="false"$IMAGE_PARAMS \
+  --set $HELM_VALUES \
+  --set-file "seedfile=$SEED_FILE" \
   ../conjur-oss
