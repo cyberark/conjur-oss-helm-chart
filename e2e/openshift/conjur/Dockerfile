@@ -5,11 +5,15 @@ RUN apt-get update && \
                        tar && \
     apt-get clean
 
-ENV SSL_CERT_DIRECTORY=/opt/conjur/etc/ssl
+ENV TMP_DIR=/opt/conjur-server/tmp \
+    SSL_CERT_DIRECTORY=/opt/conjur/etc/ssl
 
 COPY root/usr/libexec/fix-permissions /usr/libexec/fix-permissions
-RUN mkdir -p $SSL_CERT_DIRECTORY/ca && \
-    mkdir -p $SSL_CERT_DIRECTORY/cert && \
+
+RUN mkdir -p $TMP_DIR \
+             $SSL_CERT_DIRECTORY/ca \
+             $SSL_CERT_DIRECTORY/cert && \
+    /usr/libexec/fix-permissions $TMP_DIR && \
     /usr/libexec/fix-permissions $SSL_CERT_DIRECTORY
 
 COPY root /

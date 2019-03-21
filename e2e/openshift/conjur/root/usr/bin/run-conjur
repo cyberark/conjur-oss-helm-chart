@@ -41,7 +41,12 @@ if [ "$CONJUR_SEED_FILE" != "" ]; then
     exit 1
   fi
 
-  export DATABASE_URL="postgres://conjur@$CONJUR_DATABASE_HOSTNAME:$PG_PORT/conjur?sslcert=/opt/conjur/etc/ssl/cert/tls.crt&sslkey=/opt/conjur/etc/ssl/cert/tls.key&sslmode=require"
+  export PGSSLCERT="/opt/conjur/etc/ssl/cert/tls.crt"
+  export PGSSLKEY="/opt/conjur/etc/ssl/cert/tls.key"
+  export DATABASE_URL="postgres://conjur@$CONJUR_DATABASE_HOSTNAME:$PG_PORT/conjur?sslmode=require"
+
+  echo "Using PGSSLCERT: '$PGSSLCERT'"
+  echo "Using PGSSLKEY: '$PGSSLKEY'"
   echo "Using DATABASE_URL: '$DATABASE_URL'"
 
   echo "Seedfile data extracted!"
