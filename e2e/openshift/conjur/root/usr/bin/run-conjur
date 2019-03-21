@@ -31,8 +31,11 @@ if [ "$CONJUR_SEED_FILE" != "" ]; then
 
   echo "Extracting CONJUR_DATA_KEY..."
   seedfile-extractor "/opt/conjur/etc/possum.key" "/tmp/conjur_data_key"
-  export CONJUR_DATA_KEY=$(cat /tmp/conjur_data_key)
+
+  # We also don't just want to blindly eval here so we manually extract the value
+  data_key_varfile=$(cat /tmp/conjur_data_key)
   rm -rf /tmp/conjur_data_key
+  export CONJUR_DATA_KEY="${data_key_varfile#*=}"
 
   echo "Composing connection string..."
 
