@@ -72,7 +72,7 @@ mkdir -m 700 \
       -p "$PG_DATA"
 
 cp /etc/postgresql/postgresql.conf "$PG_DATA/postgresql.conf"
-cp /etc/postgresql/pg_hba.conf  "$PG_DATA/pg_hba.conf"
+cp /etc/postgresql/pg_hba.conf "$PG_DATA/pg_hba.conf"
 
 echo "Verifying that all certs are in place..."
 all_certs_available="false"
@@ -105,9 +105,16 @@ done
 echo "Doing a cluster initial base backup..."
 run-pg-basebackup "$CONJUR_ACCOUNT" "$CONJUR_MASTER_HOST" "$CONJUR_ROLE"
 
-# Overwrite fetched postgresql.conf and pg_hba since we want to use our own
+# Overwrite fetched postgresql.conf, pg_hba, and pg_ident since we want to use our own
 ln -fs /etc/postgresql/postgresql.conf "/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/postgresql.conf"
 ln -fs /etc/postgresql/pg_hba.conf "/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/pg_hba.conf"
+
+PG_IDENT_FILE="/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/pg_ident.conf"
+echo "# MAPNAME       SYSTEM-USERNAME         PG-USERNAME" > "$PG_IDENT_FILE"
+echo "ssl             $hostname               conjur" >> "$PG_IDENT_FILE"
+
+echo "pg_hba ident file:"
+cat "$PG_IDENT_FILE"
 
 if [ "$DEBUG_CONTAINER" != "" ] && [ "$DEBUG_CONTAINER" != "false" ]; then
   echo "Container debugging activated... Waiting..."
