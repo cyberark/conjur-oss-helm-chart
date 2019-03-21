@@ -113,12 +113,12 @@ spec:
         args: ["server"]
         ports:
           - name: http
-            containerPort: 80
+            containerPort: 8080
             protocol: TCP
         livenessProbe:
           httpGet:
             path: /
-            port: 80
+            port: http
           initialDelaySeconds: 1
           periodSeconds: 5
           timeoutSeconds: 2
@@ -140,6 +140,8 @@ spec:
           readOnly: true
 {{- end }}
         env:
+        - name: PORT
+          value: "8080"
         - name: CONJUR_AUTHENTICATORS
           valueFrom:
             secretKeyRef:
