@@ -1,2 +1,0 @@
----
-appliance: { user: conjur, adapter: postgres, database: conjur }
