@@ -70,6 +70,25 @@ spec:
       - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
         imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
         name: postgres
+        ports:
+        - name: postgres
+          containerPort: 5432
+        livenessProbe:
+          tcpSocket:
+            port: postgres
+          initialDelaySeconds: 1
+          periodSeconds: 5
+          timeoutSeconds: 3
+          # 1 seconds * 90 = 1.5 minutes
+          failureThreshold: 90
+        readinessProbe:
+          tcpSocket:
+            port: postgres
+          initialDelaySeconds: 1
+          periodSeconds: 5
+          timeoutSeconds: 3
+          # 1 seconds * 1200 = 20 minutes
+          failureThreshold: 1200
 {{- if .Values.seedfile }}
         env:
         - name: CONJUR_SEED_FILE
