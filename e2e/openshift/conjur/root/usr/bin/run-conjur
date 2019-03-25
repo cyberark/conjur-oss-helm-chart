@@ -25,6 +25,7 @@ if [ "$CONJUR_SEED_FILE" != "" ]; then
   seedfile-extractor "/opt/conjur/etc/ssl/$hostname.pem" "/opt/conjur/etc/ssl/cert/tls.crt"
   seedfile-extractor "/opt/conjur/etc/ssl/$hostname.key" "/opt/conjur/etc/ssl/cert/tls.key"
 
+  export CONJUR_ACCOUNT=$(jq -r '.conjur.account' "$SOLO_PATH")
 
   # fix permissions on the private key
   chmod 600 "/opt/conjur/etc/ssl/cert/tls.key"
