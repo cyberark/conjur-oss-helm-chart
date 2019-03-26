@@ -54,7 +54,12 @@ spec:
           secretName: {{ .Release.Name }}-conjur-seedfile
           # Permission == 0400. JSON spec doesn’t support octal notation.
           defaultMode: 256
-{{- end }}
+      - name: {{ .Release.Name }}-conjur-audit-socket
+        # Permission == 660. JSON spec doesn’t support octal notation.
+        defaultMode: 432
+        emptyDir:
+          medium: Memory
+  {{- end }}
 
       containers:
       - name: {{ .Release.Name }}-nginx
@@ -138,6 +143,9 @@ spec:
         - name: {{ .Release.Name }}-conjur-seedfile-volume
           mountPath: /opt/conjur/seedfile
           readOnly: true
+        - name: {{ .Release.Name }}-conjur-audit-socket
+          mountPath: /run/conjur/
+          readOnly: false
 {{- end }}
         env:
         - name: PORT
@@ -166,7 +174,21 @@ spec:
           value: {{ .Release.Name }}-postgres
         - name: RAILS_ENV
           value: follower
-{{- end }}
+
+      - image: "{{ .Values.syslogng.image.repository }}:{{ .Values.syslogng.image.tag }}"
+        imagePullPolicy: "{{ .Values.syslogng.image.pullPolicy }}"
+        name: syslog-ng
+        env:
+          - name: CONJUR_SEED_FILE
+            value: /opt/conjur/seedfile/seed
+        # TODO: Allow all combos of PV and certs volume mounts
+        volumeMounts:
+          - name: {{ .Release.Name }}-conjur-seedfile-volume
+            mountPath: /opt/conjur/seedfile
+            readOnly: true
+          - name: {{ .Release.Name }}-conjur-audit-socket
+            mountPath: /run/conjur/
+{{ end }}
 
         resources:
 {{ toYaml .Values.resources | indent 12 }}

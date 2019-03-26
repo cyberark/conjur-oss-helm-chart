@@ -9,3 +9,6 @@ values-private.yaml
 
 # OSX files
 .DS_Store
+
+#idea
+.idea

@@ -44,6 +44,12 @@ postgres:
     size: 8Gi
     storageClass:
 
+syslogng:
+  image:
+    pullPolicy: IfNotPresent
+    repository:
+    tag:
+
 # Additional labels to apply to all conjur resources
 postgresLabels: {}
 

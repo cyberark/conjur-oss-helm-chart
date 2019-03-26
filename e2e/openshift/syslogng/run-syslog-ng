@@ -31,6 +31,8 @@ if [ "$CONJUR_MASTER" == "" ]; then
   exit 1
 fi
 
+sed -i "s/\$CONJUR_MASTER/$CONJUR_MASTER/g" /etc/syslog-ng/conf.d/05-conjur-audit.conf
+
 echo "Starting syslog-ng..."
 exec /usr/sbin/syslog-ng -d \
                          --persist-file /tmp/syslog-ng.persist \

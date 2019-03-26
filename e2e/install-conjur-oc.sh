@@ -28,7 +28,8 @@ TAG_NAME="oc-test"
 ./delete-conjur.sh || true
 
 EXTRA_IMAGES=( "postgres"
-         "nginx" )
+               "nginx"
+               "syslogng")
 
 IMAGE_PARAMS=""
 for image_name in ${EXTRA_IMAGES[@]}; do

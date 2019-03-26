@@ -27,14 +27,14 @@ RUN rm -rf "$CONF_DIR" && \
              "$SSL_CERT_DIRECTORY/ca" \
              "$SSL_CERT_DIRECTORY/cert"
 
-COPY syslog-ng.conf /etc/syslog-ng/syslog-ng.conf
+COPY syslog-ng/ /etc/syslog-ng/
 COPY fix-permissions \
      run-syslog-ng \
      seedfile-extractor /usr/bin/
 
 RUN fix-permissions "$SEED_FILE_DIRECTORY" && \
-    fix-permissions "$SSL_CERT_DIRECTORY"
-
+    fix-permissions "$SSL_CERT_DIRECTORY" && \
+    fix-permissions "/etc/syslog-ng/conf.d"
 
 USER 555
 
