@@ -164,6 +164,8 @@ spec:
           value: /opt/conjur/seedfile/seed
         - name: CONJUR_DATABASE_HOSTNAME
           value: {{ .Release.Name }}-postgres
+        - name: RAILS_ENV
+          value: follower
 {{- end }}
 
         resources:

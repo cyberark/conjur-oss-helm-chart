@@ -16,6 +16,8 @@ RUN mkdir -p $TMP_DIR \
     /usr/libexec/fix-permissions $TMP_DIR && \
     /usr/libexec/fix-permissions $SSL_CERT_DIRECTORY
 
+COPY follower.rb /opt/conjur-server/config/environments
+
 COPY root /
 
 ENTRYPOINT ["exec-entrypoint"]
