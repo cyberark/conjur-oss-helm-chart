@@ -42,7 +42,6 @@ for image_dir in ./openshift/*; do
     continue
   fi
 
-
   # Used as: docker-registry.default.svc:5000/<namespace>/<image>:<tag>
   pushd "$image_dir" >/dev/null
     image_name="$(basename $image_dir)"
