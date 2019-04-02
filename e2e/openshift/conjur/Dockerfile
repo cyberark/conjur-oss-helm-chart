@@ -8,17 +8,19 @@ RUN apt-get update && \
 ENV TMP_DIR=/opt/conjur-server/tmp \
     SSL_CERT_DIRECTORY=/opt/conjur/etc/ssl
 
-COPY root/usr/libexec/fix-permissions /usr/libexec/fix-permissions
+COPY fix-permissions /usr/bin/fix-permissions
 
 RUN mkdir -p $TMP_DIR \
              $SSL_CERT_DIRECTORY/ca \
              $SSL_CERT_DIRECTORY/cert && \
-    /usr/libexec/fix-permissions $TMP_DIR && \
-    /usr/libexec/fix-permissions $SSL_CERT_DIRECTORY
+    fix-permissions $TMP_DIR && \
+    fix-permissions $SSL_CERT_DIRECTORY
 
 COPY follower.rb /opt/conjur-server/config/environments
 
-COPY root /
+COPY exec-entrypoint \
+     run-conjur \
+     seedfile-extractor /usr/bin/
 
 ENTRYPOINT ["exec-entrypoint"]
 CMD ["run-conjur"]
