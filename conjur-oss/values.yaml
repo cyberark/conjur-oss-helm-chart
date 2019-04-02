@@ -43,6 +43,7 @@ postgres:
     create: true
     size: 8Gi
     storageClass:
+  replicas: 2
 
 syslogng:
   image:

@@ -117,6 +117,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`postgres.persistentVolume.create`|Create a peristent volume to back the PostgreSQL data|`true`|
 |`postgres.persistentVolume.size`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
 |`postgres.persistentVolume.storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
+|`postgres.replicas`|Number of replica pods to initially start Postgres with|`2`|
 |`rbac.create`|Controls whether or not RBAC resources are created|`true`|
 |`replicaCount`|Number of desired Conjur pods|`1`|
 |`seedfile`|Follower seed file generated from master cluster. *Must be used with `--set-file`*|`""`|
