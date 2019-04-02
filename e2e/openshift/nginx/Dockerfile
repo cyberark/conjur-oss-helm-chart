@@ -49,14 +49,14 @@ RUN test "$(id www-data)" = "uid=888(www-data) gid=888(www-data) groups=888(www-
              $SSL_CERT_DIRECTORY/ca \
              $SSL_CERT_DIRECTORY/cert \
              $SEED_FILE_DIRECTORY && \
-    fix-permissions $HOME && \
-    fix-permissions /etc/nginx && \
-    fix-permissions /etc/ssl && \
-    fix-permissions /var/lib/nginx && \
-    fix-permissions /var/log/nginx && \
-    fix-permissions /var/run/nginx && \
-    fix-permissions $SSL_CERT_DIRECTORY && \
-    fix-permissions $SEED_FILE_DIRECTORY
+    fix-permissions -u www-data "$HOME" \
+                                "/etc/nginx" \
+                                "/etc/ssl" \
+                                "/var/lib/nginx" \
+                                "/var/log/nginx" \
+                                "/var/run/nginx" \
+                                "$SSL_CERT_DIRECTORY" \
+                                "$SEED_FILE_DIRECTORY"
 
 COPY exec-entrypoint \
      run-nginx \

@@ -33,9 +33,9 @@ COPY fix-permissions \
      seedfile-extractor /usr/bin/
 
 RUN test "$(id syslog)" = "uid=555(syslog) gid=555(syslog) groups=555(syslog)" && \
-    fix-permissions "$SEED_FILE_DIRECTORY" && \
-    fix-permissions "$SSL_CERT_DIRECTORY" && \
-    fix-permissions "/etc/syslog-ng/conf.d"
+    fix-permissions -u syslog "$SEED_FILE_DIRECTORY" \
+                              "$SSL_CERT_DIRECTORY" \
+                              "/etc/syslog-ng/conf.d"
 
 USER 555
 

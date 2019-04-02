@@ -13,8 +13,8 @@ COPY fix-permissions /usr/bin/fix-permissions
 RUN mkdir -p $TMP_DIR \
              $SSL_CERT_DIRECTORY/ca \
              $SSL_CERT_DIRECTORY/cert && \
-    fix-permissions $TMP_DIR && \
-    fix-permissions $SSL_CERT_DIRECTORY
+    fix-permissions "$TMP_DIR" \
+                    "$SSL_CERT_DIRECTORY"
 
 COPY follower.rb /opt/conjur-server/config/environments
 

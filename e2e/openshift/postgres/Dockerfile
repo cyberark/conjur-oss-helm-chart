@@ -8,8 +8,6 @@ ENV HOME=/var/lib/postgresql \
 
 EXPOSE 5432
 
-COPY bin/fix-permissions /usr/bin/fix-permissions
-
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https \
                                                       ca-certificates \
@@ -44,6 +42,7 @@ RUN apt-get update && \
                                                       vim && \
     apt-get clean
 
+COPY bin/fix-permissions /usr/bin/fix-permissions
 RUN test "$(id postgres)" = "uid=26(postgres) gid=260(postgres) groups=260(postgres),261(ssl-cert)" && \
     rm /var/run && \
     rm -rf $HOME/$PG_VERSION && \
@@ -52,11 +51,11 @@ RUN test "$(id postgres)" = "uid=26(postgres) gid=260(postgres) groups=260(postg
              $SEED_FILE_DIRECTORY \
              $SSL_CERT_DIRECTORY/ca \
              $SSL_CERT_DIRECTORY/cert && \
-    fix-permissions $HOME && \
-    fix-permissions /var/run/postgresql && \
-    fix-permissions /etc/postgresql && \
-    fix-permissions $SEED_FILE_DIRECTORY && \
-    fix-permissions $SSL_CERT_DIRECTORY
+    fix-permissions -u postgres $HOME \
+                                /var/run/postgresql \
+                                /etc/postgresql \
+                                $SEED_FILE_DIRECTORY \
+                                $SSL_CERT_DIRECTORY
 
 COPY bin /usr/bin
 COPY etc /etc

@@ -1,7 +1,22 @@
 #!/bin/sh
 # Fix permissions on the given directory to allow group read/write of
 # regular files and execute of directories.
-find "$1" -exec chown syslog {} \;
-find "$1" -exec chgrp 0 {} \;
-find "$1" -exec chmod g+rw {} \;
-find "$1" -type d -exec chmod g+x {} +
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 [ -u <username> ] dir-or-file [ dir-or-file... ]"
+  exit 1
+fi
+
+username="nobody"
+if [ "$1" == "-u" ]; then
+  username="$2"
+  shift 2
+fi
+
+for location in "$@"; do
+  echo "Fixing permissions ($username): $location"
+  find "$location" -exec chown $username {} \;
+  find "$location" -exec chgrp 0 {} \;
+  find "$location" -exec chmod g+rw {} \;
+  find "$location" -type d -exec chmod g+x {} +
+done
