@@ -8,7 +8,7 @@ ENV HOME=/var/lib/postgresql \
 
 EXPOSE 5432
 
-COPY root/usr/libexec/fix-permissions /usr/libexec/fix-permissions
+COPY bin/fix-permissions /usr/bin/fix-permissions
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y apt-transport-https \
@@ -19,7 +19,7 @@ RUN apt-get update && \
     update-locale LANG=en_US.UTF-8
 
 # RH image uses 26 as the PG UID - we should try to use the same one for consistency
-COPY root/etc/apt /etc/apt
+COPY etc/apt /etc/apt
 RUN apt-key add /etc/apt/keys.d/apt.2ndquadrant.com_9904CD4BD6BAF0C3.asc && \
     groupadd --gid 260 \
              --system postgres && \
@@ -52,13 +52,14 @@ RUN test "$(id postgres)" = "uid=26(postgres) gid=260(postgres) groups=260(postg
              $SEED_FILE_DIRECTORY \
              $SSL_CERT_DIRECTORY/ca \
              $SSL_CERT_DIRECTORY/cert && \
-    /usr/libexec/fix-permissions $HOME && \
-    /usr/libexec/fix-permissions /var/run/postgresql && \
-    /usr/libexec/fix-permissions /etc/postgresql && \
-    /usr/libexec/fix-permissions $SEED_FILE_DIRECTORY && \
-    /usr/libexec/fix-permissions $SSL_CERT_DIRECTORY
+    fix-permissions $HOME && \
+    fix-permissions /var/run/postgresql && \
+    fix-permissions /etc/postgresql && \
+    fix-permissions $SEED_FILE_DIRECTORY && \
+    fix-permissions $SSL_CERT_DIRECTORY
 
-COPY root /
+COPY bin /usr/bin
+COPY etc /etc
 
 # OpenShift does not present the volume with writable permissions
 # TODO: Make this work:
