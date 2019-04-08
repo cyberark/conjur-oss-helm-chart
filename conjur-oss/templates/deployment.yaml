@@ -48,20 +48,90 @@ spec:
               path: dhparams.pem
             - key: conjur_site
               path: sites-enabled/conjur.conf
-{{- if .Values.seedfile }}
-      - name: {{ .Release.Name }}-conjur-seedfile-volume
-        secret:
-          secretName: {{ .Release.Name }}-conjur-seedfile
-          # Permission == 0400. JSON spec doesn’t support octal notation.
-          defaultMode: 256
+{{- if .Values.seedService.host }}
+      {{- include "seedfetcherInitContainerVolumes" . | nindent 6 }}
+
+      - name: {{ .Release.Name }}-conjur-seedservice-master-cert
+        configMap:
+          name: {{ .Release.Name }}-conjur-seedservice-master-cert
+          items:
+            - key: master_cert
+              path: master.crt
       - name: {{ .Release.Name }}-conjur-audit-socket
         # Permission == 660. JSON spec doesn’t support octal notation.
         defaultMode: 432
         emptyDir:
           medium: Memory
-  {{- end }}
+{{- end }}
+
+      initContainers:
+      {{- include "seedfetcherInitContainer" . | nindent 6 }}
 
       containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: ["server"]
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 5
+          timeoutSeconds: 2
+          # 1 seconds * 180 = 3 minutes
+          failureThreshold: 180
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 30
+          timeoutSeconds: 30
+          # 1 seconds * 180 = 3 minutes
+          failureThreshold: 180
+{{- if .Values.seedService.host }}
+        volumeMounts:
+        - name: {{ .Release.Name }}-conjur-seedfile
+          mountPath: /opt/conjur/seedfile
+          readOnly: true
+        - name: {{ .Release.Name }}-conjur-audit-socket
+          mountPath: /run/conjur/
+          readOnly: false
+{{- end }}
+        env:
+        - name: PORT
+          value: "8080"
+        - name: CONJUR_AUTHENTICATORS
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-conjur-authenticators
+              key: key
+        - name: CONJUR_DATA_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-conjur-data-key
+              key: key
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-conjur-database-url
+              key: key
+        - name: CONJUR_ACCOUNT
+          value: {{ .Values.account }}
+{{- if .Values.seedService.host }}
+        - name: CONJUR_SEED_FILE
+          value: /opt/conjur/seedfile/follower-seed.tar
+        - name: CONJUR_DATABASE_HOSTNAME
+          value: {{ .Release.Name }}-postgres
+        - name: RAILS_ENV
+          value: follower
+{{- end }}
+
       - name: {{ .Release.Name }}-nginx
         image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
         imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
@@ -90,14 +160,12 @@ spec:
           timeoutSeconds: 3
           # 1 seconds * 180 = 3 minutes
           failureThreshold: 180
-{{- if .Values.seedfile }}
-        env:
-        - name: CONJUR_SEED_FILE
-          value: /opt/conjur/seedfile/seed
-{{- end }}
         volumeMounts:
-{{- if .Values.seedfile }}
-        - name: {{ .Release.Name }}-conjur-seedfile-volume
+        - name: {{ .Release.Name }}-conjur-configmap-volume
+          mountPath: /etc/nginx
+          readOnly: true
+{{- if .Values.seedService.host }}
+        - name: {{ .Release.Name }}-conjur-seedfile
           mountPath: /opt/conjur/seedfile
           readOnly: true
 {{- else }}
@@ -108,82 +176,22 @@ spec:
           mountPath: /opt/conjur/etc/ssl/ca
           readOnly: true
 {{- end }}
-        - name: {{ .Release.Name }}-conjur-configmap-volume
-          mountPath: /etc/nginx
-          readOnly: true
-
-      - name: {{ .Chart.Name }}
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        args: ["server"]
-        ports:
-          - name: http
-            containerPort: 8080
-            protocol: TCP
-        livenessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 1
-          periodSeconds: 5
-          timeoutSeconds: 2
-          # 1 seconds * 180 = 3 minutes
-          failureThreshold: 180
-        readinessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 1
-          periodSeconds: 30
-          timeoutSeconds: 30
-          # 1 seconds * 180 = 3 minutes
-          failureThreshold: 180
-{{- if .Values.seedfile }}
-        volumeMounts:
-        - name: {{ .Release.Name }}-conjur-seedfile-volume
-          mountPath: /opt/conjur/seedfile
-          readOnly: true
-        - name: {{ .Release.Name }}-conjur-audit-socket
-          mountPath: /run/conjur/
-          readOnly: false
-{{- end }}
+{{- if .Values.seedService.host }}
         env:
-        - name: PORT
-          value: "8080"
-        - name: CONJUR_AUTHENTICATORS
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-conjur-authenticators
-              key: key
-        - name: CONJUR_DATA_KEY
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-conjur-data-key
-              key: key
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Release.Name }}-conjur-database-url
-              key: key
-        - name: CONJUR_ACCOUNT
-          value: {{ .Values.account }}
-{{- if .Values.seedfile }}
         - name: CONJUR_SEED_FILE
-          value: /opt/conjur/seedfile/seed
-        - name: CONJUR_DATABASE_HOSTNAME
-          value: {{ .Release.Name }}-postgres
-        - name: RAILS_ENV
-          value: follower
+          value: /opt/conjur/seedfile/follower-seed.tar
+{{- end }}
 
+{{- if .Values.seedService.host }}
       - image: "{{ .Values.syslogng.image.repository }}:{{ .Values.syslogng.image.tag }}"
         imagePullPolicy: "{{ .Values.syslogng.image.pullPolicy }}"
         name: syslog-ng
         env:
-          - name: CONJUR_SEED_FILE
-            value: /opt/conjur/seedfile/seed
+        - name: CONJUR_SEED_FILE
+          value: /opt/conjur/seedfile/follower-seed.tar
         # TODO: Allow all combos of PV and certs volume mounts
         volumeMounts:
-          - name: {{ .Release.Name }}-conjur-seedfile-volume
+          - name: {{ .Release.Name }}-conjur-seedfile
             mountPath: /opt/conjur/seedfile
             readOnly: true
           - name: {{ .Release.Name }}-conjur-audit-socket

@@ -1,0 +1,4 @@
+tmp/
+
+# Ignore local seedfiles
+*-conjur-oss.tar

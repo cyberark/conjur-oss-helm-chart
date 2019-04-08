@@ -5,15 +5,18 @@ RUN apt-get update && \
                        tar && \
     apt-get clean
 
-ENV TMP_DIR=/opt/conjur-server/tmp \
+ENV LOG_DIR=/opt/conjur-server/log\
+    TMP_DIR=/opt/conjur-server/tmp \
     SSL_CERT_DIRECTORY=/opt/conjur/etc/ssl
 
 COPY fix-permissions /usr/bin/fix-permissions
 
 RUN mkdir -p $TMP_DIR \
+             $LOG_DIR \
              $SSL_CERT_DIRECTORY/ca \
              $SSL_CERT_DIRECTORY/cert && \
     fix-permissions "$TMP_DIR" \
+                    "$LOG_DIR" \
                     "$SSL_CERT_DIRECTORY"
 
 COPY follower.rb /opt/conjur-server/config/environments

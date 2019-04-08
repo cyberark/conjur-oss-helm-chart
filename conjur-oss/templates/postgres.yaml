@@ -41,13 +41,12 @@ spec:
     metadata:
       labels: *AppPostgresLabels
     spec:
+      # TODO: Maybe use a different service account
+      serviceAccountName: {{ template "conjur-oss.service-account" . }}
+
       volumes:
-{{- if .Values.seedfile }}
-      - name: {{ .Release.Name }}-conjur-seedfile-pg-volume
-        secret:
-          secretName: {{ .Release.Name }}-conjur-seedfile
-          # Permission == 0400. JSON spec doesn’t support octal notation.
-          defaultMode: 256
+{{- if .Values.seedService.host }}
+      {{- include "seedfetcherInitContainerVolumes" . | nindent 6 }}
 {{- else }}
       - name: {{ .Release.Name }}-conjur-ssl-cert-pg-volume
         secret:
@@ -65,6 +64,9 @@ spec:
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-conjur-oss-pvc
 {{- end }}
+
+      initContainers:
+      {{- include "seedfetcherInitContainer" . | nindent 6 }}
 
       containers:
       - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
@@ -89,18 +91,16 @@ spec:
           timeoutSeconds: 3
           # 1 seconds * 1200 = 20 minutes
           failureThreshold: 1200
-{{- if .Values.seedfile }}
+{{- if .Values.seedService.host }}
         env:
         - name: CONJUR_SEED_FILE
-          value: /opt/conjur/seedfile/seed
-{{- end }}
-        # TODO: Allow all combos of PV and certs volume mounts
+          value: /opt/conjur/seedfile/follower-seed.tar
         volumeMounts:
-{{- if .Values.seedfile }}
-        - name: {{ .Release.Name }}-conjur-seedfile-pg-volume
+        - name: {{ .Release.Name }}-conjur-seedfile
           mountPath: /opt/conjur/seedfile
           readOnly: true
 {{- else }}
+        volumeMounts:
         - name: {{ .Release.Name }}-conjur-ssl-cert-pg-volume
           mountPath: /opt/conjur/etc/ssl/cert
           readOnly: true

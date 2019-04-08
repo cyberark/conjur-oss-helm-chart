@@ -99,7 +99,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 
 |Parameter|Description|Default|
 |---------|-----------|-------|
-|`account`|Name of the Conjur account to be used by the Kubernetes authenticator|`"default"`|
+|`account`|Name of the Conjur account to be used by the Kubernetes authenticator (or for seed service auth)|`"default"`|
 |`authenticators`|List of authenticators that Conjur will whitelist and load.|`"authn"`|
 |`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
 |`databaseUrl`|PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.|`""`|
@@ -120,7 +120,12 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`postgres.replicas`|Number of replica pods to initially start Postgres with|`2`|
 |`rbac.create`|Controls whether or not RBAC resources are created|`true`|
 |`replicaCount`|Number of desired Conjur pods|`1`|
-|`seedfile`|Follower seed file generated from master cluster. *Must be used with `--set-file`*|`""`|
+|`seedService.authenticatorId`|Authenticator ID needed to authenticate against the seed service|`""`|
+|`seedService.host`|Location of master seed service|`""`|
+|`seedService.masterPublicCert`|Master's HTTPS certificate used for seed service mTLS. mTLS ignored if omitted. **MUST BE SPECIFIED WITH --set-file**|None|
+|`seedService.image.pullPolicy`|Pull policy for seed-fetcher Docker image|`"IfNotPresent"`|
+|`seedService.image.repository`|Seed-fetcher Docker image repository|`""`|
+|`seedService.image.tag`|Seed-fetcher Docker image tag|`"latest"`|
 |`service.external.annotations`|Annotations for the external LoadBalancer|`[service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp]`|
 |`service.external.enabled`|Expose service to the Internet|`true`|
 |`service.external.port`|Conjur external service port|`443`|

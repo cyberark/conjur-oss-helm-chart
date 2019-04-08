@@ -1,6 +1,6 @@
 # Default values for conjur-oss.
 
-# Name of Conjur account to be created
+# Name of Conjur account to be created or which account to use for seed service auth
 account: "default"
 
 affinity: {}
@@ -72,7 +72,14 @@ replicaCount: 1
 #  memory: 128Mi
 resources: {}
 
-seedfile: ""
+seedService:
+  authenticatorId:
+  host:
+  image:
+    pullPolicy: IfNotPresent
+    repository:
+    tag:
+  masterPublicCert:
 
 service:
   external:
@@ -86,13 +93,13 @@ service:
     port: 443
     type: NodePort
 
+serviceAccount:
+  create: true
+  name:
+
 ssl:
   expiration: 365 # days
   hostname: "conjur.myorg.com"
   altNames: []
-
-serviceAccount:
-  create: true
-  name:
 
 tolerations: []

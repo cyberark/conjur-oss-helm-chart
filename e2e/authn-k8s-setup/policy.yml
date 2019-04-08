@@ -1,0 +1,30 @@
+- !policy
+  id: conjur/authn-k8s/sgnn7-authn-k8s
+  body:
+  - &authn-secrets
+    - !variable kubernetes/service-account-token
+    - !variable kubernetes/ca-cert
+    - !variable kubernetes/api-url
+    - !variable ca/key
+    - !variable ca/cert
+
+  - &service-accounts
+    - !host
+      id: apps/sgnn7-scalable-follower/service_account/srdjan-oc-testing-conjur-oss
+      annotations:
+        kubernetes/authentication-container-name: seed-fetcher
+        openshift: "true"
+
+  - !webservice
+
+- !permit
+  role: !host conjur/authn-k8s/sgnn7-authn-k8s/apps/sgnn7-scalable-follower/service_account/srdjan-oc-testing-conjur-oss
+  resource: !webservice conjur/authn-k8s/sgnn7-authn-k8s
+  privilege: [ "authenticate" ]
+
+- !webservice conjur/seed-generation
+
+- !permit
+  role: !host conjur/authn-k8s/sgnn7-authn-k8s/apps/sgnn7-scalable-follower/service_account/srdjan-oc-testing-conjur-oss
+  resource: !webservice conjur/seed-generation
+  privilege: [ "execute" ]

@@ -1,9 +1,9 @@
 #!/bin/bash -e
 
 # Parameter parsing and validation
-if [ $# -lt 1 ]; then
-  echo "ERROR! Seedfile arg is required!"
-  echo "Usage: $0 <seed_file>"
+if [ $# -lt 3 ]; then
+  echo "ERROR! All args are required!"
+  echo "Usage: $0 <seed_service_host> <seed_service_account> <seed_service_authn_id>"
   exit 1
 fi
 

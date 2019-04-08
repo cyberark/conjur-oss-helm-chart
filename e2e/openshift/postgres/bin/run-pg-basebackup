@@ -20,6 +20,24 @@ CERT_PATH="/opt/conjur/etc/ssl/cert/tls.crt"
 ORIG_KEY_PATH="/opt/conjur/etc/ssl/cert/tls.key"
 KEY_PATH="/tmp/cert.key"
 
+if [ ! -r "$CERT_PATH" ]; then
+  echo "ERROR: Cert not readable: $CERT_PATH!"
+  exit 1
+fi
+
+if [ ! -r "$ORIG_KEY_PATH" ]; then
+  echo "ERROR: Cert key not readable: $ORIG_KEY_PATH!"
+  exit 1
+fi
+
+CN_NAME=$(openssl x509 -noout -subject -in "$CERT_PATH")
+echo "Cert CN: $CN_NAME"
+
+CERT_SAN_DATA=$(openssl x509 -text -noout -in "$CERT_PATH" \
+  -certopt no_subject,no_header,no_version,no_serial,no_signame,no_validity,no_issuer,no_pubkey,no_sigdump,no_aux)
+echo "Cert x509 extension data:"
+echo "$CERT_SAN_DATA"
+
 # We need this to work around UID/GID issues in OpenShift
 cp "$ORIG_KEY_PATH" "$KEY_PATH"
 chmod 600 "$KEY_PATH"
@@ -52,5 +70,6 @@ pg_basebackup -D "${PG_BASEDIR}" \
               --xlog-method=stream \
               --verbose \
               --progress
-set -x
+set +x
+
 echo "Replication done!"

@@ -64,4 +64,6 @@ roleRef:
   kind: ClusterRole
   name: {{ .Release.Name }}-conjur-authenticator
   apiGroup: rbac.authorization.k8s.io
+
+# TODO: Possibly add separate account for external API usage
 {{- end }}

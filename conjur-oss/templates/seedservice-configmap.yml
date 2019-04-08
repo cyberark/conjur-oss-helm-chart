@@ -1,0 +1,13 @@
+{{- if .Values.seedService.host }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-conjur-seedservice-master-cert
+  namespace: {{ .Release.Namespace }}
+  labels:
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  master_cert: {{  .Values.seedService.masterPublicCert | quote }}
+{{- end }}
