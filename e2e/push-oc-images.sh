@@ -1,5 +1,11 @@
 #!/bin/bash -e
 
+echo "Checking that we're logged in..."
+if ! oc whoami >/dev/null; then
+  echo "We're not logged in. Logging into $OC_REPOSITORY..."
+  oc login
+fi
+
 echo "Gathering OpenShift configuration..."
 OC_USER="$(oc whoami)"
 OC_NAMESPACE="$(oc project -q)"
