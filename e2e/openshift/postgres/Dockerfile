@@ -3,8 +3,8 @@ FROM ubuntu:18.04
 ENV HOME=/var/lib/postgresql \
     PG_USER=postgres \
     PG_VERSION=9.4 \
-    SSL_CERT_DIRECTORY=/opt/conjur/etc/ssl \
-    SEED_FILE_DIRECTORY=/opt/conjur/seedfile
+    PG_ETC_DIR=/etc/postgresql/9.4/main \
+    SSL_CERT_DIRECTORY=/opt/conjur/etc/ssl
 
 EXPOSE 5432
 
@@ -38,7 +38,6 @@ RUN apt-get update && \
                                                       libnss-wrapper \
                                                       ntp \
                                                       postgresql-bdr-9.4-bdr-plugin \
-                                                      tar \
                                                       vim && \
     apt-get clean
 
@@ -48,13 +47,12 @@ RUN test "$(id postgres)" = "uid=26(postgres) gid=260(postgres) groups=260(postg
     rm -rf $HOME/$PG_VERSION && \
     mkdir -p /var/run/postgresql \
              $HOME \
-             $SEED_FILE_DIRECTORY \
+             $PG_ETC_DIR \
              $SSL_CERT_DIRECTORY/ca \
              $SSL_CERT_DIRECTORY/cert && \
     fix-permissions -u postgres $HOME \
                                 /var/run/postgresql \
                                 /etc/postgresql \
-                                $SEED_FILE_DIRECTORY \
                                 $SSL_CERT_DIRECTORY
 
 COPY bin /usr/bin

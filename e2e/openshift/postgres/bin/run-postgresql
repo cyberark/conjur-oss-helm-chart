@@ -7,37 +7,25 @@ INSTANCE="$version-$cluster"
 
 CONJUR_ROLE="follower"
 
+SSL_KEY="/tmp/tls.key"
 SSL_FILES=( "/opt/conjur/etc/ssl/ca/tls.crt"
             "/opt/conjur/etc/ssl/cert/tls.crt"
-            "/opt/conjur/etc/ssl/cert/tls.key" )
+            "$SSL_KEY" )
 
 export PG_DATA="$HOME/$PG_VERSION/$CLUSTER_NAME"
 
-if [ "$CONJUR_SEED_FILE" != "" ]; then
+SOLO_PATH="/tmp/config/config.json"
+if [ -f "$SOLO_PATH" ]; then
   echo "Seed file setting detected. Extracting relevant info..."
-  if [ ! -f "$CONJUR_SEED_FILE" ]; then
-    echo "ERROR! Cannot find seed file '$CONJUR_SEED_FILE'!"
-    exit 1
-  fi
 
-  SOLO_PATH="/tmp/solo.json"
-  echo "Extracting solo.json and grabbing its values..."
-  seedfile-extractor "/etc/chef/solo.json" "$SOLO_PATH"
-
+  echo "Grabbing config (solo) JSON values..."
   export CONJUR_ACCOUNT=$(jq -r '.conjur.account' "$SOLO_PATH")
   export CONJUR_MASTER_HOST=$(jq -r '.conjur.master_host' "$SOLO_PATH")
   export CONJUR_ROLE=$(jq -r '.conjur.role' "$SOLO_PATH")
 
-  echo "Extracting seedfile certificates..."
-  hostname=$(jq -r '.conjur.hostname' "$SOLO_PATH")
-  seedfile-extractor "/opt/conjur/etc/ssl/ca.pem" "/opt/conjur/etc/ssl/ca/tls.crt"
-  seedfile-extractor "/opt/conjur/etc/ssl/$hostname.pem" "/opt/conjur/etc/ssl/cert/tls.crt"
-  seedfile-extractor "/opt/conjur/etc/ssl/$hostname.key" "/opt/conjur/etc/ssl/cert/tls.key"
-
-  # fix permissions on the private key
-  chmod 600 "/opt/conjur/etc/ssl/cert/tls.key"
-
-  echo "Seedfile data extracted!"
+  # Fix permissions on the private key by copying it to /tmp
+  cp "/opt/conjur/etc/ssl/cert/tls.key" "$SSL_KEY"
+  chmod 600 "$SSL_KEY"
 fi
 
 # Sanity check
@@ -105,7 +93,7 @@ done
 echo "Doing a cluster initial base backup..."
 run-pg-basebackup "$CONJUR_ACCOUNT" "$CONJUR_MASTER_HOST" "$CONJUR_ROLE"
 
-# Overwrite fetched postgresql.conf, pg_hba, and pg_ident since we want to use our own
+echo "Overriding default PG files..."
 ln -fs /etc/postgresql/postgresql.conf "/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/postgresql.conf"
 ln -fs /etc/postgresql/pg_hba.conf "/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/pg_hba.conf"
 

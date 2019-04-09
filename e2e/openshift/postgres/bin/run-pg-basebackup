@@ -39,7 +39,10 @@ echo "Cert x509 extension data:"
 echo "$CERT_SAN_DATA"
 
 # We need this to work around UID/GID issues in OpenShift
-cp "$ORIG_KEY_PATH" "$KEY_PATH"
+if [ ! -f "$KEY_PATH" ]; then
+  cp "$ORIG_KEY_PATH" "$KEY_PATH"
+fi
+
 chmod 600 "$KEY_PATH"
 
 sn_cert_line=$(openssl x509 -in $CERT_PATH -subject -noout)
@@ -71,5 +74,10 @@ pg_basebackup -D "${PG_BASEDIR}" \
               --verbose \
               --progress
 set +x
+
+while [ ! -d "${PG_BASEDIR}" ]; do
+  echo "Waiting for PG directory to be present..."
+  sleep 1
+done
 
 echo "Replication done!"

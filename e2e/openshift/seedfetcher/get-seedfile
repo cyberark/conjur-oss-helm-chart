@@ -11,6 +11,9 @@ if [[ "${AUTHENTICATOR_ID}" == "" ]]; then
     exit 1
 fi
 
+CERTS_DIR="/tmp/certs"
+DATAKEY_DIR="/tmp/datakey"
+
 MASTER_SSL_CERT_PATH="/tmp/master.crt"
 TOKEN_PATH="/run/secrets/kubernetes.io/serviceaccount/token"
 
@@ -62,6 +65,7 @@ follower_altname="$FOLLOWER_HOSTNAME.$MY_POD_NAMESPACE.svc.cluster.local"
 follower_hostnames="$FOLLOWER_HOSTNAME,$follower_altname"
 echo "Using hostnames: '$follower_hostnames'"
 
+conjur_seed_file="$SEEDFILE_DIR/follower-seed.tar"
 wget --post-data "follower_hostname=$follower_hostnames" \
      --header "Authorization: Token token=\"$conjur_api_token\"" \
      "${WGET_CERT_ARGS[@]}" \
@@ -69,3 +73,40 @@ wget --post-data "follower_hostname=$follower_hostnames" \
      "$conjur_seed_file_url"
 
 echo "Seedfile downloaded!"
+
+##############  EXTRACTION ##############
+echo "Extracting certs..."
+if [ ! -f "$conjur_seed_file" ]; then
+  echo "ERROR! Cannot find seed file '$conjur_seed_file'!"
+  exit 1
+fi
+
+SOLO_PATH="/tmp/config/config.json"
+echo "Extracting solo.json and grabbing its values..."
+seedfile-extractor "$conjur_seed_file" \
+                   "/etc/chef/solo.json" \
+                   "$SOLO_PATH"
+
+echo "Extracting seedfile certificates..."
+mkdir -m 777 -p "$CERTS_DIR/ca" \
+                "$CERTS_DIR/cert"
+
+hostname=$(jq -r '.conjur.hostname' "$SOLO_PATH")
+seedfile-extractor "$conjur_seed_file" \
+                   "/opt/conjur/etc/ssl/ca.pem" \
+                   "$CERTS_DIR/ca/tls.crt"
+
+seedfile-extractor "$conjur_seed_file" \
+                   "/opt/conjur/etc/ssl/$hostname.pem" \
+                   "$CERTS_DIR/cert/tls.crt"
+
+seedfile-extractor "$conjur_seed_file" \
+                   "/opt/conjur/etc/ssl/$hostname.key" \
+                   "$CERTS_DIR/cert/tls.key"
+
+echo "Extracting datakey..."
+seedfile-extractor "$conjur_seed_file" \
+                   "/opt/conjur/etc/possum.key" \
+                   "$DATAKEY_DIR/conjur_data_key"
+
+echo "All data extracted - seedfile initialization complete!"

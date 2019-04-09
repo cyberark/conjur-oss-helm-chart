@@ -5,6 +5,7 @@ FROM alpine:3.9
 
 RUN apk add --no-cache bash \
                        jq \
+                       tar \
                        wget
 
 # Required for OpenShift since this is where the client
@@ -16,7 +17,9 @@ COPY --from=authenticator /bin/authenticator /usr/bin/
 ENV CONJUR_VERSION=5 \
     CONTAINER_MODE=init
 
-COPY get-seedfile.sh /usr/bin/
-RUN chmod +x /usr/bin/get-seedfile.sh
+COPY get-seedfile \
+     seedfile-extractor /usr/bin/
+RUN chmod +x /usr/bin/get-seedfile \
+             /usr/bin/seedfile-extractor
 
-CMD ["get-seedfile.sh"]
+CMD ["get-seedfile"]

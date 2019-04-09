@@ -7,6 +7,15 @@
 - name: {{ .Release.Name }}-conjur-api-token
   emptyDir:
     medium: Memory
+- name: {{ .Release.Name }}-conjur-certs
+  emptyDir:
+    medium: Memory
+- name: {{ .Release.Name }}-conjur-config
+  emptyDir:
+    medium: Memory
+- name: {{ .Release.Name }}-conjur-datakey
+  emptyDir:
+    medium: Memory
 - name: {{ .Release.Name }}-conjur-seedfile
   emptyDir:
     medium: Memory
@@ -49,6 +58,12 @@
   volumeMounts:
     - name: {{ .Release.Name }}-conjur-api-token
       mountPath: /run/conjur
+    - name: {{ .Release.Name }}-conjur-certs
+      mountPath: /tmp/certs
+    - name: {{ .Release.Name }}-conjur-config
+      mountPath: /tmp/config
+    - name: {{ .Release.Name }}-conjur-datakey
+      mountPath: /tmp/datakey
     - name: {{ .Release.Name }}-conjur-seedfile
       mountPath: /tmp/seedfile
 {{ end -}}

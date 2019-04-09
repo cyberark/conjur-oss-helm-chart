@@ -92,12 +92,12 @@ spec:
           # 1 seconds * 1200 = 20 minutes
           failureThreshold: 1200
 {{- if .Values.seedService.host }}
-        env:
-        - name: CONJUR_SEED_FILE
-          value: /opt/conjur/seedfile/follower-seed.tar
         volumeMounts:
-        - name: {{ .Release.Name }}-conjur-seedfile
-          mountPath: /opt/conjur/seedfile
+        - name: {{ .Release.Name }}-conjur-certs
+          mountPath: /opt/conjur/etc/ssl
+          readOnly: true
+        - name: {{ .Release.Name }}-conjur-config
+          mountPath: /tmp/config
           readOnly: true
 {{- else }}
         volumeMounts:

@@ -2,6 +2,20 @@
 
 set -o pipefail
 
+if [ $# -lt 3 ]; then
+  echo "ERROR: A required argument was not provided!"
+  echo "Usage: $0 <archive_path> <source_tar_path> <output_file>"
+  exit 1
+fi
+
+CONJUR_SEED_FILE="$1"
+SOURCE_PATH="$2"
+TARGET_PATH="$3"
+
+SOURCE_FILENAME=$(basename $SOURCE_PATH)
+TARGET_FILENAME=$(basename $TARGET_PATH)
+TARGET_BASEDIR=$(dirname $TARGET_PATH)
+
 if [ "$CONJUR_SEED_FILE" == "" ]; then
   echo "ERROR! CONJUR_SEED_FILE env var not provided!"
   exit 1
@@ -14,18 +28,6 @@ if [ ! -f "$CONJUR_SEED_FILE" ]; then
   exit 1
 fi
 
-if [ $# -lt 2 ]; then
-  echo "ERROR: Source path or destination path not provided"
-  echo "Usage: $0 <source_tar_path> <output_file>"
-  exit 1
-fi
-
-SOURCE_PATH="$1"
-TARGET_PATH="$2"
-
-SOURCE_FILENAME=$(basename $SOURCE_PATH)
-TARGET_FILENAME=$(basename $TARGET_PATH)
-TARGET_BASEDIR=$(dirname $TARGET_PATH)
 
 echo "Removing target file (if exists): $TARGET_PATH ..."
 rm -f "$TARGET_PATH"
