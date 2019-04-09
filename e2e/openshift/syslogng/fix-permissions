@@ -8,7 +8,7 @@ if [ $# -lt 1 ]; then
 fi
 
 username="nobody"
-if [ "$1" == "-u" ]; then
+if [ "$1" = "-u" ]; then
   username="$2"
   shift 2
 fi
