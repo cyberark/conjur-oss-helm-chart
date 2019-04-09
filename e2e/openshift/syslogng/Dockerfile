@@ -3,10 +3,9 @@ FROM ubuntu:18.04
 EXPOSE 1999
 
 ENV CONF_DIR=/etc/syslog-ng/conf.d \
-    SEED_FILE_DIRECTORY=/opt/conjur/seedfile \
     SSL_CERT_DIRECTORY=/opt/conjur/etc/ssl
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update -y && \
+RUN apt-get update -y && \
     DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y jq \
                                                       syslog-ng
@@ -23,18 +22,15 @@ RUN groupadd --gid 555 \
 
 RUN rm -rf "$CONF_DIR" && \
     mkdir -p "$CONF_DIR" \
-             "$SEED_FILE_DIRECTORY" \
              "$SSL_CERT_DIRECTORY/ca" \
              "$SSL_CERT_DIRECTORY/cert"
 
 COPY syslog-ng/ /etc/syslog-ng/
 COPY fix-permissions \
-     run-syslog-ng \
-     seedfile-extractor /usr/bin/
+     run-syslog-ng /usr/bin/
 
 RUN test "$(id syslog)" = "uid=555(syslog) gid=555(syslog) groups=555(syslog)" && \
-    fix-permissions -u syslog "$SEED_FILE_DIRECTORY" \
-                              "$SSL_CERT_DIRECTORY" \
+    fix-permissions -u syslog "$SSL_CERT_DIRECTORY" \
                               "/etc/syslog-ng/conf.d"
 
 USER 555

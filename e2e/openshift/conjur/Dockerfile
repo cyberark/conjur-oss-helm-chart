@@ -22,8 +22,7 @@ RUN mkdir -p $TMP_DIR \
 COPY follower.rb /opt/conjur-server/config/environments
 
 COPY exec-entrypoint \
-     run-conjur \
-     seedfile-extractor /usr/bin/
+     run-conjur /usr/bin/
 
 ENTRYPOINT ["exec-entrypoint"]
 CMD ["run-conjur"]

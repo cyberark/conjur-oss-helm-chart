@@ -91,26 +91,21 @@ spec:
           timeoutSeconds: 3
           # 1 seconds * 1200 = 20 minutes
           failureThreshold: 1200
+
+        volumeMounts:
 {{- if .Values.seedService.host }}
-        volumeMounts:
-        - name: {{ .Release.Name }}-conjur-certs
-          mountPath: /opt/conjur/etc/ssl
-          readOnly: true
-        - name: {{ .Release.Name }}-conjur-config
-          mountPath: /tmp/config
-          readOnly: true
+          {{- include "seedfetcherInitContainerTlsVolumeMounts" . | nindent 10 }}
 {{- else }}
-        volumeMounts:
-        - name: {{ .Release.Name }}-conjur-ssl-cert-pg-volume
-          mountPath: /opt/conjur/etc/ssl/cert
-          readOnly: true
-        - name: {{ .Release.Name }}-conjur-ssl-ca-cert-pg-volume
-          mountPath: /opt/conjur/etc/ssl/ca
-          readOnly: true
+          - name: {{ .Release.Name }}-conjur-ssl-cert-pg-volume
+            mountPath: /opt/conjur/etc/ssl/cert
+            readOnly: true
+          - name: {{ .Release.Name }}-conjur-ssl-ca-cert-pg-volume
+            mountPath: /opt/conjur/etc/ssl/ca
+            readOnly: true
 {{- end }}
 {{- if .Values.postgres.persistentVolume.create }}
-        - mountPath: "/var/lib/postgresql"
-          name: postgres-data
+          - mountPath: "/var/lib/postgresql"
+            name: postgres-data
 {{- end }}
 ---
 {{ end }}

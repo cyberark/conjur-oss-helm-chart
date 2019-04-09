@@ -8,34 +8,18 @@ if [ "$DATABASE_URL" == "" ]; then
   exit 1
 fi
 
-if [ "$CONJUR_SEED_FILE" != "" ]; then
-  echo "Seed file setting detected. Extracting relevant info..."
-  if [ ! -f "$CONJUR_SEED_FILE" ]; then
-    echo "ERROR! Cannot find seed file '$CONJUR_SEED_FILE'!"
-    exit 1
-  fi
-
-  SOLO_PATH="/tmp/solo.json"
-  echo "Extracting solo.json and grabbing its values..."
-  seedfile-extractor "/etc/chef/solo.json" "$SOLO_PATH"
-
+SOLO_PATH="/tmp/config/config.json"
+SSL_KEY="/tmp/tls.key"
+if [ -f "$SOLO_PATH" ]; then
   echo "Extracting seedfile certificates..."
-  hostname=$(jq -r '.conjur.hostname' "$SOLO_PATH")
-  seedfile-extractor "/opt/conjur/etc/ssl/ca.pem" "/opt/conjur/etc/ssl/ca/tls.crt"
-  seedfile-extractor "/opt/conjur/etc/ssl/$hostname.pem" "/opt/conjur/etc/ssl/cert/tls.crt"
-  seedfile-extractor "/opt/conjur/etc/ssl/$hostname.key" "/opt/conjur/etc/ssl/cert/tls.key"
-
   export CONJUR_ACCOUNT=$(jq -r '.conjur.account' "$SOLO_PATH")
 
   # fix permissions on the private key
-  chmod 600 "/opt/conjur/etc/ssl/cert/tls.key"
+  cp "/opt/conjur/etc/ssl/cert/tls.key" "$SSL_KEY"
+  chmod 600 "$SSL_KEY"
 
-  echo "Extracting CONJUR_DATA_KEY..."
-  seedfile-extractor "/opt/conjur/etc/possum.key" "/tmp/conjur_data_key"
-
-  # We also don't just want to blindly eval here so we manually extract the value
-  data_key_varfile=$(cat /tmp/conjur_data_key)
-  rm -rf /tmp/conjur_data_key
+  # We don't just want to blindly eval here so we manually extract the value
+  data_key_varfile=$(cat /tmp/datakey/conjur_data_key)
   export CONJUR_DATA_KEY="${data_key_varfile#*=}"
 
   echo "Composing connection string..."
@@ -46,14 +30,12 @@ if [ "$CONJUR_SEED_FILE" != "" ]; then
   fi
 
   export PGSSLCERT="/opt/conjur/etc/ssl/cert/tls.crt"
-  export PGSSLKEY="/opt/conjur/etc/ssl/cert/tls.key"
+  export PGSSLKEY="$SSL_KEY"
   export DATABASE_URL="postgres://conjur@$CONJUR_DATABASE_HOSTNAME:$PG_PORT/conjur?sslmode=require"
 
   echo "Using PGSSLCERT: '$PGSSLCERT'"
   echo "Using PGSSLKEY: '$PGSSLKEY'"
   echo "Using DATABASE_URL: '$DATABASE_URL'"
-
-  echo "Seedfile data extracted!"
 fi
 
 # TODO: Wait for PG to be up before continuing

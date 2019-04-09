@@ -1,6 +1,9 @@
 {{- /*
-  Defined here: "seedfetcherInitContainerVolumes" and "seedfetcherInitContainer"
-  Both are required for init container to work
+  Defined here:
+  - "seedfetcherInitContainerVolumes"
+  - "seedfetcherInitContainerDatakeyVolumeMount"
+  - "seedfetcherInitContainerTlsVolumeMounts"
+  - "seedfetcherInitContainer"
 */ -}}
 
 {{- define "seedfetcherInitContainerVolumes" }}
@@ -21,10 +24,26 @@
     medium: Memory
 {{ end -}}
 
+{{- define "seedfetcherInitContainerTlsVolumeMounts" }}
+- name: {{ .Release.Name }}-conjur-certs
+  mountPath: /opt/conjur/etc/ssl
+  readOnly: true
+- name: {{ .Release.Name }}-conjur-config
+  mountPath: /tmp/config
+  readOnly: true
+{{ end -}}
+
+{{- define "seedfetcherInitContainerDatakeyVolumeMount" }}
+- name: {{ .Release.Name }}-conjur-datakey
+  mountPath: /tmp/datakey
+  readOnly: true
+{{ end -}}
+
 {{- define "seedfetcherInitContainer" -}}
 - name: seed-fetcher
   image: "{{ .Values.seedService.image.repository }}:{{ .Values.seedService.image.tag }}"
   imagePullPolicy: {{ .Values.seedService.image.pullPolicy }}
+
   env:
     - name: AUTHENTICATOR_ID
       value: {{ .Values.seedService.authenticatorId }}

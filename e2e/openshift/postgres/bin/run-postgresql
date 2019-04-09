@@ -23,6 +23,8 @@ if [ -f "$SOLO_PATH" ]; then
   export CONJUR_MASTER_HOST=$(jq -r '.conjur.master_host' "$SOLO_PATH")
   export CONJUR_ROLE=$(jq -r '.conjur.role' "$SOLO_PATH")
 
+  HOST_NAME="$(jq -r '.conjur.hostname' "$SOLO_PATH")"
+
   # Fix permissions on the private key by copying it to /tmp
   cp "/opt/conjur/etc/ssl/cert/tls.key" "$SSL_KEY"
   chmod 600 "$SSL_KEY"
@@ -99,7 +101,7 @@ ln -fs /etc/postgresql/pg_hba.conf "/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/pg
 
 PG_IDENT_FILE="/etc/postgresql/$PG_VERSION/$CLUSTER_NAME/pg_ident.conf"
 echo "# MAPNAME       SYSTEM-USERNAME         PG-USERNAME" > "$PG_IDENT_FILE"
-echo "ssl             $hostname               conjur" >> "$PG_IDENT_FILE"
+echo "ssl             $HOST_NAME              conjur" >> "$PG_IDENT_FILE"
 
 echo "pg_hba ident file:"
 cat "$PG_IDENT_FILE"

@@ -1,8 +1,7 @@
 FROM ubuntu:18.04
 
 ENV HOME=/var/www \
-    SSL_CERT_DIRECTORY=/opt/conjur/etc/ssl \
-    SEED_FILE_DIRECTORY=/opt/conjur/seedfile
+    SSL_CERT_DIRECTORY=/opt/conjur/etc/ssl
 
 
 EXPOSE 9000 9443
@@ -32,7 +31,6 @@ RUN apt-get update && \
                                                       libnss-wrapper \
                                                       ntp \
                                                       nginx \
-                                                      tar \
                                                       vim && \
     apt-get clean
 
@@ -47,20 +45,17 @@ RUN test "$(id www-data)" = "uid=888(www-data) gid=888(www-data) groups=888(www-
              /var/log/nginx \
              /var/run/nginx \
              $SSL_CERT_DIRECTORY/ca \
-             $SSL_CERT_DIRECTORY/cert \
-             $SEED_FILE_DIRECTORY && \
+             $SSL_CERT_DIRECTORY/cert && \
     fix-permissions -u www-data "$HOME" \
                                 "/etc/nginx" \
                                 "/etc/ssl" \
                                 "/var/lib/nginx" \
                                 "/var/log/nginx" \
                                 "/var/run/nginx" \
-                                "$SSL_CERT_DIRECTORY" \
-                                "$SEED_FILE_DIRECTORY"
+                                "$SSL_CERT_DIRECTORY"
 
 COPY exec-entrypoint \
-     run-nginx \
-     seedfile-extractor /usr/bin/
+     run-nginx /usr/bin/
 
 USER 888
 
