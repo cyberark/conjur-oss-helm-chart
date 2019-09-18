@@ -10,3 +10,7 @@
 ---
 
 See [./conjur-oss](conjur-oss) for Chart files and instructions.
+
+## License
+
+This repository is licensed under Apache License 2.0 - see [`LICENSE`](LICENSE) for more details.
