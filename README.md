@@ -11,6 +11,11 @@
 
 See [./conjur-oss](conjur-oss) for Chart files and instructions.
 
+## Requirements
+
+This chart requires Helm v3+. The chart may work with older versions of Helm
+but that deployment isn't specifically supported.
+
 ## License
 
 This repository is licensed under Apache License 2.0 - see [`LICENSE`](LICENSE) for more details.
