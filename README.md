@@ -16,6 +16,12 @@ See [./conjur-oss](conjur-oss) for Chart files and instructions.
 This chart requires Helm v3+. The chart may work with older versions of Helm
 but that deployment isn't specifically supported.
 
+## Contributing
+
+We store instructions for development and guidelines for how to build and test this
+project in the [CONTRIBUTING.md](CONTRIBUTING.md) - please refer to that document
+if you would like to contribute.
+
 ## License
 
 This repository is licensed under Apache License 2.0 - see [`LICENSE`](LICENSE) for more details.
