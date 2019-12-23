@@ -26,8 +26,10 @@ All releases: https://github.com/cyberark/conjur-oss-helm-chart/releases
 
 Install latest Conjur with integrated Postgres.
 
+_Note: These commands require Helm v3+ as-written. Remove the deployment name if using Helm v2._
+
 ```sh-session
-$ helm install \
+$ helm install conjur-oss \
   --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" \
   https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
 ```
@@ -40,7 +42,7 @@ certificate. A PostgreSQL deployment is created to store Conjur state.
 Note that you can also install from source by cloning this repository and running
 
 ```sh-session
-helm install \
+helm install conjur-oss \
   --set dataKey="$(docker run --rm cyberark/conjur data-key generate)" \
   ./conjur-oss
 ```
