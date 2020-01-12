@@ -70,7 +70,7 @@ ssl:
 ```
 
 ```sh-session
-$ helm install -f custom-values.yaml \
+$ helm install conjur-oss -f custom-values.yaml \
   https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
 ```
 
@@ -79,10 +79,10 @@ $ helm install -f custom-values.yaml \
 created. For example, given the following command:
 
 ```sh-session
-$ kubectl exec $POD_NAME --container=conjur-oss conjurctl account create example
+$ kubectl exec $POD_NAME --container=conjur-oss conjurctl account create default
 ```
 
-The chart value for `account` would be expected to equal `example`.
+The chart value for `account` would be expected to equal `default`.
 
 ## Uninstalling the Chart
 
