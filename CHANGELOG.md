@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v1.3.8] - 2019-12-20
+
+### Added
+- Added basic instructions on how to package the chart
+- Added gitleaks config to repo
+
+### Changed
+- Updated deployments to be able to run on Kubernetes 1.16+
+- Updated e2e scripts to support newest helm (v.1.3.8)
+
+### Removed
+- Removed GitLab pipeline (it wasn't working anyways)
+
 ## [1.3.7] - 2019-01-31
 ### Changed
 - Server ciphers have been upgraded to TLS1.2 levels.
@@ -51,7 +64,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - First version of chart available.
 
-[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.7...HEAD
+[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.8...HEAD
+[1.3.8]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.4...v1.3.5
