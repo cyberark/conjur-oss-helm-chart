@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  # Run this workflow on all push events
+  push:
+
+jobs:
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v2.16.6
+
+      - name: Create k8s KinD Cluster
+        uses: helm/kind-action@v1.0.0-alpha.3
+
+      - name: Initialise Helm
+        run: |
+          # Service account with cluster-admin role for Helm
+          echo "
+          apiVersion: v1
+          kind: ServiceAccount
+          metadata:
+            name: tiller
+            namespace: kube-system
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRoleBinding
+          metadata:
+            name: tiller
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: cluster-admin
+          subjects:
+            - kind: ServiceAccount
+              name: tiller
+              namespace: kube-system
+          " | kubectl create -f -
+
+          # Initialise
+          helm init --service-account tiller --wait
+
+      - name: Run linter
+        run: helm lint --set dataKey=BLOB ./conjur-oss
+
+      - name: Run integration tests
+        run: ./test-minimal.sh
