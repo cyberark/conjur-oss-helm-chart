@@ -1,6 +1,6 @@
 authenticators: "authn-k8s/minikube,authn"
 dataKey: "GENERATED_DATAKEY"  # docker run --rm -it cyberark/conjur data-key generate
-databaseUrl: "postgres://postgres:PASSWORD@POSTGRES_ENDPOINT/postgres"
+database.url: "postgres://postgres:PASSWORD@POSTGRES_ENDPOINT/postgres"
 
 image:
   tag: "1.0.1-stable"

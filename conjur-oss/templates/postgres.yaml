@@ -1,4 +1,4 @@
-{{ if eq .Values.databaseUrl "" }}
+{{ if eq .Values.database.url "" }}
 ---
 apiVersion: v1
 kind: Service
@@ -20,7 +20,7 @@ spec:
   selector: *AppPostgresServiceLabels
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-postgres
   labels: &AppPostgresLabels
@@ -34,6 +34,7 @@ metadata:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
+  serviceName: {{ .Release.Name }}-postgres
   replicas: 1
   selector:
     matchLabels: *AppPostgresLabels
@@ -47,14 +48,34 @@ spec:
       - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
         imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
         name: postgres
-{{ if .Values.postgres.persistentVolume.create }}
+        args: ["-c", "ssl=on", "-c", "ssl_cert_file=/etc/certs/tls.crt", "-c", "ssl_key_file=/etc/certs/tls.key"]
+        env:
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: password
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-conjur-database-password
+              key: key
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         volumeMounts:
-        - mountPath: "/var/lib/postgresql"
-          name: postgres-data
+{{ if .Values.postgres.persistentVolume.create }}
+        - name: postgres-data
+          mountPath: "/var/lib/postgresql/data"
+{{- end }}
+        - name: ssl-certs
+          mountPath: "/etc/certs"
+          readOnly: true
       volumes:
+{{ if .Values.postgres.persistentVolume.create }}
       - name: postgres-data
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-conjur-oss-pvc
 {{- end }}
----
+      - name: ssl-certs
+        secret:
+          secretName: {{ .Release.Name }}-conjur-database-ssl
+          # Set file permissions to 0600 (which corresponds to 384 decimal)
+          defaultMode: 384
 {{ end }}

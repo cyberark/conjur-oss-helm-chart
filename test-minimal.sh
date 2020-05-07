@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source ./is_helm_v2.sh
+source ./is-helm-v2.sh
 
 # This script runs the minimal helm test, without relies on external load
 # balancers or persistent volumes. This is suitable for environment where

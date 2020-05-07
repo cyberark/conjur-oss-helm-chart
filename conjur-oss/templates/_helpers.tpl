@@ -51,6 +51,28 @@ Generate CA and end user certificate for NGINX
 {{- end -}}
 
 {{/*
+Use the database password chart value if provided, or generate a
+64-character, random, alphanumeric password for the backend database
+*/}}
+{{- define "conjur-oss.database-password" -}}
+{{- if .Values.database.password }}
+{{- $_ := set . "dbPassword" (.Values.database.password | trunc 64) }}
+{{- else }}
+{{- $_ := set . "dbPassword" (randAlphaNum 64) }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Generate self-signed certificate for the backend database
+*/}}
+{{- define "conjur-oss.database-cert-gen" -}}
+{{- $expiration := .Values.database.ssl.expiration | int -}}
+{{- $cert := genSelfSignedCert "pg" nil nil $expiration -}}
+{{- $_ := set . "dbCrt" ($cert.Cert | b64enc) }}
+{{- $_ := set . "dbKey" ($cert.Key | b64enc) }}
+{{- end -}}
+
+{{/*
 Return the most recent RBAC API available
 */}}
 {{- define "conjur-oss.rbac-api" -}}

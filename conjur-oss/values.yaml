@@ -1,62 +1,105 @@
 # Default values for conjur-oss.
 
-# Name of Conjur account to be created
+
+# NOTE: It is recommended that any chart values that contain sensitive
+# information (e.g. database.password, database.url, and SSL certificates
+# and keys) be set on the command line with a `--set key=value` argument
+# rather than setting these in a custom values YAML file. This avoids the
+# risk of leaving around residual values files containing this sensitive
+# information.
+
+
+# Name of Conjur account to be created. Maps to CONJUR_ACCOUNT env variable
+# for the Conjur container.
 account: "default"
 
+# Affinity rules to apply to the Conjur pod to indicate to Kubernetes scheduler
+# which nodes would be most appropriate for Conjur pod placement. See:
+# https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node
 affinity: {}
 
-# Conjur whitelisted authenticators. Maps as CONJUR_AUTHENTICATORS env variable.
+# Conjur whitelisted authenticators, presented as a comma-separated list.
+# Maps to CONJUR_AUTHENTICATORS env variable for the Conjur container.
 authenticators: "authn"
 
 # Additional labels to apply to all conjur resources
 conjurLabels: {}
 
-# PostgreSQL connection string. If left blank, a PostgreSQL deployment is created.
-databaseUrl: ""
+database:
+  # PostgreSQL connection password. If left blank, a pseudo-random,
+  # 64-character alphanumeric password will be auto-generated.
+  # Note that this value will be ignored for Helm upgrade operations.
+  password: ""
+
+  ssl:
+    # Backend database SSL certificate and private key. These should be
+    # base64-encoded strings. If these values are not set, a self-signed
+    # certificate will be auto-generated.
+    cert: ""
+    key: ""
+    # Expiration for an auto-generated cert.
+    expiration: 365 # days
+
+  # PostgreSQL connection string. If left blank, a PostgreSQL deployment
+  # is created. This value will be ignored for Helm upgrade operations
+  # (i.e. value used for install is reused).
+  url: ""
 
 # Conjur data key, 32 byte base-64 encoded string for data encryption.
 # Generate one with `docker run --rm cyberark/conjur data-key generate`.
 dataKey: ""
 
+# Annotations to apply to the Conjur deployment.
 deployment:
   annotations: {}
 
 image:
   pullPolicy: Always
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
-  tag: latest
-
-nodeSelector: {}
+  tag: 1.5
 
 nginx:
   image:
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     repository: nginx          # https://hub.docker.com/_/nginx/
     tag: '1.15'
 
+# nodeSelector (node selection constraints) to apply to the Conjur pod. Refer to:
+# https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+nodeSelector: {}
+
 postgres:
   image:
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     repository: postgres       # https://hub.docker.com/_/postgres/
-    tag: '10.1'
+    tag: '10.12'
   persistentVolume:
     create: true
     size: 8Gi
     storageClass:
 
-# Additional labels to apply to all conjur resources
+# Additional labels to apply to all postgres-related resources
 postgresLabels: {}
 
+# Indicates whether the Conjur ClusterRole and ClusterRoleBinding should be
+# created. This should be set to true, unless there is already a Conjur
+# deployment in a separate namespace that has already created these
+# cluster-wide resources.
 rbac:
   create: true
 
 # Number of Conjur pods to run
 replicaCount: 1
 
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# Conjur container resource limits and requests. It is recommended that
+# these Conjur-specific limits/requests remain unset, and instead let the
+# Conjur container resources be constrained by namespace-wide limit ranges
+# and resource quotas. The namespace-wide resource limitations are
+# typically set by a cluster administrator to values that make sense for
+# the host Kubernetes platform.
+# 
+# If you do want to specify resources, uncomment the following lines, adjust
+# them as necessary, and remove the curly braces after 'resources:'.
 # limits:
 #  cpu: 100m
 #  memory: 128Mi
@@ -82,6 +125,14 @@ serviceAccount:
   name:
 
 ssl:
+  # Conjur CA certificate and key, and signed certificate and key. These
+  # should be base64-encoded. If left blank, CA certificate and signed
+  # certificate will be auto-generated.
+  caCert: ""
+  caKey: ""
+  cert: ""
+  key: ""
+
   expiration: 365 # days
   hostname: "conjur.myorg.com"
   altNames: []
@@ -92,4 +143,15 @@ test:
                          # automatically deleted upon test completion,
                          # regardless of test success or failure.
 
+serviceAccount:
+  # Indicates whether Conjur service account should be created or not.
+  # Typically set to `true`, unless the service account has already been
+  # created outside of this Helm chart workflow.
+  create: true
+  # Suffix to apply to the Conjur service account name.
+  name:
+
+# Tolerations to apply to the Conjur pod to indicate to the Kubernetes
+# scheduler which nodes should be avoided for Conjur pod placement. See:
+# https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration
 tolerations: []
