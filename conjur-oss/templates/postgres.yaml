@@ -41,6 +41,8 @@ spec:
     metadata:
       labels: *AppPostgresLabels
     spec:
+      securityContext:
+        fsGroup: 999
       containers:
       - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
         imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
