@@ -5,8 +5,55 @@ on:
   push:
 
 jobs:
-  tests:
-    name: Run Tests
+  linter:
+    name: Run Helm Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.2.1
+
+      - name: Run linter
+        run: helm lint --set dataKey=BLOB ./conjur-oss
+
+  install-test-helm-v3:
+    name: Install/test Conjur with Helm V3 on KinD Cluster
+    needs: [ linter ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        kube-tag:
+          - v1.18.2
+          - v1.16.9
+          - v1.14.10
+          - v1.12.10
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: v3.2.1
+
+      - name: Create k8s KinD Cluster
+        uses: helm/kind-action@v1.0.0-rc.1
+        with:
+          node_image: "kindest/node:${{ matrix.kube-tag }}"
+          cluster_name: kube_${{ matrix.kube-tag }}
+
+      - name: Run integration tests
+        run: ./test-minimal.sh
+
+  install-test-helm-v2:
+    name: Install/test Conjur with Helm V2 on KinD Cluster
+    needs:
+      - linter
+      - install-test-helm-v3
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -18,7 +65,10 @@ jobs:
           version: v2.16.6
 
       - name: Create k8s KinD Cluster
-        uses: helm/kind-action@v1.0.0-alpha.3
+        uses: helm/kind-action@v1.0.0-rc.1
+        with:
+          node_image: "kindest/node:v1.18.2"
+          cluster_name: kube_v1.18.2_helm2
 
       - name: Initialise Helm
         run: |
@@ -46,9 +96,6 @@ jobs:
 
           # Initialise
           helm init --service-account tiller --wait
-
-      - name: Run linter
-        run: helm lint --set dataKey=BLOB ./conjur-oss
 
       - name: Run integration tests
         run: ./test-minimal.sh

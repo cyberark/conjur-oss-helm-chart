@@ -2,8 +2,18 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "{{ .Release.Name }}-test-{{ randAlphaNum 5 | lower }}"
+  labels:
+    app: {{ template "conjur-oss.name" . }}
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
   annotations:
     "helm.sh/hook": test-success
+{{ if .Values.test.deleteOnSuccess }}
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+{{ else }}
+    "helm.sh/hook-delete-policy": before-hook-creation
+{{ end }}
 spec:
   initContainers:
   - name: {{ .Release.Name }}-bats-init

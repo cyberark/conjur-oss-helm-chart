@@ -77,13 +77,19 @@ service:
     port: 443
     type: NodePort
 
+serviceAccount:
+  create: true
+  name:
+
 ssl:
   expiration: 365 # days
   hostname: "conjur.myorg.com"
   altNames: []
 
-serviceAccount:
-  create: true
-  name:
+test:
+  deleteOnSuccess: true  # If true, test pods are deleted upon successful
+                         # test completion. Otherwise, test pods are not
+                         # automatically deleted upon test completion,
+                         # regardless of test success or failure.
 
 tolerations: []

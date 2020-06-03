@@ -1,24 +1,93 @@
 #!/bin/bash -e
 
-# Run helm test
-# Any arguments passed to this script will be passed to `helm test`.
+source ./is_helm_v2.sh
 
-HELM_TEST_ARGS="${@:---cleanup}"  # cleanup test pod by default
+# Run Helm test
+#
+# This script does the following in sequence:
+# - Runs a Helm install of a Conjur server
+# - Runs a Helm test that deploys a test container that runs a
+#   Bash Automated Test System (a.k.a. "Bats") test script that
+#   confirms that the Conjur server's status page is active.
+#
+# Syntax:
+#       ./test.sh <your-helm-test-args>
+#
+# Optional Environment Variables:
+#   HELM_INSTALL_ARGS:    Additional arguments to pass to the `helm install`
+#                         command beyond the standard arguments used below:
+#                             --wait
+#                             --timeout $HELM_INSTALL_TIMEOUT
+#                             --set "dataKey=$dataKey"
+#                         Defaults to empty string.
+#   HELM_TEST_LOGGING:    Set to true to enable Helm test log collection.
+#                         Defaults to false.
+#   HELM_INSTALL_TIMEOUT: Helm install timeout. Defaults to `900` for
+#                         Helm V2 and `900s` for newer versions of Helm.
+
+# Command line arguments for this script are passed to `helm test`.
+HELM_TEST_ARGS="$@"
+HELM_INSTALL_ARGS=${HELM_INSTALL_ARGS:-""}
+HELM_TEST_LOGGING=${HELM_TEST_LOGGING:-false}
+if is_helm_v2; then
+  HELM_INSTALL_TIMEOUT=${HELM_INSTALL_TIMEOUT:-900}
+else
+  HELM_INSTALL_TIMEOUT=${HELM_INSTALL_TIMEOUT:-900s}
+fi
+
+# If Helm test logging is to be enabled, then we want to ensure that the
+# test pod is not deleted until after Helm test has had a chance to display
+# its logs.
+if [ "$HELM_TEST_LOGGING" = "true" ]; then
+  HELM_INSTALL_ARGS="${HELM_INSTALL_ARGS} --set test.deleteOnSuccess=false"
+  HELM_TEST_ARGS="${HELM_TEST_ARGS} --logs"
+fi
+
+# For Helm version 2, test pods can be automatically deleted at the end
+# of the helm test.
+if is_helm_v2; then
+  HELM_TEST_ARGS="${HELM_TEST_ARGS} --cleanup"
+fi
 
 RELEASE_NAME="helm-chart-test-$(date -u +%Y%m%d-%H%M%S)"
 
-function finish() {
-  echo "> Deleting release $RELEASE_NAME"
-  helm del --purge $RELEASE_NAME
+function delete_release() {
+  echo "=========================================="
+  echo "Deleting Conjur Helm release $RELEASE_NAME"
+  echo "=========================================="
+  if is_helm_v2; then
+    helm del --purge "$RELEASE_NAME"
+  else
+    helm del "$RELEASE_NAME"
+  fi
 }
-trap finish EXIT
 
-echo "> Installing helm chart, waiting until app is ready..."
+echo "======================================================="
+echo "Installing Conjur OSS, waiting until server is ready..."
+echo "======================================================="
 dataKey="$(docker run --rm cyberark/conjur data-key generate)"
+echo "RELEASE_NAME: $RELEASE_NAME"
+if is_helm_v2; then
+  RELEASE_ARG="--name $RELEASE_NAME"
+else
+  RELEASE_ARG="$RELEASE_NAME"
+fi
+echo "RELEASE_ARG: $RELEASE_ARG"
 helm install --wait \
-             --timeout 900 \
-             --name $RELEASE_NAME \
-             --set "dataKey=$dataKey" ./conjur-oss
+             --timeout $HELM_INSTALL_TIMEOUT \
+             --set "dataKey=$dataKey" \
+             $HELM_INSTALL_ARGS \
+             $RELEASE_ARG \
+             ./conjur-oss
+trap delete_release EXIT
 
-echo "> Running helm tests with arguments: $HELM_TEST_ARGS"
-helm test $HELM_TEST_ARGS $RELEASE_NAME
+echo "=================================================="
+echo "Running helm tests with arguments:"
+echo "    $HELM_TEST_ARGS"
+echo "=================================================="
+helm test $HELM_TEST_ARGS "$RELEASE_NAME"
+
+if  [[ (! is_helm_v2) && ("$HELM_TEST_LOGGING" == true) ]]; then
+  # Test pod log has been displayed, so it's safe to delete the test pod.
+  kubectl delete pod -l release="$RELEASE_NAME"
+fi
