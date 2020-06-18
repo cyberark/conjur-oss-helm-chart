@@ -1,6 +1,8 @@
-#!/bin/bash -e
+#!/bin/bash
 
-source ./is_helm_v2.sh
+set -eo pipefail
+
+source ./is-helm-v2.sh
 
 # Run Helm test
 #
@@ -24,6 +26,8 @@ source ./is_helm_v2.sh
 #                         Defaults to false.
 #   HELM_INSTALL_TIMEOUT: Helm install timeout. Defaults to `900` for
 #                         Helm V2 and `900s` for newer versions of Helm.
+#   CONJUR_NAMESPACE:     Namespace to use for Conjur deployment. The
+#                         namespace is created if it doesn't exist.
 
 # Command line arguments for this script are passed to `helm test`.
 HELM_TEST_ARGS="$@"
@@ -47,18 +51,35 @@ fi
 # of the helm test.
 if is_helm_v2; then
   HELM_TEST_ARGS="${HELM_TEST_ARGS} --cleanup"
+  HELM_DEL_ARGS="${HELM_DEL_ARGS} --purge"
+fi
+
+if [ ! -z "$CONJUR_NAMESPACE" ]; then
+  if ! kubectl get namespace "$CONJUR_NAMESPACE" 2>/dev/null; then
+    kubectl create namespace "$CONJUR_NAMESPACE"
+  fi
+  HELM_INSTALL_ARGS="${HELM_INSTALL_ARGS} -n $CONJUR_NAMESPACE"
+  HELM_TEST_ARGS="${HELM_TEST_ARGS} -n $CONJUR_NAMESPACE"
+  HELM_DEL_ARGS="${HELM_DEL_ARGS} -n $CONJUR_NAMESPACE"
 fi
 
 RELEASE_NAME="helm-chart-test-$(date -u +%Y%m%d-%H%M%S)"
+DATABASE_USER="postgres"
+DATABASE_PASSWORD="postgres-password"
 
 function delete_release() {
   echo "=========================================="
   echo "Deleting Conjur Helm release $RELEASE_NAME"
   echo "=========================================="
-  if is_helm_v2; then
-    helm del --purge "$RELEASE_NAME"
+  if [ ! -z "HELM_DEL_ARGS" ]; then 
+    helm del "$HELM_DEL_ARGS " "$RELEASE_NAME"
   else
     helm del "$RELEASE_NAME"
+  fi
+  if [ -z "$CONJUR_NAMESPACE" ]; then
+    kubectl delete secrets --selector=release=$RELEASE_NAME
+  else
+    kubectl delete secrets -n "$CONJUR_NAMESPACE" --selector=release=$RELEASE_NAME
   fi
 }
 
@@ -89,5 +110,9 @@ helm test $HELM_TEST_ARGS "$RELEASE_NAME"
 
 if  [[ (! is_helm_v2) && ("$HELM_TEST_LOGGING" == true) ]]; then
   # Test pod log has been displayed, so it's safe to delete the test pod.
-  kubectl delete pod -l release="$RELEASE_NAME"
+  if [ -z "$CONJUR_NAMESPACE" ]; then
+    kubectl delete pod -l release="$RELEASE_NAME"
+  else
+    kubectl delete pod -n "$CONJUR_NAMESPACE" -l release="$RELEASE_NAME"
+  fi
 fi

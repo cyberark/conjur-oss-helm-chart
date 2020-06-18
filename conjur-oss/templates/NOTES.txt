@@ -8,7 +8,9 @@
   It may take 1-10 minutes for the LoadBalancer IP to be available. You can watch
   the status of the progress by running:
 
-      kubectl get svc -w {{ template "conjur-oss.fullname" . }}-ingress
+      kubectl get svc \
+          --namespace {{ .Release.Namespace }} \
+          -w {{ template "conjur-oss.fullname" . }}-ingress
 
   and waiting until you have a value in "EXTERNAL-IP" column.
 
@@ -42,7 +44,10 @@
       export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} \
                                          -l "app={{ template "conjur-oss.name" . }},release={{ .Release.Name }}" \
                                          -o jsonpath="{.items[0].metadata.name}")
-      kubectl exec $POD_NAME --container={{ .Chart.Name }} conjurctl account create {{ .Values.account | quote }}
+      kubectl exec --namespace {{ .Release.Namespace }} \
+                   $POD_NAME \
+                   --container={{ .Chart.Name }} \
+                   -- conjurctl account create {{ .Values.account | quote }}
 
   Note that the conjurctl account create command gives you the
   public key and admin API key for the account administrator you created.

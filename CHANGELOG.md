@@ -4,7 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [v2.0.0] - 2020-06-17
+
+### Added
+- Adds password authentication for the backend Postgres database connection.
+- Adds TLS support between the Conjur pod and the Postgres pod.
+- Adds default auto-generation of the Postgres connection password and
+  TLS certificate.
+- Adds default auto-rotation of the following for `helm upgrade`:
+  - Conjur TLS CA signing certificate and signed certificate for Conjur
+  - Postgres database TLS certificate and key
+- Adds mechanism for user to set their own TLS CA and signed certificates
+  for Conjur.
+ 
+### Changed
+- Pins default Conjur version to current stable release 1.5.
+- Sets default pullPolicy for Nginx and Postgres to `Always`.
+
+### Fixed
+- Fixes an issue with the use of persistent volume store so that the
+  Postgres database contents are preserved across pod resets
+  and helm upgrades.
 
 ## [v1.3.8] - 2019-12-20
 
@@ -64,7 +84,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - First version of chart available.
 
-[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.8...HEAD
+[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.8...v2.0.0
 [1.3.8]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.5...v1.3.6
