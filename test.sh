@@ -71,8 +71,8 @@ function delete_release() {
   echo "=========================================="
   echo "Deleting Conjur Helm release $RELEASE_NAME"
   echo "=========================================="
-  if [ ! -z "HELM_DEL_ARGS" ]; then 
-    helm del "$HELM_DEL_ARGS " "$RELEASE_NAME"
+  if [ ! -z "$HELM_DEL_ARGS" ]; then
+    helm del $HELM_DEL_ARGS "$RELEASE_NAME"
   else
     helm del "$RELEASE_NAME"
   fi
