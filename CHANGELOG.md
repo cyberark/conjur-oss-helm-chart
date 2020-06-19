@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [v2.0.0] - 2020-06-17
+## [v2.0.0] - 2020-06-18
 
 ### Added
 - Adds password authentication for the backend Postgres database connection.
@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixes an issue with the use of persistent volume store so that the
   Postgres database contents are preserved across pod resets
   and helm upgrades.
+  [Commit](https://github.com/cyberark/conjur-oss-helm-chart/commit/9ee5b2b191f118714193861fc75abd5226c94425),
+  [Security Bulletin](https://github.com/cyberark/conjur-oss-helm-chart/security/advisories/GHSA-mg2m-623j-wpxw)
 
 ## [v1.3.8] - 2019-12-20
 
