@@ -50,7 +50,7 @@ jobs:
         run: ./test-minimal.sh
 
   install-test-helm-v2:
-    name: Install/test Conjur with Helm V2 on KinD Cluster
+    name: Install/test Conjur with Helm V2 on KinD Cluster (v1.18.2)
     needs:
       - linter
       - install-test-helm-v3

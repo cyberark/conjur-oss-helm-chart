@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-source ./is-helm-v2.sh
+source ./utils.sh
 
 HELM_RELEASE=${HELM_RELEASE:-conjur-oss}
 
@@ -24,7 +24,7 @@ if [ ! -z "$CONJUR_NAMESPACE" ]; then
   if ! kubectl get namespace "$CONJUR_NAMESPACE" 2>/dev/null; then
     kubectl create namespace "$CONJUR_NAMESPACE"
   fi
-  HELM_ARGS="$HELM_ARGS -n $CONJUR_NAMESPACE"
+  HELM_ARGS="$HELM_ARGS --namespace $CONJUR_NAMESPACE"
 fi
 
 helm install $HELM_ARGS ./conjur-oss
