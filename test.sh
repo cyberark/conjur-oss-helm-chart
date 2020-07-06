@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-source ./is-helm-v2.sh
+source ./utils.sh
 
 # Run Helm test
 #
@@ -16,18 +16,20 @@ source ./is-helm-v2.sh
 #       ./test.sh <your-helm-test-args>
 #
 # Optional Environment Variables:
+#   CONJUR_NAMESPACE:     Namespace to use for Conjur deployment. The
+#                         namespace is created if it doesn't exist.
 #   HELM_INSTALL_ARGS:    Additional arguments to pass to the `helm install`
 #                         command beyond the standard arguments used below:
 #                             --wait
 #                             --timeout $HELM_INSTALL_TIMEOUT
 #                             --set "dataKey=$dataKey"
 #                         Defaults to empty string.
-#   HELM_TEST_LOGGING:    Set to true to enable Helm test log collection.
-#                         Defaults to false.
 #   HELM_INSTALL_TIMEOUT: Helm install timeout. Defaults to `900` for
 #                         Helm V2 and `900s` for newer versions of Helm.
-#   CONJUR_NAMESPACE:     Namespace to use for Conjur deployment. The
-#                         namespace is created if it doesn't exist.
+#   HELM_TEST_LOGGING:    Set to true to enable Helm test log collection.
+#                         Defaults to false.
+#   RELEASE_NAME:         Name of Helm release to use for testing
+#                         Defaults to "helm-chart-test-<date>-<time>"
 
 # Command line arguments for this script are passed to `helm test`.
 HELM_TEST_ARGS="$@"
@@ -38,6 +40,7 @@ if is_helm_v2; then
 else
   HELM_INSTALL_TIMEOUT=${HELM_INSTALL_TIMEOUT:-900s}
 fi
+RELEASE_NAME=${RELEASE_NAME:-"helm-chart-test-$(date -u +%Y%m%d-%H%M%S)"}
 
 # If Helm test logging is to be enabled, then we want to ensure that the
 # test pod is not deleted until after Helm test has had a chance to display
@@ -58,19 +61,19 @@ if [ ! -z "$CONJUR_NAMESPACE" ]; then
   if ! kubectl get namespace "$CONJUR_NAMESPACE" 2>/dev/null; then
     kubectl create namespace "$CONJUR_NAMESPACE"
   fi
-  HELM_INSTALL_ARGS="${HELM_INSTALL_ARGS} -n $CONJUR_NAMESPACE"
-  HELM_TEST_ARGS="${HELM_TEST_ARGS} -n $CONJUR_NAMESPACE"
-  HELM_DEL_ARGS="${HELM_DEL_ARGS} -n $CONJUR_NAMESPACE"
+  HELM_INSTALL_ARGS="${HELM_INSTALL_ARGS} --namespace $CONJUR_NAMESPACE"
+  if ! is_helm_v2; then
+    HELM_TEST_ARGS="${HELM_TEST_ARGS} --namespace $CONJUR_NAMESPACE"
+    HELM_DEL_ARGS="${HELM_DEL_ARGS} --namespace $CONJUR_NAMESPACE"
+  fi
 fi
 
-RELEASE_NAME="helm-chart-test-$(date -u +%Y%m%d-%H%M%S)"
 DATABASE_USER="postgres"
 DATABASE_PASSWORD="postgres-password"
 
 function delete_release() {
-  echo "=========================================="
-  echo "Deleting Conjur Helm release $RELEASE_NAME"
-  echo "=========================================="
+  announce "Deleting Conjur Helm release $RELEASE_NAME"
+  echo "HELM_DEL_ARGS: $HELM_DEL_ARGS"
   if [ ! -z "$HELM_DEL_ARGS" ]; then
     helm del $HELM_DEL_ARGS "$RELEASE_NAME"
   else
@@ -83,10 +86,8 @@ function delete_release() {
   fi
 }
 
-echo "======================================================="
-echo "Installing Conjur OSS, waiting until server is ready..."
-echo "======================================================="
-dataKey="$(docker run --rm cyberark/conjur data-key generate)"
+announce "Installing Conjur OSS, waiting until server is ready..."
+data_key="$(docker run --rm cyberark/conjur data-key generate)"
 echo "RELEASE_NAME: $RELEASE_NAME"
 if is_helm_v2; then
   RELEASE_ARG="--name $RELEASE_NAME"
@@ -94,18 +95,20 @@ else
   RELEASE_ARG="$RELEASE_NAME"
 fi
 echo "RELEASE_ARG: $RELEASE_ARG"
+echo "HELM_INSTALL_ARGS: $HELM_INSTALL_ARGS"
+echo "HELM_INSTALL_TIMEOUT: $HELM_INSTALL_TIMEOUT"
+echo "Helm Version: $(helm version)"
+echo "Kubernetes Version: $(kubectl version)"
 helm install --wait \
              --timeout $HELM_INSTALL_TIMEOUT \
-             --set "dataKey=$dataKey" \
+             --set "dataKey=$data_key" \
              $HELM_INSTALL_ARGS \
              $RELEASE_ARG \
              ./conjur-oss
 trap delete_release EXIT
 
-echo "=================================================="
-echo "Running helm tests with arguments:"
-echo "    $HELM_TEST_ARGS"
-echo "=================================================="
+announce "Running helm tests"
+echo "HELM_TEST_ARGS: $HELM_TEST_ARGS"
 helm test $HELM_TEST_ARGS "$RELEASE_NAME"
 
 if  [[ (! is_helm_v2) && ("$HELM_TEST_LOGGING" == true) ]]; then
