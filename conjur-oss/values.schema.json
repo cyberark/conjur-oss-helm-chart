@@ -1,0 +1,242 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "required": [
+    "dataKey"
+  ],
+  "properties": {
+    "account": {
+      "type": "string"
+    },
+    "affinity": {
+      "type": "object"
+    },
+    "authenticators": {
+      "type": "string"
+    },
+    "conjurLabels": {
+      "type": "object"
+    },
+    "database": {
+      "properties": {
+        "password": {
+          "type": "string"
+        },
+        "ssl": {
+          "dependencies": {
+            "cert": {
+              "required": [
+                "key"
+              ]
+            }
+          },
+          "properties": {
+            "cert": {
+              "type": "string",
+              "minLength": 1
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "expiration": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "dataKey": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deployment": {
+      "properties": {
+        "annotations": {
+          "type": "object"
+        }
+      }
+    },
+    "image": {
+      "properties": {
+        "pullPolicy": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "tag": {
+          "type": [ "string", "number" ],
+          "pattern": "(^\\d+(\\.\\d+){0,2})$"
+        }
+      }
+    },
+    "nginx": {
+      "properties": {
+        "image": {
+          "properties": {
+            "pullPolicy": {
+              "type": "string"
+            },
+            "repository": {
+              "type": "string"
+            },
+            "tag": {
+              "type": [ "string", "number" ],
+              "pattern": "(^\\d+(\\.\\d+){0,2})$"
+            }
+          }
+        }
+      }
+    },
+    "nodeSelector": {
+      "type": "object"
+    },
+    "postgres": {
+      "properties": {
+        "image": {
+          "properties": {
+            "pullPolicy": {
+              "type": "string"
+            },
+            "repository": {
+              "type": "string"
+            },
+            "tag": {
+              "type": [ "string", "number" ],
+              "pattern": "(^\\d+(\\.\\d+){0,2})$"
+            }
+          }
+        },
+        "persistentVolume": {
+          "properties": {
+            "create": {
+              "type": "boolean"
+            },
+            "size": {
+              "type": "string"
+            },
+            "storageClass": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "postgresLabels": {
+      "type": "object"
+    },
+    "rbac": {
+      "properties": {
+        "create": {
+          "type": "boolean"
+        }
+      }
+    },
+    "replicaCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "resources": {
+      "type": "object"
+    },
+    "service": {
+      "properties": {
+        "external": {
+          "properties": {
+            "annotations": {
+              "type": "object"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "port": {
+              "type": "integer"
+            }
+          }
+        },
+        "internal": {
+          "properties": {
+            "annotations": {
+              "type": "object"
+            },
+            "port": {
+              "type": "integer"
+            },
+            "type": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "serviceAccount": {
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "ssl": {
+      "dependencies": {
+        "cert": {
+          "required": [
+            "key",
+            "caCert",
+            "caKey"
+          ]
+        }
+      },
+      "properties": {
+        "caCert": {
+          "type": "string",
+          "minLength": 1
+        },
+        "caKey": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cert": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expiration": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "hostname": {
+          "type": "string"
+        },
+        "altNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "test": {
+        "properties": {
+          "deleteOnSuccess": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "tolerations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

@@ -35,8 +35,8 @@ database:
     # Backend database SSL certificate and private key. These should be
     # base64-encoded strings. If these values are not set, a self-signed
     # certificate will be auto-generated.
-    cert: ""
-    key: ""
+    # cert:
+    # key:
     # Expiration for an auto-generated cert.
     expiration: 365 # days
 
@@ -47,7 +47,8 @@ database:
 
 # Conjur data key, 32 byte base-64 encoded string for data encryption.
 # Generate one with `docker run --rm cyberark/conjur data-key generate`.
-dataKey: ""
+# This is a required setting.
+# dataKey:
 
 # Annotations to apply to the Conjur deployment.
 deployment:
@@ -76,7 +77,8 @@ postgres:
   persistentVolume:
     create: true
     size: 8Gi
-    storageClass:
+    # Set storageClass to use a non-default storage class for your platform
+    # storageClass:
 
 # Additional labels to apply to all postgres-related resources
 postgresLabels: {}
@@ -120,18 +122,14 @@ service:
     port: 443
     type: NodePort
 
-serviceAccount:
-  create: true
-  name:
-
 ssl:
   # Conjur CA certificate and key, and signed certificate and key. These
   # should be base64-encoded. If left blank, CA certificate and signed
   # certificate will be auto-generated.
-  caCert: ""
-  caKey: ""
-  cert: ""
-  key: ""
+  # caCert:
+  # caKey:
+  # cert:
+  # key:
 
   expiration: 365 # days
   hostname: "conjur.myorg.com"
@@ -149,7 +147,7 @@ serviceAccount:
   # created outside of this Helm chart workflow.
   create: true
   # Suffix to apply to the Conjur service account name.
-  name:
+  # name:
 
 # Tolerations to apply to the Conjur pod to indicate to the Kubernetes
 # scheduler which nodes should be avoided for Conjur pod placement. See:
