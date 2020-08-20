@@ -23,7 +23,7 @@ type: kubernetes.io/tls
 data:
 {{- if .Values.ssl.caCert }}
   tls.crt: {{ .Values.ssl.caCert }}
-  tls.key: {{ required "'Values.ssl.caKey' must be provided!" .Values.ssl.caKey }}
+  tls.key: {{ .Values.ssl.caKey }}
 {{- else }}
   tls.crt: {{ .caCrt }}
   tls.key: {{ .caKey }}
@@ -51,8 +51,8 @@ metadata:
 type: kubernetes.io/tls
 data:
 {{- if .Values.ssl.caCert }}
-  tls.crt: {{ required "'Values.ssl.cert' must be provided!" .Values.ssl.cert }}
-  tls.key: {{ required "'Values.ssl.key' must be provided!" .Values.ssl.key }}
+  tls.crt: {{ .Values.ssl.cert }}
+  tls.key: {{ .Values.ssl.key }}
 {{- else }}
   tls.crt: {{ .certCrt }}
   tls.key: {{ .certKey }}
