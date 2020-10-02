@@ -133,6 +133,8 @@ spec:
               key: key
         - name: CONJUR_ACCOUNT
           value: {{ .Values.account }}
+        - name: CONJUR_LOG_LEVEL
+          value: {{ .Values.logLevel }}
         resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}

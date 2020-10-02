@@ -23,7 +23,10 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
   * [Installing Conjur with an External Postgres Database](#installing-conjur-with-an-external-postgres-database)
   * [Auto-Generated Configuration](#auto-generated-configuration)
 - [Upgrading, Modifying, or Migrating a Conjur OSS Helm Deployment](#upgrading-modifying-or-migrating-a-conjur-oss-helm-deployment)
+  * [Modifying environment variables for an existing Conjur OSS Helm Deployment](#modifying-environment-variables-for-an-existing-conjur-oss-helm-deployment)
+    + [Example: Changing Log Level](#example-changing-log-level)
 - [Configuration](#configuration)
+  * [Debugging](#debugging)
   * [PostgreSQL Database Password Restrictions](#postgresql-database-password-restrictions)
 - [Deleting the Conjur Deployment](#deleting-the-conjur-deployment)
   * [Uninstalling the Chart via Helm Delete](#uninstalling-the-chart-via-helm-delete)
@@ -65,11 +68,12 @@ $  CONJUR_NAMESPACE=<conjur-namespace>
 $  kubectl create namespace "$CONJUR_NAMESPACE"
 $  DATA_KEY="$(docker run --rm cyberark/conjur data-key generate)"
 $  HELM_RELEASE=<helm-release>
+$  VERSION=<conjur-oss-version>
 $  helm install \
    -n "$CONJUR_NAMESPACE" \
    --set dataKey="$DATA_KEY" \
    "$HELM_RELEASE" \
-   https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
+   https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v$VERSION/conjur-oss-$VERSION.tgz
 ```
 
 _Note: The configured data key will be used to encrypt sensitive information
@@ -251,13 +255,38 @@ automatic generation of the following configuration:
 
 ## Upgrading, Modifying, or Migrating a Conjur OSS Helm Deployment
 
-This Helm chart supports modifications or upgrades of a Conjur deployment via
-`helm upgrade`. This includes tasks such as rotating SSL certificates.
+This Helm chart supports modifications or upgrades of a Conjur deployment via the
+[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/#helm) command. 
+This includes tasks such as rotating SSL certificates.
 
 For details on how to upgrade or modify an existing Conjur OSS Helm deployment,
 or migrate Conjur configuration from on Conjur OSS Helm deployment to a new,
 separate Conjur OSS Helm deployment, please see the
 [UPGRADING.md](UPGRADING.md) markdown file.
+
+### Modifying environment variables for an existing Conjur OSS Helm Deployment
+
+After deploying the Conjur OSS using the helm chart, you may need to add or modify an 
+environment variable within the Conjur container. This task can be performed without needing 
+to tear down your existing deployment by using the `helm upgrade` command. 
+
+#### Example: Changing Log Level
+
+For example, to change the log-level of the Conjur container in your
+deployment, run the following:
+
+```sh-session
+$  CONJUR_NAMESPACE="<conjur-namespace>"
+$  HELM_RELEASE="conjur-oss"
+$  LOG_LEVEL="<info, debug, etc.>
+$  helm upgrade \
+   -n "$CONJUR_NAMESPACE" \
+   --reuse-values \
+   --recreate-pods \
+   --set logLevel="$LOG_LEVEL" \
+   "$HELM_RELEASE" \
+   ./conjur-oss
+```
 
 ## Configuration
 
@@ -277,6 +306,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`image.repository`|Conjur Docker image repository|`"cyberark/conjur"`|
 |`image.tag`|Conjur Docker image tag|`"1.5"`|
 |`image.pullPolicy`|Pull policy for Conjur Docker image|`"Always"`|
+|`logLevel`|Conjur log level. Set to 'debug' to enable detailed debug logs in the Conjur container |`"info"`|
 |`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
 |`nginx.image.tag`|NGINX Docker image tag|`"1.15"`|
 |`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
@@ -300,6 +330,46 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`ssl.expiration`|Expiration limit for generated certificates|`365`|
 |`ssl.hostname`|Hostname and Common Name for generated certificate and ingress|`"conjur.myorg.com"`|
 |`postgresLabels`|Extra Kubernetes labels to apply to Conjur PostgreSQL resources|`{}`|
+
+### Debugging
+To display additional debugging information for the Conjur container,
+you can set the `logLevel` value to `debug`.
+
+To change this value without needing to re-deploy or modify your 
+configuration, perform the following steps:
+
+1. Run `helm upgrade` to change the current debug value
+
+```sh-session
+$  CONJUR_NAMESPACE="<conjur-namespace>"
+$  HELM_RELEASE="conjur-oss"
+$  LOG_LEVEL="debug"
+$  helm upgrade \
+   -n "$CONJUR_NAMESPACE" \
+   --reuse-values \
+   --recreate-pods \
+   --set logLevel="$LOG_LEVEL" \
+   "$HELM_RELEASE" \
+   ./conjur-oss
+```
+
+2. _(Optional)_ Retrieve the ID of the Conjur container
+```sh-session
+$ POD_NAME=$(kubectl get pods \
+                    --namespace $CONJUR_NAMESPACE \
+                    -l "app=conjur-oss,release=conjur-oss" \
+                    -o jsonpath="{.items[0].metadata.name}")
+
+```
+
+3. Access logs for your Conjur container
+```sh-session
+$ kubectl logs $POD_NAME conjur-oss
+```
+  - _(Optional)_ Use `-f` to follow logs
+```sh-session
+$ kubectl logs -f $POD_NAME conjur-oss
+```
 
 ### PostgreSQL Database Password Restrictions 
 The following restrictions apply to the PostgreSQL database password:
