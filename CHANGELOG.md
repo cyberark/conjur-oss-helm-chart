@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+- `CONJUR_LOG_LEVEL` for the Conjur container can now be configured by setting the
+  `logLevel` value, or updated using `helm upgrade` [cyberark/conjur-oss-helm-chart#77](https://github.com/cyberark/conjur-oss-helm-chart/issues/77)
+
 ## [v2.0.0] - 2020-06-18
 
 ### Added

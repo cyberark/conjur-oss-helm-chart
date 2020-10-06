@@ -25,6 +25,10 @@ authenticators: "authn"
 # Additional labels to apply to all conjur resources
 conjurLabels: {}
 
+# Conjur log level. Set to 'debug' to enable detailed debug logs
+# in the Conjur container.
+logLevel: "info"
+
 database:
   # PostgreSQL connection password. If left blank, a pseudo-random,
   # 64-character alphanumeric password will be auto-generated.
