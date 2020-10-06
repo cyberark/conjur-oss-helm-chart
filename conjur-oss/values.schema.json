@@ -67,10 +67,6 @@
         },
         "repository": {
           "type": "string"
-        },
-        "tag": {
-          "type": [ "string", "number" ],
-          "pattern": "(^\\d+(\\.\\d+){0,2})$"
         }
       }
     },
@@ -83,10 +79,6 @@
             },
             "repository": {
               "type": "string"
-            },
-            "tag": {
-              "type": [ "string", "number" ],
-              "pattern": "(^\\d+(\\.\\d+){0,2})$"
             }
           }
         }
@@ -104,10 +96,6 @@
             },
             "repository": {
               "type": "string"
-            },
-            "tag": {
-              "type": [ "string", "number" ],
-              "pattern": "(^\\d+(\\.\\d+){0,2})$"
             }
           }
         },
