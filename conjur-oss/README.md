@@ -138,7 +138,7 @@ The following shows how to install a Conjur deployment with:
 
 ```sh-session
 $  CONJUR_NAMESPACE=my-conjur-namespace
-$  kubectl create --namespace "$CONJUR_NAMESPACE"
+$  kubectl create namespace "$CONJUR_NAMESPACE"
 $  DATA_KEY="$(docker run --rm cyberark/conjur data-key generate)"
 $  HELM_ARGS="--set dataKey=$DATA_KEY \
               --set image.tag=1.5.1 \
@@ -178,7 +178,7 @@ Next, deploy Conjur using the `custom-values.yaml` file as follows:
 
 ```sh-session
 $  CONJUR_NAMESPACE=my-conjur-namespace
-$  kubectl create --namespace "$CONJUR_NAMESPACE"
+$  kubectl create namespace "$CONJUR_NAMESPACE"
 $  helm install \
    -n "$CONJUR_NAMESPACE" \
    -f custom-values.yaml \
