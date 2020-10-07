@@ -92,7 +92,11 @@ spec:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+{{- if .Values.account.name }}
+        args: ["server", "--account={{ .Values.account.name }}"]
+{{ else }}
         args: ["server"]
+{{- end }}
         ports:
           - name: http
             containerPort: 80
@@ -132,7 +136,7 @@ spec:
               name: {{ .Release.Name }}-conjur-database-url
               key: key
         - name: CONJUR_ACCOUNT
-          value: {{ .Values.account }}
+          value: {{ .Values.account.name }}
         - name: CONJUR_LOG_LEVEL
           value: {{ .Values.logLevel }}
         resources:

@@ -20,6 +20,7 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
   * [Custom Installation](#custom-installation)
     + [Example: Installation Using Command Line Arguments](#example-installation-using-command-line-arguments)
     + [Example: Installation Using Custom YAML File](#example-installation-using-custom-yaml-file)
+  * [Configuring Conjur Accounts](#configuring-conjur-accounts)
   * [Installing Conjur with an External Postgres Database](#installing-conjur-with-an-external-postgres-database)
   * [Auto-Generated Configuration](#auto-generated-configuration)
 - [Upgrading, Modifying, or Migrating a Conjur OSS Helm Deployment](#upgrading-modifying-or-migrating-a-conjur-oss-helm-deployment)
@@ -186,15 +187,44 @@ $  helm install \
    https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
 ```
 
-*NOTE:* If using the Kubernetes authenticator for Conjur, the `account` value
+*NOTE:* If using the Kubernetes authenticator for Conjur, the `account.name` value
 (see [Configuration](#configuration)) must match the initial Conjur account
-created. For example, given the following command:
+created.
+
+### Configuring Conjur Accounts
+
+By setting `account.create` to `true`, you can direct your Conjur
+container to create an account during startup. To retrieve the credentials
+for this account, perform the following commands:
 
 ```sh-session
-$  kubectl exec -n "$CONJUR_NAMESPACE" "$POD_NAME" --container=conjur-oss conjurctl account create default
+ACCOUNT_NAME=<conjur-account-name>
+CONJUR_NAMESPACE=<conjur-namespace>
+HELM_RELEASE=<helm-release>
+POD_NAME=$(kubectl get pods --namespace "$CONJUR_NAMESPACE" \
+            -l "app=conjur-oss,release=$HELM_RELEASE" \
+            -o jsonpath="{.items[0].metadata.name}")
+kubectl exec --namespace "$CONJUR_NAMESPACE" \
+            "$POD_NAME" \
+            --container=conjur-oss \
+            -- conjurctl role retrieve-key "$ACCOUNT_NAME":user:admin
 ```
 
-The chart value for `account` would be expected to equal `default`.
+If you set `account.create` to `false`, or did not provide a value, an admin account will
+need to be created. To create an account, use the following commands:
+
+```sh-session
+ACCOUNT_NAME=<Name for Conjur account to be created>
+POD_NAME=$(kubectl get pods --namespace "$CONJUR_NAMESPACE" \
+            -l "app=conjur-oss,release=$HELM_RELEASE" \
+            -o jsonpath="{.items[0].metadata.name}")
+kubectl exec --namespace $CONJUR_NAMESPACE \
+              $POD_NAME \
+              --container=conjur-oss \
+              -- conjurctl account create $ACCOUNT_NAME
+```
+The credentials for this account will be provided after the account has been created.
+Store these in a safe location.
 
 ### Installing Conjur with an External Postgres Database
 
@@ -294,7 +324,8 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 
 |Parameter|Description|Default|
 |---------|-----------|-------|
-|`account`|Name of the Conjur account to be used by the Kubernetes authenticator|`"default"`|
+|`account.name`|Name of the Conjur account to be used by the Kubernetes authenticator|`"default"`|
+|`account.create`|If true, a Conjur account is created automatically after installation|`false`|
 |`authenticators`|List of authenticators that Conjur will whitelist and load.|`"authn"`|
 |`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
 |`database.url`|PostgreSQL connection string. If left blank, an integrated PostgreSQL deployment is created.|`""`|

@@ -332,7 +332,7 @@ The restore operation to the new Conjur OSS deployment involves:
   simplicity in these instructions.
 
   The Helm values that are included in the migration described here:
-  - `account`
+  - `account.name`
   - `authenticators`
   - `database.password`
   - `database.url`
@@ -364,7 +364,7 @@ $  namespace="<conjur-namespace>"
 
 $  helm_chart_name=$(helm list -n "$namespace" -q)
 $  account=$(helm show values "$helm_chart_name" | \
-             awk '/^account:/{print $2}' | \
+             awk '/^account\.name:/{print $2}' | \
              sed -e 's/^"//' -e 's/"$//')
 $  authenticators=$(kubectl get secret \
              -n "$namespace" \
@@ -440,7 +440,7 @@ $  namespace="<conjur-namespace>"
 $  helm_chart_name=conjur-oss
 $  helm install \
         -n "$namespace" \
-        --set account="$account" \
+        --set account.name="$account" \
         --set authenticators="$authenticators" \
         --set database.password="$db_password" \
         --set dataKey="$data_key" \
@@ -511,7 +511,7 @@ $  namespace="<conjur-namespace>"
 
 $  helm_chart_name=$(helm list -n "$namespace" -q)
 $  account=$(helm show values "$helm_chart_name" | \
-             awk '/^account:/{print $2}' | \
+             awk '/^account\.name:/{print $2}' | \
              sed -e 's/^"//' -e 's/"$//')
 $  authenticators=$(kubectl get secret \
              -n "$namespace" \
@@ -551,7 +551,7 @@ $  namespace="<conjur-namespace>"
 $  helm_chart_name=conjur-oss
 $  helm install \
         -n "$namespace" \
-        --set account="$account" \
+        --set account.name="$account" \
         --set authenticators="$authenticators" \
         --set database.url="$db_url" \
         --set dataKey="$data_key" \
