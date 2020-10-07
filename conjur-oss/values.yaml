@@ -47,7 +47,8 @@ database:
   # PostgreSQL connection string. If left blank, a PostgreSQL deployment
   # is created. This value will be ignored for Helm upgrade operations
   # (i.e. value used for install is reused).
-  url: ""
+  #url: ""
+
 
 # Conjur data key, 32 byte base-64 encoded string for data encryption.
 # Generate one with `docker run --rm cyberark/conjur data-key generate`.
@@ -73,19 +74,20 @@ nginx:
 # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
 nodeSelector: {}
 
-postgres:
-  image:
-    pullPolicy: Always
-    repository: postgres       # https://hub.docker.com/_/postgres/
-    tag: '10.12'
-  persistentVolume:
-    create: true
-    size: 8Gi
-    # Set storageClass to use a non-default storage class for your platform
-    # storageClass:
-
-# Additional labels to apply to all postgres-related resources
-postgresLabels: {}
+postgresql:
+  persistence:
+    enabled: false
+  volumePermissions:
+    securityContext:
+      runAsUser: auto
+  securityContext:
+    enabled: false
+  containerSecurityContext:
+    enabled: false
+  shmVolume:
+    chmod:
+      enabled: false
+  #postgresqlPassword: ChangeMe
 
 # Indicates whether the Conjur ClusterRole and ClusterRoleBinding should be
 # created. This should be set to true, unless there is already a Conjur
