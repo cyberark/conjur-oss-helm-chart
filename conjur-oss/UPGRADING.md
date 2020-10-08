@@ -90,7 +90,6 @@ $  HELM_RELEASE="conjur-oss"
 $  helm upgrade \
    -n "$CONJUR_NAMESPACE" \
    --reuse-values \
-   --recreate-pods \
    < INSERT YOUR --set CUSTOMIZATION SETTINGS HERE > \
    "$HELM_RELEASE" \
    https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
@@ -105,7 +104,6 @@ $  HELM_RELEASE="conjur-oss"
 $  helm upgrade \
    -n "$CONJUR_NAMESPACE" \
    --reuse-values \
-   --recreate-pods \
    < INSERT YOUR --set CUSTOMIZATION SETTINGS HERE > \
    "$HELM_RELEASE" \
    ./conjur-oss
@@ -115,9 +113,6 @@ Some notes:
 
 - The `--reuse-values` is required to preserve any non-default values
   that were used during your previous `helm install`.
-- `--recreate-pods` is required to ensure that pods are using the latest
-  configuration from Kubernetes `secrets` and `configMaps` following
-  `helm upgrade`.
 - Custom values that can be set via `--set` are described in the
   [Custom Installation](README.md#custom-installation) section of the
   [README.md](README.md) file.
@@ -149,7 +144,6 @@ $  HELM_RELEASE="conjur-oss"
 $  helm upgrade \
    -n "$CONJUR_NAMESPACE" \
    --reuse-values \
-   --recreate-pods \
    --set image.tag="<new-conjur-version>" \
    "$HELM_RELEASE" \
    ./conjur-oss
@@ -166,7 +160,6 @@ $  HELM_RELEASE="conjur-oss"
 $  helm upgrade \
    -n "$CONJUR_NAMESPACE" \
    --reuse-values \
-   --recreate-pods \
    --set nginx.image.tag="<nginx-version>" \
    "$HELM_RELEASE" \
    ./conjur-oss
@@ -207,7 +200,6 @@ $  kubectl delete -n "$CONJUR_NAMESPACE" "$CERT_SECRET"
 $  helm upgrade \
        -n "$CONJUR_NAMESPACE" \
        --reuse-values \
-       --recreate-pods \
        --set database.ssl.cert="<new-ssl-cert>" \
        --set database.ssl.key="<new-ssl-key>" \
        "$HELM_RELEASE" \
@@ -255,7 +247,6 @@ $  kubectl delete -n "$CONJUR_NAMESPACE" "$CERT_SECRET"
 $  helm upgrade \
        -n "$CONJUR_NAMESPACE" \
        --reuse-values \
-       --recreate-pods \
        --set ssl.caCert="<new-ssl-CA-cert>" \
        --set ssl.caKey="<new-ssl-CA-key>" \
        --set ssl.cert="<new-ssl-cert>" \
@@ -283,7 +274,6 @@ $  HELM_RELEASE="conjur-oss"
 $  helm upgrade \
        -n "$CONJUR_NAMESPACE" \
        --reuse-values \
-       --recreate-pods \
        --set "database.url=<new-database-url>" \
        "$HELM_RELEASE" \
        ./conjur-oss
@@ -489,7 +479,6 @@ $  kubectl exec -it -n "$namespace" \
 ```sh-session
 $  helm upgrade -n "$namespace" \
                 --reuse-values \
-                --recreate-pods \
                 --set replicaCount="1" \
                 $helm_chart_name \
                 ./conjur-oss

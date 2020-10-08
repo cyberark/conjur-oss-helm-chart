@@ -282,7 +282,6 @@ $  LOG_LEVEL="<info, debug, etc.>
 $  helm upgrade \
    -n "$CONJUR_NAMESPACE" \
    --reuse-values \
-   --recreate-pods \
    --set logLevel="$LOG_LEVEL" \
    "$HELM_RELEASE" \
    ./conjur-oss
@@ -347,7 +346,6 @@ $  LOG_LEVEL="debug"
 $  helm upgrade \
    -n "$CONJUR_NAMESPACE" \
    --reuse-values \
-   --recreate-pods \
    --set logLevel="$LOG_LEVEL" \
    "$HELM_RELEASE" \
    ./conjur-oss
