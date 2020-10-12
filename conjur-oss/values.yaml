@@ -34,6 +34,7 @@ database:
   # 64-character alphanumeric password will be auto-generated.
   # Note that this value will be ignored for Helm upgrade operations.
   password: ""
+  remotePassword: ""
 
   ssl:
     # Backend database SSL certificate and private key. These should be
@@ -103,7 +104,7 @@ replicaCount: 1
 # and resource quotas. The namespace-wide resource limitations are
 # typically set by a cluster administrator to values that make sense for
 # the host Kubernetes platform.
-# 
+#
 # If you do want to specify resources, uncomment the following lines, adjust
 # them as necessary, and remove the curly braces after 'resources:'.
 # limits:

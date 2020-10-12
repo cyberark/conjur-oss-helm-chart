@@ -39,7 +39,7 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
   recommended in order to facilitate limiting of direct access to Conjur
   Kubernetes resources to security administrators. Here, the term isolated
   refers to:
-  * No workloads besides Conjur and its backend database running in the 
+  * No workloads besides Conjur and its backend database running in the
     Kubernetes cluster/namespace.
   * Kubernetes and Helm access to the cluster/namespace is limited to
     security administrators via Role-Based Access Control (RBAC).
@@ -231,7 +231,7 @@ automatic generation of the following configuration:
 
 - Postgres database SSL certificate and key (for integrated Postgres
   database only).
-  
+
   Alternatively, these values can be set explicitly with the following
   `helm install` arguments (or by setting the equivalent field in a custom
   values.yaml file):
@@ -256,7 +256,7 @@ automatic generation of the following configuration:
 ## Upgrading, Modifying, or Migrating a Conjur OSS Helm Deployment
 
 This Helm chart supports modifications or upgrades of a Conjur deployment via the
-[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/#helm) command. 
+[helm upgrade](https://helm.sh/docs/helm/helm_upgrade/#helm) command.
 This includes tasks such as rotating SSL certificates.
 
 For details on how to upgrade or modify an existing Conjur OSS Helm deployment,
@@ -266,9 +266,9 @@ separate Conjur OSS Helm deployment, please see the
 
 ### Modifying environment variables for an existing Conjur OSS Helm Deployment
 
-After deploying the Conjur OSS using the helm chart, you may need to add or modify an 
-environment variable within the Conjur container. This task can be performed without needing 
-to tear down your existing deployment by using the `helm upgrade` command. 
+After deploying the Conjur OSS using the helm chart, you may need to add or modify an
+environment variable within the Conjur container. This task can be performed without needing
+to tear down your existing deployment by using the `helm upgrade` command.
 
 #### Example: Changing Log Level
 
@@ -299,6 +299,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
 |`database.url`|PostgreSQL connection string. If left blank, an integrated PostgreSQL deployment is created.|`""`|
 |`database.password`|PostgreSQL database password string. Unused if an external Postgres database is configured. See [PostgreSQL Database Password Restrictions](#postgresql-database-password-restrictions) below.|`""`|
+|`database.remotePassword`|PostgreSQL database password string. Unused if an external Postgres database is configured. See [PostgreSQL Database Password Restrictions](#postgresql-database-password-restrictions) below.|`""`|
 |`database.ssl.Cert`|PostgreSQL TLS x509 certificate, base64 encoded.|`""`|
 |`database.ssl.key`|PostgreSQL TLS private key, base64 encoded.|`""`|
 |`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
@@ -335,7 +336,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 To display additional debugging information for the Conjur container,
 you can set the `logLevel` value to `debug`.
 
-To change this value without needing to re-deploy or modify your 
+To change this value without needing to re-deploy or modify your
 configuration, perform the following steps:
 
 1. Run `helm upgrade` to change the current debug value
@@ -371,7 +372,7 @@ $ kubectl logs $POD_NAME conjur-oss
 $ kubectl logs -f $POD_NAME conjur-oss
 ```
 
-### PostgreSQL Database Password Restrictions 
+### PostgreSQL Database Password Restrictions
 The following restrictions apply to the PostgreSQL database password:
 
 - Password must only contain the following:
@@ -417,6 +418,7 @@ The Kubernetes secrets that may need to be manually deleted following
 |Secret Name|Description|When is Manual Deletion Required?|
 |-----------|-----------|---------------------------------|
 |`<helm-release>-conjur-database-password`|Database Password|When created (i.e. database URL not explicitly set)|
+|`<helm-release>-remote-database-password`|Remote Database Password|When created (i.e. database URL not explicitly set)|
 |`<helm-release>-conjur-database-ssl`|Database SSL Certificate|When auto-generated (i.e. not explicitly set)|
 |`<helm-release>-conjur-database-url`|Database URL|When auto-generated (i.e. not explicitly set)|
 |`<helm-release>-conjur-data-key`|Data encryption key|Always|
