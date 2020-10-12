@@ -418,7 +418,7 @@ The Kubernetes secrets that may need to be manually deleted following
 |Secret Name|Description|When is Manual Deletion Required?|
 |-----------|-----------|---------------------------------|
 |`<helm-release>-conjur-database-password`|Database Password|When created (i.e. database URL not explicitly set)|
-|`<helm-release>-remote-database-password`|Remote Database Password|When created (i.e. database URL not explicitly set)|
+|`<helm-release>-database-remote-password`|Remote Database Password|When created (i.e. database URL not explicitly set)|
 |`<helm-release>-conjur-database-ssl`|Database SSL Certificate|When auto-generated (i.e. not explicitly set)|
 |`<helm-release>-conjur-database-url`|Database URL|When auto-generated (i.e. not explicitly set)|
 |`<helm-release>-conjur-data-key`|Data encryption key|Always|
