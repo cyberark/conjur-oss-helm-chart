@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `CONJUR_LOG_LEVEL` for the Conjur container can now be configured by setting the
   `logLevel` value, or updated using `helm upgrade` [cyberark/conjur-oss-helm-chart#77](https://github.com/cyberark/conjur-oss-helm-chart/issues/77)
 
+### Changed
+- `account` now accepts two values, `account.create`, a boolean, and `account.name`, a string. 
+  These values allow you to configure the creation of a Conjur account on container startup, and 
+  the name of the account. [cyberark/conjur-oss-helm-chart#77](https://github.com/cyberark/conjur-oss-helm-chart/issues/78)
+
 ## [v2.0.0] - 2020-06-18
 
 ### Added

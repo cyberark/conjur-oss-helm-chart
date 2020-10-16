@@ -37,7 +37,24 @@
         /etc/hosts file: "$SERVICE_IP  {{ $.Values.ssl.hostname }}"
 {{- end }}
 
-2. Configure Conjur
+{{ if .Values.account.create }}
+2. Configure Conjur Account
+
+  To retrieve the credentials for the account created in Conjur at startup, {{ .Values.account.name | quote }}
+  , use the following commands: 
+
+      export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} \
+                                         -l "app={{ template "conjur-oss.name" . }},release={{ .Release.Name }}" \
+                                         -o jsonpath="{.items[0].metadata.name}")
+      kubectl exec --namespace {{ .Release.Namespace }} \
+                   $POD_NAME \
+                   --container={{ .Chart.Name }} \
+                   -- conjurctl role retrieve-key {{ .Values.account.name }}:user:admin
+
+  Back up this key in a safe location.
+{{- else }}
+2. Configure Conjur Account
+
   To create an initial account and login, follow the instructions here:
   https://www.conjur.org/get-started/install-conjur.html#install-and-configure
 
@@ -47,13 +64,15 @@
       kubectl exec --namespace {{ .Release.Namespace }} \
                    $POD_NAME \
                    --container={{ .Chart.Name }} \
-                   -- conjurctl account create {{ .Values.account | quote }}
+                   -- conjurctl account create {{ .Values.account.name | quote }}
 
   Note that the conjurctl account create command gives you the
   public key and admin API key for the account administrator you created.
   Back them up in a safe location.
+{{- end }}
 
 3. Connect to Conjur
+
   Start a container with Conjur CLI and authenticate with the new user:
 
       docker run --rm -it --entrypoint bash cyberark/conjur-cli:5
@@ -65,7 +84,7 @@
       #       SSL certificate names otherwise SSL verification will fail and you will not
       #       be able to log in.
       # NOTE: Also ensure that the URL does not contain a slash (`/`) at the end of the URL
-      conjur init -u <ENDPOINT> -a {{ .Values.account | quote }}
+      conjur init -u <ENDPOINT> -a {{ .Values.account.name | quote }}
 
       # API key here is the key that creation of the account provided you in step #2
       conjur authn login -u admin -p <API_KEY>
@@ -75,4 +94,4 @@
 
 4. Next Steps
   - Go through the Conjur Tutorials: https://www.conjur.org/tutorials/
-  - View Conjur’s API Documentation: https://www.conjur.org/api.html
+  - View Conjur's API Documentation: https://www.conjur.org/api.html
