@@ -209,8 +209,11 @@ POD_NAME=$(kubectl get pods --namespace "$CONJUR_NAMESPACE" \
 kubectl exec --namespace "$CONJUR_NAMESPACE" \
             "$POD_NAME" \
             --container=conjur-oss \
-            -- conjurctl role retrieve-key "$ACCOUNT_NAME":user:admin
+            -- conjurctl role retrieve-key "$ACCOUNT_NAME":user:admin | tail -1
 ```
+
+> Note: If you have `logLevel` set to `debug`, the `tail -1` command will truncate the output.
+To see all output, remove this additional command from the end.
 
 If you set `account.create` to `false`, or did not provide a value, an admin account will
 need to be created. To create an account, use the following commands:
@@ -223,7 +226,7 @@ POD_NAME=$(kubectl get pods --namespace "$CONJUR_NAMESPACE" \
 kubectl exec --namespace $CONJUR_NAMESPACE \
               $POD_NAME \
               --container=conjur-oss \
-              -- conjurctl account create $ACCOUNT_NAME
+              -- conjurctl account create $ACCOUNT_NAME | tail -1
 ```
 The credentials for this account will be provided after the account has been created.
 Store these in a safe location.

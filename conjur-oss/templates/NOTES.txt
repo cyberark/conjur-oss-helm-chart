@@ -49,7 +49,7 @@
       kubectl exec --namespace {{ .Release.Namespace }} \
                    $POD_NAME \
                    --container={{ .Chart.Name }} \
-                   -- conjurctl role retrieve-key {{ .Values.account.name }}:user:admin
+                   -- conjurctl role retrieve-key {{ .Values.account.name }}:user:admin | tail -1
 
   Back up this key in a safe location.
 {{- else }}
@@ -64,7 +64,7 @@
       kubectl exec --namespace {{ .Release.Namespace }} \
                    $POD_NAME \
                    --container={{ .Chart.Name }} \
-                   -- conjurctl account create {{ .Values.account.name | quote }}
+                   -- conjurctl account create {{ .Values.account.name | quote }} | tail -1
 
   Note that the conjurctl account create command gives you the
   public key and admin API key for the account administrator you created.
