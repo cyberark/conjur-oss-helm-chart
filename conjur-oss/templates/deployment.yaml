@@ -92,8 +92,15 @@ spec:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-{{- if .Values.account.name }}
+{{- if .Values.account.create }}
+{{- if .Release.IsUpgrade }}
+        # For Helm upgrade, we want to make server startup idempotent, i.e.
+        # tolerant of the chart setting 'account.create=true' being reused.
+        command: ["bash"]
+        args: ["-c", "conjurctl server --account={{ .Values.account.name }} || conjurctl server"]
+{{ else }}
         args: ["server", "--account={{ .Values.account.name }}"]
+{{- end }}
 {{ else }}
         args: ["server"]
 {{- end }}
