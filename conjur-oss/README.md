@@ -27,6 +27,8 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
   * [Modifying environment variables for an existing Conjur OSS Helm Deployment](#modifying-environment-variables-for-an-existing-conjur-oss-helm-deployment)
     + [Example: Changing Log Level](#example-changing-log-level)
 - [Configuration](#configuration)
+  * [Deploying Without Persistent Volume Support (e.g. for MiniKube, KataCoda)](#deploying-without-persistent-volume-support-eg-for-minikube-katacoda)
+  * [Deploying Without LoadBalancer Support (e.g. for KinD, MiniKube, KataCoda)](#deploying-without-loadbalancer-support-eg-for-kind-minikube-katacoda)
   * [Debugging](#debugging)
   * [PostgreSQL Database Password Restrictions](#postgresql-database-password-restrictions)
 - [Deleting the Conjur Deployment](#deleting-the-conjur-deployment)
@@ -361,6 +363,43 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`ssl.expiration`|Expiration limit for generated certificates|`365`|
 |`ssl.hostname`|Hostname and Common Name for generated certificate and ingress|`"conjur.myorg.com"`|
 |`postgresLabels`|Extra Kubernetes labels to apply to Conjur PostgreSQL resources|`{}`|
+
+### Deploying Without Persistent Volume Support (e.g. for MiniKube, KataCoda)
+Some Kubernetes platforms (e.g. MiniKube and KataCoda) do not have
+out-of-the-box support for StorageClasses or PersistentVolumes. If you
+are Helm installing a Conjur cluster on such a platform, then it is possible
+to install the cluster without persistent storage of Conjur secrets
+configuration and data by using the following chart setting:
+
+    ```
+    --set persistentVolume.create=false
+    ```
+
+Using this flag means that your Conjur policies and secrets will not be
+stored persistently across pod resets, so this is intended to be used
+for experimentation, exploration, or automated testing, and is **not intended
+to be used in production environments**.
+
+### Deploying Without LoadBalancer Support (e.g. for KinD, MiniKube, KataCoda)
+Some Kubernetes platforms (e.g. Kubernetes-in-Docker [KinD], MiniKube
+and KataCoda) do not have out-of-the-box support for LoadBalancers.
+
+For such platforms, one workaround for this is to install a software
+load balancer add-on, such as MetalLB, and assign a pool of routed IPs
+for the software load balancer to use as external IPs. Configuring such
+a software load balancer is considered out-of-scope here. Please refer to
+the [MetalLB documentation](https://metallb.universe.tf) for details.
+
+An alternative to using a software load balancer would be to install the
+Conjur cluster without LoadBalancer support by using the following
+chart setting:
+
+    ```
+    --set service.external.enabled=false
+    ```
+
+Using this flag will result in a Conjur deployment that uses services of
+type `NodePort` rather then `LoadBalancer`.
 
 ### Debugging
 To display additional debugging information for the Conjur container,
