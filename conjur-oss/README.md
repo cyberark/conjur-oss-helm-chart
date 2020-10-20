@@ -31,6 +31,7 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
   * [Deploying Without LoadBalancer Support (e.g. for KinD, MiniKube, KataCoda)](#deploying-without-loadbalancer-support-eg-for-kind-minikube-katacoda)
   * [Debugging](#debugging)
   * [PostgreSQL Database Password Restrictions](#postgresql-database-password-restrictions)
+- [What's Next? Deploy an Example Application That Uses Conjur Secrets](#whats-next-deploy-an-example-application-that-uses-conjur-secrets)
 - [Deleting the Conjur Deployment](#deleting-the-conjur-deployment)
   * [Uninstalling the Chart via Helm Delete](#uninstalling-the-chart-via-helm-delete)
   * [Cleaning Up Kubernetes Secrets Not Managed by Helm](#cleaning-up-kubernetes-secrets-not-managed-by-helm)
@@ -200,7 +201,7 @@ container to create an account during startup. To retrieve the credentials
 for this account, perform the following commands:
 
 ```sh-session
-ACCOUNT_NAME=<conjur-account-name>
+CONJUR_ACCOUNT=<conjur-account-name>
 CONJUR_NAMESPACE=<conjur-namespace>
 HELM_RELEASE=<helm-release>
 POD_NAME=$(kubectl get pods --namespace "$CONJUR_NAMESPACE" \
@@ -209,7 +210,7 @@ POD_NAME=$(kubectl get pods --namespace "$CONJUR_NAMESPACE" \
 kubectl exec --namespace "$CONJUR_NAMESPACE" \
             "$POD_NAME" \
             --container=conjur-oss \
-            -- conjurctl role retrieve-key "$ACCOUNT_NAME":user:admin | tail -1
+            -- conjurctl role retrieve-key "$CONJUR_ACCOUNT":user:admin | tail -1
 ```
 
 > Note: If you have `logLevel` set to `debug`, the `tail -1` command will truncate the output.
@@ -219,14 +220,14 @@ If you set `account.create` to `false`, or did not provide a value, an admin acc
 need to be created. To create an account, use the following commands:
 
 ```sh-session
-ACCOUNT_NAME=<Name for Conjur account to be created>
+CONJUR_ACCOUNT=<Name for Conjur account to be created>
 POD_NAME=$(kubectl get pods --namespace "$CONJUR_NAMESPACE" \
             -l "app=conjur-oss,release=$HELM_RELEASE" \
             -o jsonpath="{.items[0].metadata.name}")
 kubectl exec --namespace $CONJUR_NAMESPACE \
               $POD_NAME \
               --container=conjur-oss \
-              -- conjurctl account create $ACCOUNT_NAME | tail -1
+              -- conjurctl account create $CONJUR_ACCOUNT | tail -1
 ```
 The credentials for this account will be provided after the account has been created.
 Store these in a safe location.
@@ -453,6 +454,40 @@ The following restrictions apply to the PostgreSQL database password:
   - The special characters:
     ["-", ".", "_", or "~"]
 - Password length must be less than or equal to 64 characters.
+
+## What's Next? Deploy an Example Application That Uses Conjur Secrets
+
+If you are new to Conjur, you may be interested in learning more about how
+Conjur security policy can be configured and an application can
+be deployed that uses Conjur OSS to safely manage secrets data.
+
+This repository contains a set of scripts that can:
+
+- Create a [Kubernetes-in-Docker](https://github.com/kubernetes-sigs/kind)
+  (KinD) cluster on your local machine
+- Helm install a Conjur OSS cluster on that KinD cluster
+- Enable the
+  [Conjur Kubernetes Authenticator](https://docs.conjur.org/Latest/en/Content/Operations/Services/k8s_auth.htm)
+  (authn-k8s) (as a security admin)
+- Load Conjur security policies for some example applications
+  (as a security admin)
+- Deploy instances of a simple "Pet Store" application each using
+  one of the following Conjur authentication broker/clients:
+  - [Secretless Broker](https://github.com/cyberark/secretless-broker) sidecar container
+  - [Conjur Kubernetes Authenticator Client](https://github.com/cyberark/conjur-authn-k8s-client)
+    sidecar container
+  - [Conjur Kubernetes Authenticator Client](https://github.com/cyberark/conjur-authn-k8s-client)
+    init container
+  (as an application developer/deployer)
+
+Please refer to the [README.md](../examples/kubernetes-in-docker/README.md)
+file in the `../examples/kubernetes-in-docker` directory for more details
+on how to run these demo scripts.
+
+These scripts will also generate some application-specific Conjur policy
+YAML files and Kubernetes application manifests as concrete examples of
+how applications can be deployed that use Conjur Kubernetes authentication
+to safely retrieve secrets.
 
 ## Deleting the Conjur Deployment
 
