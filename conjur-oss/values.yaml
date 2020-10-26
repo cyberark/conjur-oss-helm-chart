@@ -94,6 +94,14 @@ postgresLabels: {}
 # created. This should be set to true, unless there is already a Conjur
 # deployment in a separate namespace that has already created these
 # cluster-wide resources.
+#
+# NOTE: This setting is deprecated and will be replaced in the next major
+# release with two separate settings:
+#   - rbac.createClusterRole        (defaulting to true)
+#   - rbac.createClusterRoleBinding (defaulting to false)
+# and the recommendation will be for chart users to create RoleBindings
+# for each individual namespace that supports applications that require
+# Conjur Kubernetes authentication.
 rbac:
   create: true
 
