@@ -352,7 +352,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`postgres.persistentVolume.create`|Create a peristent volume to back the PostgreSQL data|`true`|
 |`postgres.persistentVolume.size`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
 |`postgres.persistentVolume.storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
-|`rbac.create`|Controls whether or not RBAC resources are created|`true`|
+|`rbac.create`|Controls whether or not RBAC resources are created. This setting is deprecated and will be replaced in the next major release with two separate settings: `rbac.createClusterRole` (defaulting to true) and `rbac.createClusterRoleBinding` (defaulting to false), and the creation of RoleBindings will be recommended over relying on this ClusterRoleBinding.|`true`|
 |`replicaCount`|Number of desired Conjur pods|`1`|
 |`service.external.annotations`|Annotations for the external LoadBalancer|`[service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp]`|
 |`service.external.enabled`|Expose service to the Internet|`true`|
