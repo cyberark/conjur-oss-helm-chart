@@ -19,7 +19,7 @@ set -eo pipefail
 #
 # Also, force the recreation of pods, since Helm isn't aware that pods need
 # to be started e.g. for when configmaps or secrets are changed.
-HELM_ARGS="$@ --reuse-values --recreate-pods"
+HELM_ARGS="$@ --reuse-values"
 
 if [ ! -z "$CONJUR_NAMESPACE" ]; then
   HELM_ARGS="$HELM_ARGS -n $CONJUR_NAMESPACE"
