@@ -6,3 +6,6 @@ values-private.yaml
 
 # Vim swapfiles
 *.sw[po]
+
+# Example temp files
+examples/kubernetes-in-docker/temp*

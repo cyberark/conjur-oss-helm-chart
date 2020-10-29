@@ -25,9 +25,12 @@ export TEST_APP_LOADBALANCER_SVCS="${TEST_APP_LOADBALANCER_SVCS:-false}"
 # build and push demo images to a registry so that the images can then be
 # pulled by KinD.
 #
-# These should be configured/customized in bootstrap.env
-check_env_var "DOCKER_REGISTRY_URL"
-check_env_var "DOCKER_REGISTRY_PATH"
-check_env_var "DOCKER_USERNAME"
-check_env_var "DOCKER_PASSWORD"
-check_env_var "DOCKER_EMAIL"
+# These should be configured/customized in customize.env
+export CREATE_DOCKER_INTERNAL_REGISTRY="${CREATE_DOCKER_INTERNAL_REGISTRY:-true}"
+if [[ "CREATE_DOCKER_INTERNAL_REGISTRY" == "false" ]]; then
+  check_env_var "DOCKER_REGISTRY_URL"
+  check_env_var "DOCKER_REGISTRY_PATH"
+  check_env_var "DOCKER_USERNAME"
+  check_env_var "DOCKER_PASSWORD"
+  check_env_var "DOCKER_EMAIL"
+fi
