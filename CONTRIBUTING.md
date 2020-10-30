@@ -15,7 +15,9 @@ any additional information for contributing code to this project.
 
 To release a new version of this chart:
 - Make the appropriate changes
-- Update the version number
+- Update the version number in [`conjur-oss/Chart.yaml`](conjur-oss/Chart.yaml)
+- Update the CHANGELOG.md file according to the
+  [Conjur community guidelines](https://github.com/cyberark/community/blob/master/Conjur/CONTRIBUTING.md#tagging)
 - Tag the git history with `v##.##.##` version
 - Create the release on GitHub for that tag
 - Build the helm chart package with `helm package conjur-oss`
