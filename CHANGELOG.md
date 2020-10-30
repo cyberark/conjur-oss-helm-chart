@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [v2.0.1] - 2020-10-30
+
 ### Added
 - `CONJUR_LOG_LEVEL` for the Conjur container can now be configured by setting the
   `logLevel` value, or updated using `helm upgrade` [cyberark/conjur-oss-helm-chart#77](https://github.com/cyberark/conjur-oss-helm-chart/issues/77)
@@ -14,6 +16,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `account` now accepts two values, `account.create`, a boolean, and `account.name`, a string. 
   These values allow you to configure the creation of a Conjur account on container startup, and 
   the name of the account. [cyberark/conjur-oss-helm-chart#77](https://github.com/cyberark/conjur-oss-helm-chart/issues/78)
+
+### Deprecated
+- The `rbac.create` chart value is now deprecated. This value will be replaced 
+  in the next major release with two separate settings:
+  - `rbac.createClusterRole`        (defaulting to true)
+  - `rbac.createClusterRoleBinding` (defaulting to false)
+  and the use of `RoleBindings` will be recommended over using
+  `ClusterRoleBinding`.
 
 ## [v2.0.0] - 2020-06-18
 
@@ -97,7 +107,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - First version of chart available.
 
-[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.8...v2.0.0
 [1.3.8]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.6...v1.3.7
