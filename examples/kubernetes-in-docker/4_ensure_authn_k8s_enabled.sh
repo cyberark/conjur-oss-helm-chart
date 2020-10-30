@@ -14,7 +14,6 @@ if grep -q "$authenticators" <<< "$AUTHENTICATOR_ID"; then
   helm upgrade \
        -n "$CONJUR_NAMESPACE" \
        --reuse-values \
-       --recreate-pods \
        --set authenticators="authn\,authn-k8s/$AUTHENTICATOR_ID" \
        --set logLevel="$CONJUR_LOG_LEVEL" \
        "$HELM_RELEASE" \

@@ -35,13 +35,11 @@ if [ "$(helm list -q -n $CONJUR_NAMESPACE | grep "^$HELM_RELEASE$")" = "$HELM_RE
       --set authenticators="authn\,authn-k8s/$AUTHENTICATOR_ID" \
       --set logLevel="$CONJUR_LOG_LEVEL" \
       --reuse-values \
-      --recreate-pods \
       "$HELM_RELEASE" \
       "../../conjur-oss"
 else
   # Helm install a Conjur cluster and create a Conjur account
   data_key="$(docker run --rm cyberark/conjur data-key generate)"
-  echo "data_key: $data_key"
   helm install \
       -n "$CONJUR_NAMESPACE" \
       --set dataKey="$data_key" \
