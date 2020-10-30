@@ -21,13 +21,17 @@ export CONJUR_OSS_HELM_INSTALLED="${CONJUR_OSS_HELM_INSTALLED:-true}"
 # KinD specific specific setting for demo scripts
 export TEST_APP_LOADBALANCER_SVCS="${TEST_APP_LOADBALANCER_SVCS:-false}"
 
-# DockerHub account credentials are required since the demo scripts need to
-# build and push demo images to a registry so that the images can then be
-# pulled by KinD.
+# You can choose to have the scripts create a local, insecure Docker registry
+# for pushing/pulling pod images by exporting the following:
+#     export USE_DOCKER_LOCAL_REGISTRY=true
+# Or you can use a public Docker registry (e.g. DockerHub) by exporting
+# your Docker credentials.
 #
-# These should be configured/customized in customize.env
+# These can be configured/customized in customize.env
 export USE_DOCKER_LOCAL_REGISTRY="${USE_DOCKER_LOCAL_REGISTRY:-true}"
-export DOCKER_REGISTRY_URL="${DOCKER_REGISTRY_URL:-localhost:5000}"
+export DOCKER_LOCAL_REGISTRY_NAME="${DOCKER_LOCAL_REGISTRY_NAME:-kind-registry}"
+export DOCKER_LOCAL_REGISTRY_PORT="${DOCKER_LOCAL_REGISTRY_PORT:-5000}"
+export DOCKER_REGISTRY_URL="${DOCKER_REGISTRY_URL:-localhost:$DOCKER_LOCAL_REGISTRY_PORT}"
 if [[ "USE_DOCKER_LOCAL_REGISTRY" == "false" ]]; then
   check_env_var "DOCKER_REGISTRY_URL"
   check_env_var "DOCKER_REGISTRY_PATH"

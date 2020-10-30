@@ -166,14 +166,20 @@ demo scripts are run. You can do this by either modifying the existing
 `customize.env` file, or creating your own copy to modify and using
 the `-c <customization-file>` command line argument for the `start` script.
 
-#### Providing Docker Registry Credentials
+#### Configuring a Docker Registry
 
-Because the Kubernetes Conjur Demo scripts build and push several demo
-container images to a Docker registry, you will need to provide Docker
-registry credentials for the scripts to use.
+Kubernetes Conjur Demo scripts build and push several demo container images
+to a Docker registry so that they can then be pulled by KinD. You can choose
+to have the scripts create and use a local, insecure Docker registry
+by exporting the following:
 
-This is done by uncommenting the following lines in `customize.env`
-and substituting your Docker credentials:
+```
+     export USE_DOCKER_LOCAL_REGISTRY=true
+```
+
+Or you can use a public Docker registry (e.g. DockerHub) by providing
+your Docker credentials. This is done by uncommenting the following lines
+in `customize.env` and substituting your Docker credentials:
 
 ```
 #export DOCKER_REGISTRY_URL="docker.io"
@@ -288,7 +294,6 @@ HELM_RELEASE=conjur-oss
 helm upgrade \
      -n "$CONJUR_NAMESPACE" \
      --reuse-values \
-     --recreate-pods \
      --set logLevel=debug \
      "$HELM_RELEASE" \
      ./conjur-oss
