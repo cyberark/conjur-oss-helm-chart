@@ -26,8 +26,9 @@ export TEST_APP_LOADBALANCER_SVCS="${TEST_APP_LOADBALANCER_SVCS:-false}"
 # pulled by KinD.
 #
 # These should be configured/customized in customize.env
-export CREATE_DOCKER_INTERNAL_REGISTRY="${CREATE_DOCKER_INTERNAL_REGISTRY:-true}"
-if [[ "CREATE_DOCKER_INTERNAL_REGISTRY" == "false" ]]; then
+export USE_DOCKER_LOCAL_REGISTRY="${USE_DOCKER_LOCAL_REGISTRY:-true}"
+export DOCKER_REGISTRY_URL="${DOCKER_REGISTRY_URL:-localhost:5000}"
+if [[ "USE_DOCKER_LOCAL_REGISTRY" == "false" ]]; then
   check_env_var "DOCKER_REGISTRY_URL"
   check_env_var "DOCKER_REGISTRY_PATH"
   check_env_var "DOCKER_USERNAME"

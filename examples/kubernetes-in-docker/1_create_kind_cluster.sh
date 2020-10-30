@@ -24,7 +24,7 @@ fi
 # Check if KinD cluster has already been created
 if [ "$(kind get clusters | grep "^$KIND_CLUSTER_NAME$")" = "$KIND_CLUSTER_NAME" ]; then
   echo "KinD cluster '$KIND_CLUSTER_NAME' already exists. Skipping cluster creation."
-elif [[ $CREATE_DOCKER_INTERNAL_REGISTRY == "true" ]]; then 
+elif [[ $USE_DOCKER_LOCAL_REGISTRY == "true" ]]; then 
   announce "Creating KinD Cluster with local registry"
   
   reg_name='kind-registry'
