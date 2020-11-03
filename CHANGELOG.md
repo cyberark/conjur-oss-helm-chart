@@ -18,12 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   the name of the account. [cyberark/conjur-oss-helm-chart#77](https://github.com/cyberark/conjur-oss-helm-chart/issues/78)
 
 ### Deprecated
-- The `rbac.create` chart value is now deprecated. This value will be replaced 
-  in the next major release with two separate settings:
-  - `rbac.createClusterRole`        (defaulting to true)
-  - `rbac.createClusterRoleBinding` (defaulting to false)
-  and the use of `RoleBindings` will be recommended over using
-  `ClusterRoleBinding`.
+- The `rbac.create` chart value is now deprecated. This value will be replaced in the next major
+  release with two separate settings: `rbac.createClusterRole` (defaulting to true) and
+  `rbac.createClusterRoleBinding` (defaulting to false). Though `ClusterRole` creation will continue
+  to be supported, we recommend users migrate to using `RoleBindings` at application deploy time
+  rather than relying on overprivileged `ClusterRoleBindings`.
 
 ## [v2.0.0] - 2020-06-18
 
