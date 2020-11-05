@@ -19,6 +19,7 @@ export AUTHENTICATOR_ID="${AUTHENTICATOR_ID:-my-authenticator-id}"
 export CONJUR_OSS_HELM_INSTALLED="${CONJUR_OSS_HELM_INSTALLED:-true}"
 
 # KinD specific specific setting for demo scripts
+export CONJUR_LOADBALANCER_SVCS="${CONJUR_LOADBALANCER_SVCS:-false}"
 export TEST_APP_LOADBALANCER_SVCS="${TEST_APP_LOADBALANCER_SVCS:-false}"
 
 # You can choose to have the scripts create a local, insecure Docker registry

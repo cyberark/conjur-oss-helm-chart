@@ -16,14 +16,12 @@ if grep -q "$authenticators" <<< "$AUTHENTICATOR_ID"; then
        --reuse-values \
        --set authenticators="authn\,authn-k8s/$AUTHENTICATOR_ID" \
        --set logLevel="$CONJUR_LOG_LEVEL" \
+       --wait \
+       --timeout 300s \
        "$HELM_RELEASE" \
        ../../conjur-oss
 
-  # Pause to let Helm begin to terminate existing pods as a result
-  # of Helm upgrade
-  sleep 5
-
-  # Wait for Conjur master pod to have both containers ready
+  # Wait for Conjur pods become ready
   wait_for_conjur_ready
 
 else
