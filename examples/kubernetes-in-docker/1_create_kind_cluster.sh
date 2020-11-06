@@ -22,7 +22,7 @@ if ! meets_min_version $kind_version $min_kind_version; then
 fi
 
 registry_container_is_running() {
-  "$(docker inspect -f '{{.State.Running}}' $DOCKER_LOCAL_REGISTRY_NAME 2>/dev/null || true)"
+  docker inspect -f '{{.State.Running}}' $DOCKER_LOCAL_REGISTRY_NAME 2>/dev/null
 }
  
 # Check if KinD cluster has already been created
@@ -46,6 +46,10 @@ elif [[ $USE_DOCKER_LOCAL_REGISTRY == "true" ]]; then
     
   # create registry container unless it already exists
   if ! registry_container_is_running; then
+    echo "Creating a registry container"
+    # Create a Docker network named 'kind' if not already created
+    docker network inspect kind >/dev/null 2>&1 || \
+      docker network create kind
     docker run \
       -d --restart=always -p "${reg_port}:${reg_port}" --name "${reg_name}" --net=kind \
       registry:2

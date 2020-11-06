@@ -56,10 +56,8 @@ if [ $HELM_INSTALL_CONJUR = "true" ]; then
   announce "Helm installing/upgrading Conjur OSS cluster"
   ./2_helm_install_or_upgrade_conjur.sh
 
-  # Pause to let Helm begin to terminate existing pods for the
-  # Helm upgrade case
-  sleep 5
-
+  # Wait for Conjur pods to become ready (just in case there are old
+  # Conjur pods getting terminated as part of Helm upgrade)
   announce "Waiting for Conjur to become ready"
   wait_for_conjur_ready
 fi

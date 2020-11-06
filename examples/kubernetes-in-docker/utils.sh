@@ -19,6 +19,10 @@ conjur_master_labels() {
     echo "app=conjur-oss,release=$HELM_RELEASE"
 }
 
+conjur_postgres_labels() {
+    echo "app=conjur-oss-postgres,release=$HELM_RELEASE"
+}
+
 get_master_pod_name() {
   pod_name=$(kubectl get pods \
              -n "$CONJUR_NAMESPACE" \
@@ -64,18 +68,16 @@ wait_for_it() {
 }
 
 wait_for_conjur_ready() {
-  # Wait for Conjur master pod to reach Running status
-  wait_for_it 300 "kubectl get pods \
+  echo "Waiting for Conjur pod to be ready"
+  kubectl wait --for=condition=ready pod \
                      -n $CONJUR_NAMESPACE \
                      -l "$(conjur_master_labels)" \
-                     -o jsonpath="{.items[0].status.phase}" \
-                   | grep -q Running"
-  # Wait for both containers to be ready in Conjur master pod
-  wait_for_it 300 "kubectl describe pod \
+                     --timeout 300s
+  echo "Waiting for Postgres pod to be ready"
+  kubectl wait --for=condition=ready pod \
                      -n $CONJUR_NAMESPACE \
-                     -l "$(conjur_master_labels)" \
-                   | grep ContainersReady \
-                   | grep -q True"
+                     -l "$(conjur_postgres_labels)" \
+                     --timeout 300s
 }
 
 oldest_version() {
