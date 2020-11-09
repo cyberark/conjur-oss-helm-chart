@@ -64,7 +64,7 @@ deployment:
 image:
   pullPolicy: Always
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
-  tag: 1.5
+  tag: '1.5'
 
 nginx:
   image:
