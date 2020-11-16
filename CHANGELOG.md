@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Changed
+- Image `tag` values must now include surrouding quotes when they are
+  set in a values.yaml file. Arbitrary tag strings are allowed now
+  (e.g. "latest" is allowable).
+
 ## [v2.0.1] - 2020-10-30
 
 ### Added
