@@ -145,7 +145,7 @@ $  CONJUR_NAMESPACE=my-conjur-namespace
 $  kubectl create namespace "$CONJUR_NAMESPACE"
 $  DATA_KEY="$(docker run --rm cyberark/conjur data-key generate)"
 $  HELM_ARGS="--set dataKey=$DATA_KEY \
-              --set image.tag=1.5.1 \
+              --set image.tag=1.11.0 \
               --set image.pullPolicy=IfNotPresent \
               --set ssl.hostname=custom.domainname.com
 $  helm install \
@@ -170,7 +170,7 @@ authenticators: "authn-k8s/minikube,authn"
 dataKey: $DATA_KEY
 
 image:
-  tag: "1.5.1"
+  tag: "1.11.0"
   pullPolicy: IfNotPresent
 
 ssl:
@@ -340,7 +340,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
 |`deployment.annotations`|Annotations for Conjur deployment|`{}`|
 |`image.repository`|Conjur Docker image repository|`"cyberark/conjur"`|
-|`image.tag`|Conjur Docker image tag|`"1.5"`|
+|`image.tag`|Conjur Docker image tag|`"1.10"`|
 |`image.pullPolicy`|Pull policy for Conjur Docker image|`"Always"`|
 |`logLevel`|Conjur log level. Set to 'debug' to enable detailed debug logs in the Conjur container |`"info"`|
 |`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
@@ -348,7 +348,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
-|`postgres.image.tag`|postgres Docker image tag|`"10.12"`|
+|`postgres.image.tag`|postgres Docker image tag|`"10.14"`|
 |`postgres.persistentVolume.create`|Create a peristent volume to back the PostgreSQL data|`true`|
 |`postgres.persistentVolume.size`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
 |`postgres.persistentVolume.storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|

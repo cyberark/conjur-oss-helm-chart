@@ -64,7 +64,7 @@ deployment:
 image:
   pullPolicy: Always
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
-  tag: '1.5'
+  tag: '1.10'
 
 nginx:
   image:
@@ -80,7 +80,7 @@ postgres:
   image:
     pullPolicy: Always
     repository: postgres       # https://hub.docker.com/_/postgres/
-    tag: '10.12'
+    tag: '10.14'
   persistentVolume:
     create: true
     size: 8Gi
