@@ -148,27 +148,14 @@ to access application-specific secrets from Conjur.
    Conjur security policy, and deploy several instances of the `Pet Store`
    applications that use Conjur Kubernetes authentication.
 
-   If everything is successful, you should see the following verification
-   of Conjur secrets being retrieved by the application instances:
+   If everything is successful, you should see the following message:
 
    ```sh-session
-           Querying init app
+   ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-           [{"id":1,"name":"Mr. Init"},{"id":2,"name":"Mr. Init"}]
+   Deployment of Conjur and demo applications is complete!
 
-           Querying init app with hosts outside apps
-
-           [{"id":1,"name":"Mr. Init"},{"id":2,"name":"Mr. Init"}]
-
-           Querying sidecar app
-
-           [{"id":1,"name":"Mr. Sidecar"}]
-
-           Querying secretless app
-
-           [{"id":1,"name":"Mr. Secretless"}]
-
-           Stopping all port-forwarding
+   ++++++++++++++++++++++++++++++++++++++++++++++++++++
    ```
 
 ## Behind the Scenes: So What Did this Demo Just Do?
@@ -449,8 +436,10 @@ In this case, there are two authenticators enabled:
 
 #### Conjur CLI Pod
 
-For convenience (and for loading Conjur policy), the demo scripts create a
-Conjur CLI deployment in the `conjur-oss` namespace:
+For convenience, the demo scripts create a `conjur-cli` deployment in the
+`conjur-oss` namespace. This makes it easy to run
+[Conjur CLI](https://docs.conjur.org/latest/en/Content/Tools/CLI_Help.htm)
+commands to configure the Conjur cluster:
 
 ```sh-session
     $ kubectl get pods -n conjur-oss -l app=conjur-cli
@@ -459,23 +448,57 @@ Conjur CLI deployment in the `conjur-oss` namespace:
     $
 ```
 
-The Conjur-CLI pod can be used to execute Conjur commands against the
-Conjur server by first running the following:
+To run
+[Conjur CLI](https://docs.conjur.org/latest/en/Content/Tools/CLI_Help.htm)
+commands, first initialized the Conjur CLI pod's connection with
+Conjur as follows:
 
 ```
-    export CONJUR_ACCOUNT=myConjurAccount
-    export CONJUR_POD="$(kubectl get pod -n conjur-oss -l app=conjur-oss \
-            -o jsonpath='{.items[0].metadata.name}')"
-    export CLI_POD="$(kubectl get pods -n conjur-oss -l app=conjur-cli \
-            -o jsonpath='{.items[0].metadata.name}')"
-    ADMIN_PASSWORD="$(kubectl exec -n conjur-oss $CONJUR_POD -c conjur-oss \
-            -- conjurctl role retrieve-key $CONJUR_ACCOUNT:user:admin | tail -1)"
-    kubectl exec -n conjur-oss $CLI_POD -- conjur authn login -u admin -p $ADMIN_PASSWORD 
-    export CONJUR_CMD="kubectl exec -n conjur-oss $CLI_POD -- conjur"
+# Retrieve Conjur admin password
+CONJUR_POD="$(kubectl get pods -n conjur-oss -l app=conjur-oss \
+        -o jsonpath='{.items[0].metadata.name}')"
+CONJUR_ACCOUNT="$(kubectl exec -n conjur-oss $CONJUR_POD -c conjur-oss \
+        -- printenv \
+        | grep CONJUR_ACCOUNT \
+        | sed 's/.*=//')"
+ADMIN_PASSWORD="$(kubectl exec -n conjur-oss $CONJUR_POD -c conjur-oss \
+        -- conjurctl role retrieve-key $CONJUR_ACCOUNT:user:admin | tail -1)"
+
+# Initialize the Conjur CLI pod's connection to Conjur
+export CLI_POD="$(kubectl get pods -n conjur-oss -l app=conjur-cli \
+        -o jsonpath='{.items[0].metadata.name}')"
+CONJUR_URL="https://conjur-oss.conjur-oss.svc.cluster.local"
+kubectl exec -n conjur-oss $CLI_POD \
+        -- bash -c "yes yes | conjur init -a $CONJUR_ACCOUNT -u $CONJUR_URL"
+kubectl exec -n conjur-oss $CLI_POD -- conjur authn login \
+        -u admin -p $ADMIN_PASSWORD
 ```
 
-After that initial setup, Conjur commands can be executed using the `$CONJUR_CMD`
-environment. For example:
+And then create a `conjur` alias if your shell supports aliases:
+
+```
+# Create a 'conjur' command alias
+alias conjur="kubectl exec -n conjur-oss $CLI_POD -- conjur"
+```
+
+Or export a `CONJUR_CMD` environment variable if your shell does not
+support aliases:
+
+```
+# Create a 'conjur' command alias
+export CONJUR_CMD="kubectl exec -n conjur-oss $CLI_POD -- conjur"
+```
+
+After that initial setup, Conjur commands can be executed using the `conjur`
+command alias, if you've created one:
+
+```sh-session
+    $ conjur list variables | grep alice
+      "myConjurAccount:user:alice",
+    $
+```
+
+Or by using the `CONJUR_CMD` environment variable:
 
 ```sh-session
     $ $CONJUR_CMD list variables | grep alice
