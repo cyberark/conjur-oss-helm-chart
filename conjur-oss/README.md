@@ -242,6 +242,9 @@ setting the equivalent field in a custom values.yaml file):
       --set database.url=<your-database-connection-string>
 ```
 
+The format of a Postgres database connection string is documented
+[here](https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNSTRING).
+
 If this chart value is not explicitly set, then an integrated Postgres
 database will be deployed along with Conjur.
 
@@ -333,7 +336,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`account.create`|If true, a Conjur account is created automatically after installation|`false`|
 |`authenticators`|List of authenticators that Conjur will whitelist and load.|`"authn"`|
 |`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
-|`database.url`|PostgreSQL connection string. If left blank, an integrated PostgreSQL deployment is created.|`""`|
+|`database.url`|PostgreSQL connection string. The format is documented [here](https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNSTRING). If left blank, an integrated PostgreSQL deployment is created.|`""`|
 |`database.password`|PostgreSQL database password string. Unused if an external Postgres database is configured. See [PostgreSQL Database Password Restrictions](#postgresql-database-password-restrictions) below.|`""`|
 |`database.ssl.Cert`|PostgreSQL TLS x509 certificate, base64 encoded.|`""`|
 |`database.ssl.key`|PostgreSQL TLS private key, base64 encoded.|`""`|
