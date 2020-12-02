@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 ### Changed
-- Default Conjur version is upgraded from 1.5 to 1.10. Default Postgres
+- Default Conjur version is upgraded from 1.5 to 1.11. Default Postgres
   version is upgraded from 10.12 to 10.14.
+  [cyberark/conjur-oss-helm-chart#112](https://github.com/cyberark/conjur-oss-helm-chart/issues/112),
+  [cyberark/conjur-oss-helm-chart#108](https://github.com/cyberark/conjur-oss-helm-chart/issues/108)
 - Image `tag` values must now include surrouding quotes when they are
   set in a values.yaml file. Arbitrary tag strings are allowed now
   (e.g. "latest" is allowable).
+  [cyberark/conjur-oss-helm-chart#106](https://github.com/cyberark/conjur-oss-helm-chart/issues/106)
 
 ## [v2.0.1] - 2020-10-30
 

@@ -13,6 +13,17 @@ any additional information for contributing code to this project.
 
 ## Releasing
 
+### Upgrading Conjur version
+
+To upgrade the default Conjur version used by this chart, you will need to
+update the following files:
+- Update the [README](./conjur-oss/README.md) to change the default value for
+  `image.tag` in the [Configuration table](./conjur-oss/README.md#configuration)
+- Update the `tag` value for the `cyberark/conjur` image in
+  [conjur-oss/values.yaml](./conjur-oss/values.yaml)
+
+### Creating a new release
+
 To release a new version of this chart:
 - Make the appropriate changes
 - Update the version number in [`conjur-oss/Chart.yaml`](conjur-oss/Chart.yaml)

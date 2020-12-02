@@ -340,7 +340,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
 |`deployment.annotations`|Annotations for Conjur deployment|`{}`|
 |`image.repository`|Conjur Docker image repository|`"cyberark/conjur"`|
-|`image.tag`|Conjur Docker image tag|`"1.10"`|
+|`image.tag`|Conjur Docker image tag|`"1.11.1"`|
 |`image.pullPolicy`|Pull policy for Conjur Docker image|`"Always"`|
 |`logLevel`|Conjur log level. Set to 'debug' to enable detailed debug logs in the Conjur container |`"info"`|
 |`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
