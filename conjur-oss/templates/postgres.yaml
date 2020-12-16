@@ -1,4 +1,4 @@
-{{ if eq .Values.database.url "" }}
+{{- if and (not .Values.openshift.enabled) (eq .Values.database.url "")}}
 ---
 apiVersion: v1
 kind: Service
@@ -47,7 +47,7 @@ spec:
       securityContext:
         fsGroup: 999
       containers:
-      - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+      - image: "{{ .Values.postgres.image.kubernetes.repository }}:{{ .Values.postgres.image.kubernetes.tag }}"
         imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
         name: postgres
         args: ["-c", "ssl=on", "-c", "ssl_cert_file=/etc/certs/tls.crt", "-c", "ssl_key_file=/etc/certs/tls.key"]

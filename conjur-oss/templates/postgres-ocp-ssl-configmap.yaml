@@ -1,0 +1,13 @@
+{{- if .Values.openshift.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-conjur-postgres-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  postgres_ssl: {{ tpl (.Files.Get "files/postgres-ssl.conf") . | quote }}
+{{- end -}}

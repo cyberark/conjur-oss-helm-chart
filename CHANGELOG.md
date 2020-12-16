@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [v2.0.3] - 2020-12-21
+
+### Added
+- The Conjur OSS helm chart has Community support for deploying Conjur OSS to OpenShift 4.x
+  [cyberark/conjur-oss-helm-chart#60](https://github.com/cyberark/conjur-oss-helm-chart/issues/60)
+
 ## [v2.0.2] - 2020-12-02
 
 ### Changed

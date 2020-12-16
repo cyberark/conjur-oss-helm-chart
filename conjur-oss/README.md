@@ -17,6 +17,7 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
 - [Prerequisites and Guidelines](#prerequisites-and-guidelines)
 - [Installing the Chart](#installing-the-chart)
   * [Simple Install](#simple-install)
+  * [Installation on OCP](#installation-on-ocp)
   * [Custom Installation](#custom-installation)
     + [Example: Installation Using Command Line Arguments](#example-installation-using-command-line-arguments)
     + [Example: Installation Using Custom YAML File](#example-installation-using-custom-yaml-file)
@@ -48,9 +49,9 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
   * Kubernetes and Helm access to the cluster/namespace is limited to
     security administrators via Role-Based Access Control (RBAC).
 - Kubernetes 1.7+
+- OCP 4.x+ (**Preliminary [Community level](https://github.com/cyberark/community/blob/master/Conjur/conventions/certification-levels.md#community) support only**)
 - Helm v3+. The chart may work with older versions of
   Helm but that deployment isn't specifically supported.
-- Installation on OpenShift is not currently supported.
 - It is recommended that auto-upgrades of Kubernetes version not be
   used in the Kubernetes platform in which Conjur is deployed. Kubernetes
   version upgrades should be done in concert with Conjur version upgrades
@@ -107,6 +108,24 @@ $  helm install \
    "$HELM_RELEASE" \
    ./conjur-oss
 ```
+
+### Installation on OCP
+
+To install Conjur on OCP using the `openshift.enabled=true` value:
+
+```sh-session
+$  CONJUR_NAMESPACE=<conjur-namespace>
+$  oc create namespace "$CONJUR_NAMESPACE"
+$  DATA_KEY="$(docker run --rm cyberark/conjur data-key generate)"
+$  HELM_RELEASE=<helm-release>
+$  helm install \
+   -n "$CONJUR_NAMESPACE" \
+   --set openshift.enabled=true \
+   --set dataKey="$DATA_KEY" \
+   "$HELM_RELEASE" \
+   https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v<VERSION>/conjur-oss-<VERSION>.tgz
+```
+
 
 ### Custom Installation
 
