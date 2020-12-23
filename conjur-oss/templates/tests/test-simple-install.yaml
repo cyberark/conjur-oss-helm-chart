@@ -32,7 +32,7 @@ spec:
     {{- if not .Values.openshift.enabled }}
     image: "{{ .Values.image.kubernetes.repository }}:{{ .Values.image.kubernetes.tag }}"
     {{- else }}
-    image: "{{ .Values.image.openshift.repository }}:{{ .Values.openshift.kubernetes.tag }}"
+    image: "{{ .Values.image.openshift.repository }}:{{ .Values.image.openshift.tag }}"
     {{- end }}
     workingDir: "/tools/bats"
     command: ["/tools/bats/bats", "-t", "/tests/run.sh"]

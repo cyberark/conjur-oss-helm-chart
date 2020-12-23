@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - The Conjur OSS helm chart has Community support for deploying Conjur OSS to OpenShift 4.x
   [cyberark/conjur-oss-helm-chart#60](https://github.com/cyberark/conjur-oss-helm-chart/issues/60)
 
+### Fixed
+- Eliminates indefinite Conjur pod crashes that would occur if a Conjur
+  cluster is Helm installed with the automatic Conjur account creation feature
+  enabled (e.g. with `--set account.create=true`), and then the Conjur pod
+  gets restarted for any reason before a Helm upgrade has been performed.
+  [cyberark/conjur-oss-helm-chart#119](https://github.com/cyberark/conjur-oss-helm-chart/issues/119)
+
 ## [v2.0.2] - 2020-12-02
 
 ### Changed
