@@ -1,0 +1,104 @@
+{{- if and (.Values.openshift.enabled) (eq .Values.database.url "")}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    template.openshift.io/expose-uri: postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}
+  name: {{ .Release.Name }}-postgres
+  labels: &AppPostgresServiceLabels
+    app: {{ template "conjur-oss.name" . }}-postgres
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- with .Values.postgresLabels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  ports:
+  - name: postgresql
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector: *AppPostgresServiceLabels
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-postgres
+  labels: &AppPostgresLabels
+    app: {{ template "conjur-oss.name" . }}-postgres
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- with .Values.postgresLabels }}
+{{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  serviceName: {{ .Release.Name }}-postgres
+  replicas: 1
+  selector:
+    matchLabels: *AppPostgresLabels
+  template:
+    metadata:
+      labels: *AppPostgresLabels
+    spec:
+      containers:
+      - image: "{{ .Values.postgres.image.openshift.repository }}:{{ .Values.postgres.image.openshift.tag }}"
+        imagePullPolicy: IfNotPresent
+        name: postgresql
+        env:
+        - name: POSTGRESQL_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-conjur-database-password
+              key: key
+        livenessProbe:
+          exec:
+            command:
+            - /usr/libexec/check-container
+            - --live
+          initialDelaySeconds: 120
+          timeoutSeconds: 10
+        ports:
+        - containerPort: 5432
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /usr/libexec/check-container
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        securityContext:
+          capabilities: {}
+          privileged: false
+        terminationMessagePath: /dev/termination-log
+        volumeMounts:
+        {{ if .Values.postgres.persistentVolume.create }}
+        - name: postgresql-data
+          mountPath: /var/lib/pgsql/data
+        {{- end }}
+        - name: ssl-certs
+          mountPath: "/opt/app-root/src/certificates"
+          readOnly: true
+        - name: {{ .Release.Name }}-conjur-postgres-configmap-volume
+          mountPath: /opt/app-root/src/postgresql-cfg
+          readOnly: true
+      volumes:
+      {{ if .Values.postgres.persistentVolume.create }}
+      - name: postgresql-data
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-conjur-oss-pvc
+      {{- end }}
+      - name: ssl-certs
+        secret:
+          secretName: {{ .Release.Name }}-conjur-database-ssl
+        # Set file permissions to 0600 (which corresponds to 384 decimal)
+          defaultMode: 384
+      - name: {{ .Release.Name }}-conjur-postgres-configmap-volume
+        configMap:
+          name: {{ .Release.Name }}-conjur-postgres-configmap
+          items:
+            - key: postgres_ssl
+              path: postgres-ssl.conf
+{{- end }}

@@ -62,25 +62,38 @@ deployment:
   annotations: {}
 
 image:
+  kubernetes:
+    repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
+    tag: '1.11.1'
+  openshift:
+    repository: registry.connect.redhat.com/cyberark/conjur
+    tag: latest
   pullPolicy: Always
-  repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
-  tag: '1.11.1'
 
 nginx:
   image:
+    kubernetes:
+      repository: nginx          # https://hub.docker.com/_/nginx/
+      tag: '1.15'
+    openshift:
+      repository: registry.connect.redhat.com/cyberark/conjur-nginx
+      tag: latest
     pullPolicy: Always
-    repository: nginx          # https://hub.docker.com/_/nginx/
-    tag: '1.15'
-
+      
 # nodeSelector (node selection constraints) to apply to the Conjur pod. Refer to:
 # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
 nodeSelector: {}
 
 postgres:
   image:
+    kubernetes:
+      repository: postgres       # https://hub.docker.com/_/postgres/
+      tag: '10.14'
+    openshift:
+      repository: registry.redhat.io/rhscl/postgresql-10-rhel7      # https://catalog.redhat.com/software/containers/rhscl/postgresql-10-rhel7/5aa63541ac3db95f196086f1?container-tabs=overview
+      tag: latest
     pullPolicy: Always
-    repository: postgres       # https://hub.docker.com/_/postgres/
-    tag: '10.14'
+      
   persistentVolume:
     create: true
     size: 8Gi
@@ -168,3 +181,7 @@ serviceAccount:
 # scheduler which nodes should be avoided for Conjur pod placement. See:
 # https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration
 tolerations: []
+
+# Set enabled true for OCP support
+openshift: 
+  enabled: false
