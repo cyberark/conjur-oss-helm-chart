@@ -42,13 +42,13 @@ spec:
     - mountPath: /tools
       name: tools
     - mountPath: /cacert
-      name: {{ .Release.Name }}-test-conjur-ssl-ca-cert-volume
+      name: {{ .Release.Name }}-test-ssl-ca-cert-volume
       readOnly: true
   volumes:
   - name: tests
     configMap:
       name: {{ template "conjur-oss.fullname" . }}-tests
-  - name: {{ .Release.Name }}-test-conjur-ssl-ca-cert-volume
+  - name: {{ .Release.Name }}-test-ssl-ca-cert-volume
     secret:
       secretName: {{ .Release.Name }}-conjur-ssl-ca-cert
       # Permission == 0400. JSON spec doesn’t support octal notation.
