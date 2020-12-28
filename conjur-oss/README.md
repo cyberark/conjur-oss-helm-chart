@@ -361,8 +361,10 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`database.ssl.key`|PostgreSQL TLS private key, base64 encoded.|`""`|
 |`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
 |`deployment.annotations`|Annotations for Conjur deployment|`{}`|
-|`image.repository`|Conjur Docker image repository|`"cyberark/conjur"`|
-|`image.tag`|Conjur Docker image tag|`"1.11.1"`|
+|`image.kubernetes.repository`|Conjur Docker image repository for Kubernetes platforms|`"cyberark/conjur"`|
+|`image.kubernetes.tag`|Conjur Docker image tag for Kubernetes platforms|`"1.11.1"`|
+|`image.openshift.repository`|Conjur Docker image repository for OpenShift platform|`"registry.connect.redhat.com/cyberark/conjur"`|
+|`image.openshift.tag`|Conjur Docker image tag for OpenShift platform|`"latest"`|
 |`image.pullPolicy`|Pull policy for Conjur Docker image|`"Always"`|
 |`logLevel`|Conjur log level. Set to 'debug' to enable detailed debug logs in the Conjur container |`"info"`|
 |`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|

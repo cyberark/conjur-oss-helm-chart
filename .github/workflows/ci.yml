@@ -95,7 +95,7 @@ jobs:
           " | kubectl create -f -
 
           # Initialise
-          helm init --service-account tiller --wait
+          helm init --stable-repo-url https://charts.helm.sh/stable --service-account tiller --wait
 
       - name: Run integration tests
         run: ./test-minimal.sh
