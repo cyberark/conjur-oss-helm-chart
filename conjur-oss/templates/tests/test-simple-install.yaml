@@ -29,11 +29,7 @@ spec:
       name: tools
   containers:
   - name: {{ .Release.Name }}-test
-    {{- if not .Values.openshift.enabled }}
-    image: "{{ .Values.image.kubernetes.repository }}:{{ .Values.image.kubernetes.tag }}"
-    {{- else }}
-    image: "{{ .Values.image.openshift.repository }}:{{ .Values.image.openshift.tag }}"
-    {{- end }}
+    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
     workingDir: "/tools/bats"
     command: ["/tools/bats/bats", "-t", "/tests/run.sh"]
     env:

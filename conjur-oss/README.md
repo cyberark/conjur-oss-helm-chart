@@ -111,7 +111,10 @@ $  helm install \
 
 ### Installation on OCP
 
-To install Conjur on OCP using the `openshift.enabled=true` value:
+To install Conjur on OCP, use the `openshift.enabled=true` value, and
+use images for Conjur, NGINX, and Postgres that are appropriate for an
+OpenShift platform. The following Helm install example includes the default
+values for Conjur, NGINX, Postgres images for deploying on OpenShift:
 
 ```sh-session
 $  CONJUR_NAMESPACE=<conjur-namespace>
@@ -120,6 +123,12 @@ $  DATA_KEY="$(docker run --rm cyberark/conjur data-key generate)"
 $  HELM_RELEASE=<helm-release>
 $  helm install \
    -n "$CONJUR_NAMESPACE" \
+   --set image.repository=registry.connect.redhat.com/cyberark/conjur \
+   --set image.tag=latest \
+   --set nginx.image.repository=registry.connect.redhat.com/cyberark/conjur-nginx \
+   --set nginx.image.tag=latest \
+   --set postgres.image.repository=registry.redhat.io/rhscl/postgresql-10-rhel7 \
+   --set postgres.image.tag=latest \
    --set openshift.enabled=true \
    --set dataKey="$DATA_KEY" \
    "$HELM_RELEASE" \
@@ -361,15 +370,14 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`database.ssl.key`|PostgreSQL TLS private key, base64 encoded.|`""`|
 |`dataKey`|Conjur data key, 32 byte base-64 encoded string for data encryption.|`""`|
 |`deployment.annotations`|Annotations for Conjur deployment|`{}`|
-|`image.kubernetes.repository`|Conjur Docker image repository for Kubernetes platforms|`"cyberark/conjur"`|
-|`image.kubernetes.tag`|Conjur Docker image tag for Kubernetes platforms|`"1.11.1"`|
-|`image.openshift.repository`|Conjur Docker image repository for OpenShift platform|`"registry.connect.redhat.com/cyberark/conjur"`|
-|`image.openshift.tag`|Conjur Docker image tag for OpenShift platform|`"latest"`|
+|`image.repository`|Conjur Docker image repository|`"cyberark/conjur"`|
+|`image.tag`|Conjur Docker image tag|`"1.11.1"`|
 |`image.pullPolicy`|Pull policy for Conjur Docker image|`"Always"`|
 |`logLevel`|Conjur log level. Set to 'debug' to enable detailed debug logs in the Conjur container |`"info"`|
 |`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
 |`nginx.image.tag`|NGINX Docker image tag|`"1.15"`|
 |`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
+|`openshift.enabled`|Indicates that Conjur is to be installed on an OpenShift platform|`false`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
 |`postgres.image.tag`|postgres Docker image tag|`"10.14"`|

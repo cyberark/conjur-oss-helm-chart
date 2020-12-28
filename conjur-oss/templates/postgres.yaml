@@ -47,7 +47,7 @@ spec:
       securityContext:
         fsGroup: 999
       containers:
-      - image: "{{ .Values.postgres.image.kubernetes.repository }}:{{ .Values.postgres.image.kubernetes.tag }}"
+      - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
         imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
         name: postgres
         args: ["-c", "ssl=on", "-c", "ssl_cert_file=/etc/certs/tls.crt", "-c", "ssl_key_file=/etc/certs/tls.key"]

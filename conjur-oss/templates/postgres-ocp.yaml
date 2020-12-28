@@ -44,7 +44,7 @@ spec:
       labels: *AppPostgresLabels
     spec:
       containers:
-      - image: "{{ .Values.postgres.image.openshift.repository }}:{{ .Values.postgres.image.openshift.tag }}"
+      - image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
         imagePullPolicy: IfNotPresent
         name: postgresql
         env:
