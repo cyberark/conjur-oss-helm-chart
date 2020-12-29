@@ -109,14 +109,18 @@ spec:
         {{- end }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- if .Values.account.create }}
-{{- if .Release.IsUpgrade }}
-        # For Helm upgrade, we want to make server startup idempotent, i.e.
-        # tolerant of the chart setting 'account.create=true' being reused.
+        # If the configured account has already been created, then start the
+        # server without account creation. Otherwise, start the server with
+        # account creation.
         command: ["bash"]
-        args: ["-c", "conjurctl server --account={{ .Values.account.name }} || conjurctl server"]
-{{ else }}
-        args: ["server", "--account={{ .Values.account.name }}"]
-{{- end }}
+        args:
+        - -c
+        - |
+           if conjurctl role retrieve-key {{ .Values.account.name }}:user:admin >/dev/null 2>&1; then
+             conjurctl server;
+           else
+             conjurctl server --account={{ .Values.account.name }} | grep -v 'API key for admin:';
+           fi
 {{ else }}
         args: ["server"]
 {{- end }}
