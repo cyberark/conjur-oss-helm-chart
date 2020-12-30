@@ -6,17 +6,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
-## [v2.0.3] - 2020-12-21
+## [v2.0.3] - 2020-12-30
 
 ### Added
-- The Conjur OSS helm chart has Community support for deploying Conjur OSS to OpenShift 4.x
+- The Conjur OSS helm chart has Community support for deploying Conjur OSS to
+  OpenShift 4.x.
   [cyberark/conjur-oss-helm-chart#60](https://github.com/cyberark/conjur-oss-helm-chart/issues/60)
 
+### Changed
+- The default Postgres server version is incremented to 10.15 from 10.14.
+  [cyberark/conjur-oss-helm-chart#120](https://github.com/cyberark/conjur-oss-helm-chart/issues/120)
+
 ### Fixed
-- Eliminates indefinite Conjur pod crashes that would occur if a Conjur
-  cluster is Helm installed with the automatic Conjur account creation feature
-  enabled (e.g. with `--set account.create=true`), and then the Conjur pod
-  gets restarted for any reason before a Helm upgrade has been performed.
+- Conjur pod no longer fails on restarts when the Conjur cluster is helm
+  installed with the automatic Conjur account creation feature enabled (e.g.
+  with `--set account.create=true`). The Conjur startup command is revised to
+  check if the account exists before starting the server with the flag used to
+  create it.
   [cyberark/conjur-oss-helm-chart#119](https://github.com/cyberark/conjur-oss-helm-chart/issues/119)
 
 ## [v2.0.2] - 2020-12-02
