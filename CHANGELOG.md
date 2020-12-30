@@ -137,7 +137,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - First version of chart available.
 
-[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.2...HEAD
+[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.3...HEAD
+[2.0.3]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v1.3.8...v2.0.0
