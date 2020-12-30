@@ -8,6 +8,9 @@ source ./utils.sh
 #
 # This test also enables Helm test logging by default.
 
+# Validate our schema before running tests
+./ci/validate_schema.sh 
+
 export HELM_INSTALL_ARGS="--set service.external.enabled=false \
                    --set postgres.persistentVolume.create=false"
 
