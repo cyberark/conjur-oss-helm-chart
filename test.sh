@@ -4,6 +4,9 @@ set -eo pipefail
 
 source ./utils.sh
 
+# Validate our schema before running tests
+./ci/validate_schema.sh 
+
 # Run Helm test
 #
 # This script does the following in sequence:
