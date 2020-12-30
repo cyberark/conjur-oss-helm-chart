@@ -57,11 +57,7 @@ spec:
       {{- end }}
       containers:
       - name: {{ .Release.Name }}-nginx
-        {{- if not .Values.openshift.enabled }}
-        image: "{{ .Values.nginx.image.kubernetes.repository }}:{{ .Values.nginx.image.kubernetes.tag }}"
-        {{- else }}
-        image: "{{ .Values.nginx.image.openshift.repository }}:{{ .Values.nginx.image.openshift.tag }}"
-        {{- end }}
+        image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
         imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
         ports:
         - containerPort: 9443
@@ -102,11 +98,7 @@ spec:
         {{- end }}
 
       - name: {{ .Chart.Name }}
-        {{- if not .Values.openshift.enabled }}
-        image: "{{ .Values.image.kubernetes.repository }}:{{ .Values.image.kubernetes.tag }}"
-        {{- else }}
-        image: "{{ .Values.image.openshift.repository }}:{{ .Values.image.openshift.tag }}"
-        {{- end }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- if .Values.account.create }}
         # If the configured account has already been created, then start the

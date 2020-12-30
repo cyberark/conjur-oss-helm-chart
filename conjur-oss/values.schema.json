@@ -71,25 +71,11 @@
     },
     "image": {
       "properties": {
-        "kubernetes": {
-          "properties": {
-            "repository": {
-              "type": "string"
-            },
-            "tag": {
-              "type": "string"
-            }
-          }
+        "repository": {
+          "type": "string"
         },
-        "openshift": {
-          "properties": {
-            "repository": {
-              "type": "string"
-            },
-            "tag": {
-              "type": "string"
-            }
-          }
+        "tag": {
+          "type": "string"
         },
         "pullPolicy": {
           "type": "string"
@@ -100,31 +86,19 @@
       "properties": {
         "image": {
           "properties": {
-            "kubernetes": {
-              "properties": {
-                "repository": {
-                  "type": "string"
-                },
-                "tag": {
-                  "type": "string"
-                }
-              }
-            },
-            "openshift": {
-              "properties": {
-                "repository": {
-                  "type": "string"
-                },
-                "tag": {
-                  "type": "string"
-                }
-              }
-            },
-            "pullPolicy": {
+            "repository": {
               "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            },
+              "pullPolicy": {
+                "type": "string"
             }
           }
-        },
+        }
+      }
+    },
     "nodeSelector": {
       "type": "object"
     },
@@ -132,25 +106,11 @@
       "properties": {
         "image": {
           "properties": {
-            "kubernetes": {
-              "properties": {
-                "repository": {
-                  "type": "string"
-                },
-                "tag": {
-                  "type": "string"
-                }
-              }
+            "repository": {
+              "type": "string"
             },
-            "openshift": {
-              "properties": {
-                "repository": {
-                  "type": "string"
-                },
-                "tag": {
-                  "type": "string"
-                }
-              }
+            "tag": {
+              "type": "string"
             },
             "pullPolicy": {
               "type": "string"
