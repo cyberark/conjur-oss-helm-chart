@@ -18,6 +18,11 @@ pipeline {
   }
 
   stages {
+    stage('Validate values schema') {
+      steps {
+        sh 'jq . < ./conjur-oss/values.schema.json'
+      }
+    }
 
     stage('GKE Build and Test') {
       environment {
