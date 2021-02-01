@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   check if the account exists before starting the server with the flag used to
   create it.
   [cyberark/conjur-oss-helm-chart#119](https://github.com/cyberark/conjur-oss-helm-chart/issues/119)
+- Kubernetes-in-Docker example scripts no longer fail with undefined
+  DOCKER_REGISTRY_PATH environment variable error.
+  [cyberark/conjur-oss-helm-chart#138](https://github.com/cyberark/conjur-oss-helm-chart/issues/138)
 
 ## [v2.0.2] - 2020-12-02
 
