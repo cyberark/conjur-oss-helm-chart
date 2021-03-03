@@ -10,7 +10,7 @@ conjur_demo_scripts_path="temp/kubernetes-conjur-demo"
 rm -rf "$conjur_demo_scripts_path"
 announce "Cloning Kubernetes Conjur Demo scripts to $conjur_demo_scripts_path"
 mkdir -p temp
-git clone https://github.com/conjurdemos/kubernetes-conjur-demo "$conjur_demo_scripts_path"
+git clone --single-branch --branch add_secrets_provider https://github.com/diverdane/kubernetes-conjur-demo "$conjur_demo_scripts_path"
 
 # Because the kubernetes-conjur-demo scripts use a different naming convention
 # for the Conjur namespace env variable, some translation is required.

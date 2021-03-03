@@ -56,46 +56,8 @@ spec:
               path: sites-enabled/conjur.conf
       {{- end }}
       containers:
-      - name: {{ .Release.Name }}-nginx
-        image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}"
-        imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
-        ports:
-        - containerPort: 9443
-          name: https
-        - containerPort: 9000
-          name: http
-        livenessProbe:
-          httpGet:
-            path: /status
-            scheme: HTTPS
-            port: https
-          initialDelaySeconds: 1
-          periodSeconds: 5
-          timeoutSeconds: 3
-          # 1 seconds * 180 = 3 minutes
-          failureThreshold: 180
-        readinessProbe:
-          httpGet:
-            path: /status
-            scheme: HTTPS
-            port: https
-          initialDelaySeconds: 1
-          periodSeconds: 5
-          timeoutSeconds: 3
-          # 1 seconds * 180 = 3 minutes
-          failureThreshold: 180
-        volumeMounts:
-        - name: {{ .Release.Name }}-conjur-ssl-cert-volume
-          mountPath: /opt/conjur/etc/ssl/cert
-          readOnly: true
-        - name: {{ .Release.Name }}-conjur-ssl-ca-cert-volume
-          mountPath: /opt/conjur/etc/ssl/ca
-          readOnly: true
-        {{- if not .Values.openshift.enabled }}
-        - name: {{ .Release.Name }}-conjur-configmap-volume
-          mountPath: /etc/nginx
-          readOnly: true
-        {{- end }}
+      # Include reverse proxy sidecar
+      {{ ( tpl (.Files.Get "reverse-proxies/nginx/sidecars.yml") . ) | indent 6 }}
 
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

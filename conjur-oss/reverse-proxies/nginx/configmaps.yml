@@ -1,0 +1,16 @@
+{{- if not .Values.openshift.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-conjur-nginx-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+    chart: {{ template "conjur-oss.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  nginx_conf: {{ tpl (.Files.Get "files/nginx.conf") . | quote }}
+  mime_types: {{ tpl (.Files.Get "files/mime.types") . | quote }}
+  conjur_site: {{ tpl (.Files.Get "files/conjur.conf") . | quote }}
+  dhparams: {{ tpl (.Files.Get "files/dhparams.pem") . | quote }}
+{{- end -}}

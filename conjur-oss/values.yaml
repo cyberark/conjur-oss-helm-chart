@@ -71,6 +71,8 @@ image:
   tag: '1.11.1'
   pullPolicy: Always
 
+reverseProxy: nginx
+
 nginx:
   image:
     # NOTE: For OpenShift deployments, the default values to use for the

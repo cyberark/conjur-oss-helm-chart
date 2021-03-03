@@ -1,0 +1,13 @@
+volumes:
+- name: {{ .Release.Name }}-conjur-configmap-volume
+  configMap:
+    name: {{ .Release.Name }}-conjur-nginx-configmap
+    items:
+      - key: nginx_conf
+        path: nginx.conf
+      - key: mime_types
+        path: mime.types
+      - key: dhparams
+        path: dhparams.pem
+      - key: conjur_site
+        path: sites-enabled/conjur.conf
