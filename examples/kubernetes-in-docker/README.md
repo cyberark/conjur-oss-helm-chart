@@ -276,7 +276,7 @@ To view Kubernetes namespaces that have been created on the `kind` cluster:
 ### Exploring the `conjur-oss` Namespace
 
 This demonstration makes use of the
-[Conjur OSS Helm Chart](https://github.com/cyberark/conjur-oss-helm-chart/conjur-oss)
+[Conjur OSS Helm Chart](https://github.com/cyberark/conjur-oss-helm-chart/tree/master/conjur-oss)
 to install a Conjur cluster on the local KinD cluster.
 
 #### Conjur OSS Pods
