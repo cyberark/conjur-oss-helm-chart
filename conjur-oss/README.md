@@ -406,9 +406,9 @@ are Helm installing a Conjur cluster on such a platform, then it is possible
 to install the cluster without persistent storage of Conjur secrets
 configuration and data by using the following chart setting:
 
-    ```
-    --set persistentVolume.create=false
-    ```
+```
+--set postgres.persistentVolume.create=false
+```
 
 Using this flag means that your Conjur policies and secrets will not be
 stored persistently across pod resets, so this is intended to be used
@@ -429,9 +429,9 @@ An alternative to using a software load balancer would be to install the
 Conjur cluster without LoadBalancer support by using the following
 chart setting:
 
-    ```
-    --set service.external.enabled=false
-    ```
+```
+--set service.external.enabled=false
+```
 
 Using this flag will result in a Conjur deployment that uses services of
 type `NodePort` rather then `LoadBalancer`.
