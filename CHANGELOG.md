@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Added
+- Support for deploying Conjur OSS to OpenShift 4.6
+
 ## [v2.0.3] - 2020-12-30
 
 ### Added

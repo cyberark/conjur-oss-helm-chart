@@ -49,7 +49,7 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
   * Kubernetes and Helm access to the cluster/namespace is limited to
     security administrators via Role-Based Access Control (RBAC).
 - Kubernetes 1.7+
-- OCP 4.x+ (**Preliminary [Community level](https://github.com/cyberark/community/blob/master/Conjur/conventions/certification-levels.md#community) support only**)
+- OCP 4.6
 - Helm v3+. The chart may work with older versions of
   Helm but that deployment isn't specifically supported.
 - It is recommended that auto-upgrades of Kubernetes version not be
