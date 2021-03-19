@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Changed
+- The default Postgres server version is incremented to 10.16 from 10.15. [Postgres 10.16](https://www.postgresql.org/docs/10/release-10-16.html)
+
 ## [v2.0.3] - 2020-12-30
 
 ### Added
