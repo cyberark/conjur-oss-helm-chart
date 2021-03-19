@@ -1,8 +1,17 @@
 name: CI
 
 on:
-  # Run this workflow on all push events
+  # Run this on pushes to master
   push:
+    branches:
+    - master
+
+  # Or when PR operations are done
+  pull_request:
+    types:
+    - opened
+    - reopened
+    - synchronize
 
 jobs:
   linter:
