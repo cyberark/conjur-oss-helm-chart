@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 
 ### Added
-- Support for deploying Conjur OSS to OpenShift 4.6
+- Support for deploying Conjur OSS to OpenShift 4.6. With the automated tests added in
+  [conjurdemos/kubernetes-conjur-demo#110](https://github.com/conjurdemos/kubernetes-conjur-demo/issues/110),
+  this helm chart now has [Trusted](https://github.com/cyberark/community/blob/master/Conjur/conventions/certification-levels.md#trusted)
+  support for OpenShift.
+  [cyberark/conjur-oss-helm-chart#140](https://github.com/cyberark/conjur-oss-helm-chart/issues/140)
 
 ## [v2.0.3] - 2020-12-30
 
