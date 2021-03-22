@@ -380,7 +380,7 @@ The following table lists the configurable parameters of the Conjur OSS chart an
 |`openshift.enabled`|Indicates that Conjur is to be installed on an OpenShift platform|`false`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
-|`postgres.image.tag`|postgres Docker image tag|`"10.15"`|
+|`postgres.image.tag`|postgres Docker image tag|`"10.16"`|
 |`postgres.persistentVolume.create`|Create a peristent volume to back the PostgreSQL data|`true`|
 |`postgres.persistentVolume.size`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
 |`postgres.persistentVolume.storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|

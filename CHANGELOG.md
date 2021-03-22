@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   this helm chart now has [Trusted](https://github.com/cyberark/community/blob/master/Conjur/conventions/certification-levels.md#trusted)
   support for OpenShift.
   [cyberark/conjur-oss-helm-chart#140](https://github.com/cyberark/conjur-oss-helm-chart/issues/140)
+### Changed
+- The default Postgres server version is incremented to 10.16 from 10.15. [Postgres 10.16](https://www.postgresql.org/docs/10/release-10-16.html)
 
 ## [v2.0.3] - 2020-12-30
 
