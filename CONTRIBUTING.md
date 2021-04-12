@@ -31,8 +31,9 @@ To release a new version of this chart:
   [Conjur community guidelines](https://github.com/cyberark/community/blob/master/Conjur/CONTRIBUTING.md#tagging)
 - Tag the git history with `v##.##.##` version
 - Create the release on GitHub for that tag
-- Get the helm chart package from the [package action](https://github.com/cyberark/conjur-oss-helm-chart/actions/workflows/package.yml)
-- Upload the package to the GitHub release
+- Get the helm chart package from the [package action](https://github.com/cyberark/conjur-oss-helm-chart/actions/workflows/package.yml) - the
+  `conjur-oss-VERSION.tgz` tarball is in the `package.zip`
+- Upload the tarball to the GitHub release
 - Add the chart to our [Helm charts repo](https://github.com/cyberark/helm-charts)
 
 ## Contributing
