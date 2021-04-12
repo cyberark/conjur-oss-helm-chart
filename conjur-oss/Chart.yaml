@@ -1,7 +1,7 @@
 apiVersion: v1
 name: conjur-oss
 home: https://www.conjur.org
-version: 2.0.3
+version: 2.0.4
 description: A Helm chart for CyberArk Conjur
 icon: https://www.cyberark.com/wp-content/uploads/2015/12/cybr-aim.jpg
 keywords:

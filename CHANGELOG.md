@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [2.0.4] - 2021-04-12
+
 ### Added
 - Support for deploying Conjur OSS to OpenShift 4.6. With the automated tests added in
   [conjurdemos/kubernetes-conjur-demo#110](https://github.com/conjurdemos/kubernetes-conjur-demo/issues/110),
@@ -15,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - The default Postgres server version is incremented to 10.16 from 10.15. [Postgres 10.16](https://www.postgresql.org/docs/10/release-10-16.html)
 
-## [v2.0.3] - 2020-12-30
+## [2.0.3] - 2020-12-30
 
 ### Added
 - The Conjur OSS helm chart has Community support for deploying Conjur OSS to
@@ -37,7 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   DOCKER_REGISTRY_PATH environment variable error.
   [cyberark/conjur-oss-helm-chart#138](https://github.com/cyberark/conjur-oss-helm-chart/issues/138)
 
-## [v2.0.2] - 2020-12-02
+## [2.0.2] - 2020-12-02
 
 ### Changed
 - Default Conjur version is upgraded from 1.5 to 1.11. Default Postgres
@@ -49,7 +51,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   (e.g. "latest" is allowable).
   [cyberark/conjur-oss-helm-chart#106](https://github.com/cyberark/conjur-oss-helm-chart/issues/106)
 
-## [v2.0.1] - 2020-10-30
+## [2.0.1] - 2020-10-30
 
 ### Added
 - `CONJUR_LOG_LEVEL` for the Conjur container can now be configured by setting the
@@ -67,7 +69,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   to be supported, we recommend users migrate to using `RoleBindings` at application deploy time
   rather than relying on overprivileged `ClusterRoleBindings`.
 
-## [v2.0.0] - 2020-06-18
+## [2.0.0] - 2020-06-18
 
 ### Added
 - Adds password authentication for the backend Postgres database connection.
@@ -149,7 +151,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - First version of chart available.
 
-[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.3...HEAD
+[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.4...HEAD
+[2.0.4]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.0...v2.0.1
