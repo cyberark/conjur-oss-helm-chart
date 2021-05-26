@@ -1,9 +1,9 @@
 name: Package Tarballs
 on:
-  # Run this workflow on branch master pushes and tag pushes that match v* (eg. `v1.2.3`)
+  # Run this workflow on branch main pushes and tag pushes that match v* (eg. `v1.2.3`)
   push:
     branch:
-      - 'master'
+      - 'main'
     tags:
       - 'v*'
 

@@ -1,10 +1,10 @@
 name: CI
 
 on:
-  # Run this on pushes to master
+  # Run this on pushes to main
   push:
     branches:
-    - master
+    - main
 
   # Or when PR operations are done
   pull_request:
