@@ -1,58 +1,58 @@
-# Upgrading, Modifying, or Migrating a Conjur OSS Helm Deployment
+# Upgrading, Modifying, or Migrating a Conjur Open Source Helm Deployment
 
 This guide describes how to upgrade, modify, or migrate data from a
-[CyberArk Conjur Open Source](https://www.conjur.org) (Conjur OSS)
+[CyberArk Conjur Open Source](https://www.conjur.org) (Conjur Open Source)
 installation that has been deployed using the
-[Conjur OSS Helm Chart](https://github.com/cyberark/conjur-oss-helm-chart/conjur-oss).
+[Conjur Open Source Helm Chart](https://github.com/cyberark/conjur-oss-helm-chart/conjur-oss).
 
 There are two main scenarios covered in this document:
-- Upgrading/Modifying an existing Conjur OSS Helm release
-- Migrating configuration from an existing Conjur OSS Helm release
-  to a new Conjur OSS Helm Release
+- Upgrading/Modifying an existing Conjur Open Source Helm release
+- Migrating configuration from an existing Conjur Open Source Helm release
+  to a new Conjur Open Source Helm Release
 
-For more details about installing Conjur OSS or contributing to Conjur OSS
+For more details about installing Conjur Open Source or contributing to Conjur Open Source
 Helm chart development, please refer to the
-[Conjur OSS Helm Chart repository](https://github.com/cyberark/conjur-oss-helm-chart/conjur-oss).
+[Conjur Open Source Helm Chart repository](https://github.com/cyberark/conjur-oss-helm-chart/conjur-oss).
 
-To see what Conjur OSS Helm chart configurations can be upgraded/updated,
+To see what Conjur Open Source Helm chart configurations can be upgraded/updated,
 please refer to the [Configuration](README.md#configuration) section of
-the Conjur OSS Helm chart [README.md](README.md) file.
+the Conjur Open Source Helm chart [README.md](README.md) file.
 
 ---
 
 ## Table of Contents
 
 - [Prerequisites and Guidelines](#prerequisites-and-guidelines)
-- [Upgrading/Modifying a Conjur OSS Helm Release](#upgradingmodifying-a-conjur-oss-helm-release)
+- [Upgrading/Modifying a Conjur Open Source Helm Release](#upgradingmodifying-a-conjur-open-source-helm-release)
   * [Running Helm Upgrade](#running-helm-upgrade)
     + [Example: Upgrading Conjur Version](#example-upgrading-conjur-version)
     + [Example: Upgrading NGINX Version](#example-upgrading-nginx-version)
   * [Rotating the SSL Certificate for an Integrated Postgres Database](#rotating-the-ssl-certificate-for-an-integrated-postgres-database)
   * [Rotating the Conjur SSL CA and Access Certificates](#rotating-the-conjur-ssl-ca-and-access-certificates)
   * [Updating the Database URL for an External Postgres Database](#updating-the-database-url-for-an-external-postgres-database)
-- [Migrating Conjur OSS Configuration to a New Conjur OSS Helm Release](#migrating-conjur-oss-configuration-to-a-new-conjur-oss-helm-release)
+- [Migrating Conjur Open Source Configuration to a New Conjur Open Source Helm Release](#migrating-conjur-oss-configuration-to-a-new-conjur-open-source-helm-release)
   * [Overview](#overview)
   * [Assumptions and Limitations](#assumptions-and-limitations)
-  * [Migrating Conjur OSS Configuration With Integrated Postgres Database](#migrating-conjur-oss-configuration-with-integrated-postgres-database)
+  * [Migrating Conjur Open Source Configuration With Integrated Postgres Database](#migrating-conjur-open-source-configuration-with-integrated-postgres-database)
     + [Step 1: Save Helm State and Kubernetes Secrets Data](#step-1-save-helm-state-and-kubernetes-secrets-data)
     + [Step 2: Save Postgres Database State](#step-2-save-postgres-database-state)
-    + [Step 3: Uninstall Original Conjur OSS Helm Release](#step-3-uninstall-original-conjur-oss-helm-release)
-    + [Step 4: Helm Install a New Conjur OSS Deployment](#step-4-helm-install-a-new-conjur-oss-deployment)
+    + [Step 3: Uninstall Original Conjur Open Source Helm Release](#step-3-uninstall-original-conjur-open-source-helm-release)
+    + [Step 4: Helm Install a New Conjur Open Source Deployment](#step-4-helm-install-a-new-conjur-open-source-deployment)
     + [Step 5: Restore the Postgres Database](#step-5-restore-the-postgres-database)
     + [Step 6: Redeploy helm chart with updated 'replicaCount'](#step-6-redeploy-helm-chart-with-updated-replicaCount)
-  * [Migrating Conjur OSS Configuration With External Postgres Database](#migrating-conjur-oss-configuration-with-external-postgres-database)
+  * [Migrating Conjur Open Source Configuration With External Postgres Database](#migrating-conjur-open-source-configuration-with-external-postgres-database)
     + [Step 1: Save Helm State and Kubernetes Secrets Data](#step-1-save-helm-state-and-kubernetes-secrets-data)
-    + [Step 2: Uninstall Original Conjur OSS Helm Release](#step-2-uninstall-original-conjur-oss-helm-release)
-    + [Step 3: Helm Install a New Conjur OSS Deployment](#step-3-helm-install-a-new-conjur-oss-deployment)
+    + [Step 2: Uninstall Original Conjur Open Source Helm Release](#step-2-uninstall-original-conjur-open-source-helm-release)
+    + [Step 3: Helm Install a New Conjur Open Source Deployment](#step-3-helm-install-a-new-conjur-open-source-deployment)
 
 ## Prerequisites and Guidelines
 
 Please refer to the
 [Prerequisites and Guidelines](README.md#prerequisites-and-guidelines)
-section of Conjur OSS helm chart [README.md](README.md) file for overall
-prerequisites and guidelines for using the Conjur OSS helm chart.
+section of Conjur Open Source helm chart [README.md](README.md) file for overall
+prerequisites and guidelines for using the Conjur Open Source helm chart.
 
-## Upgrading/Modifying a Conjur OSS Helm Release
+## Upgrading/Modifying a Conjur Open Source Helm Release
 
 This Helm chart supports modifications or upgrades of a Conjur deployment via
 `helm upgrade`. There are three upgrade scenarios to consider, depending on
@@ -167,7 +167,7 @@ $  helm upgrade \
 
 ### Rotating the SSL Certificate for an Integrated Postgres Database
 
-If a Helm deployment of Conjur OSS included the deployment of an integrated
+If a Helm deployment of Conjur Open Source included the deployment of an integrated
 Postgres database (i.e. the `database.url` chart value was not explicitly
 set for `helm install`), then `helm upgrade` operations will by default
 preserve the self-signed SSL certificate and key used to access the
@@ -181,7 +181,7 @@ manually updated (or "rotated") as follows:
 2. Delete the Kubernetes secret for the database SSL certificate. (Note:
    this is optional if the current database SSL certificate was set
    explicitly, but mandatory if the SSL certificate and key were
-   auto-generated by the Conjur OSS Helm chart):
+   auto-generated by the Conjur Open Source Helm chart):
 
 ```sh-session
 $  CONJUR_NAMESPACE="<conjur-namespace>"
@@ -279,41 +279,41 @@ $  helm upgrade \
        ./conjur-oss
 ```
 
-## Migrating Conjur OSS Configuration to a New Conjur OSS Helm Release
+## Migrating Conjur Open Source Configuration to a New Conjur Open Source Helm Release
 
 ### Overview
 
 In some cases, it may be desirable to migrate Conjur configuration from
-one Conjur OSS Helm release to a new, separate Helm release. For example,
-you may want to migrate your Conjur OSS deployment to a different
-Kubernetes provider, or you may want to move your Conjur OSS deployment
+one Conjur Open Source Helm release to a new, separate Helm release. For example,
+you may want to migrate your Conjur Open Source deployment to a different
+Kubernetes provider, or you may want to move your Conjur Open Source deployment
 to a more secure Kubernetes environment.
 
 This section provides the steps for extracting Conjur configuration from
-an existing Conjur OSS Helm deployment, and restoring that Conjur configuration
-on a new, separate Conjur OSS Helm deployment.
+an existing Conjur Open Source Helm deployment, and restoring that Conjur configuration
+on a new, separate Conjur Open Source Helm deployment.
 
-The backup operation from the original Conjur OSS deployment involves
-extracting Conjur OSS state from three sources:
+The backup operation from the original Conjur Open Source deployment involves
+extracting Conjur Open Source state from three sources:
 
 - Kubernetes secrets
 - Helm state
 - Postgres database state
 
-The restore operation to the new Conjur OSS deployment involves:
+The restore operation to the new Conjur Open Source deployment involves:
 
 - Running `helm init` to restore Helm state and Kubernetes secrets
 - Postgres restore of Conjur's database state
 
 ### Assumptions and Limitations
 
-- Currently, _the version of Conjur for the new Conjur OSS deployment
+- Currently, _the version of Conjur for the new Conjur Open Source deployment
   **MUST** be the same as the version of Conjur on the original Conjur
   OSS deployment_. (Support for migration to different versions of Conjur
   may be available in the future, but this will require schema translation
   logic that is TBD).
 - For deployments using an integrated Postgres database, _the **major**
-  version of Postgres in the new Conjur OSS deployment must be the
+  version of Postgres in the new Conjur Open Source deployment must be the
   same as the **major** version of Postgres in the original deployment_.
 - For simplicity, the instructions described here will include the
   recreation of only a critical **subset** of Helm state from the old Conjur
@@ -336,10 +336,10 @@ The restore operation to the new Conjur OSS deployment involves:
 - _**All instructions that follow assume that you are in the base of
   https://github.com/cyberark/conjur-oss-helm-chart repo**_
 
-### Migrating Conjur OSS Configuration With Integrated Postgres Database
+### Migrating Conjur Open Source Configuration With Integrated Postgres Database
 
-When a Conjur OSS Helm deployment includes an integrated (internal) Postgres
-database, the procedure for migrating Conjur OSS state to a new Conjur OSS
+When a Conjur Open Source Helm deployment includes an integrated (internal) Postgres
+database, the procedure for migrating Conjur Open Source state to a new Conjur Open Source
 Helm deployment is as follows:
 
 #### Step 1: Save Helm State and Kubernetes Secrets Data
@@ -368,13 +368,13 @@ $  data_key=$(kubectl get secret \
              base64 --decode)
 ```
 
-Next, check your Conjur OSS chart version:
+Next, check your Conjur Open Source chart version:
 
 ```sh-session
 $  helm show chart "$helm_chart_name"| awk '/^version:/{print $2}'
 ```
 
-If your Conjur OSS chart version is 2.0.0 or newer, then you will also need
+If your Conjur Open Source chart version is 2.0.0 or newer, then you will also need
 to store the database password:
 ```sh-session
 $  db_password=$(kubectl get secret \
@@ -404,9 +404,9 @@ $  kubectl exec -it \
 $  kubectl cp -n "$namespace" $postgres_old_pod:dbdump.tar dbdump.tar
 ```
 
-#### Step 3: Uninstall Original Conjur OSS Helm Release
+#### Step 3: Uninstall Original Conjur Open Source Helm Release
 
-Run `helm uninstall ...` to delete the original Conjur OSS Helm release
+Run `helm uninstall ...` to delete the original Conjur Open Source Helm release
 and delete any residual, "self-managed" Kubernetes secrets.
 
 **WARNING: This will remove your old certificates!**
@@ -416,7 +416,7 @@ $  helm uninstall -n "$namespace" $helm_chart_name
 $  kubectl delete secrets -n "$namespace" -l release="$helm_chart_name"
 ```
 
-#### Step 4: Helm Install a New Conjur OSS Deployment
+#### Step 4: Helm Install a New Conjur Open Source Deployment
 
 **WARNING: This will possibly change your external service IP!**
 
@@ -484,10 +484,10 @@ $  helm upgrade -n "$namespace" \
                 ./conjur-oss
 ```
 
-### Migrating Conjur OSS Configuration With External Postgres Database
+### Migrating Conjur Open Source Configuration With External Postgres Database
 
-When a Conjur OSS Helm deployment includes an external Postgres database,
-the procedure for migrating Conjur OSS state to a new Conjur OSS Helm
+When a Conjur Open Source Helm deployment includes an external Postgres database,
+the procedure for migrating Conjur Open Source state to a new Conjur Open Source Helm
 deployment is as follows:
 
 #### Step 1: Save Helm State and Kubernetes Secrets Data
@@ -519,9 +519,9 @@ $  db_url=$(kubectl get secret \
              base64 --decode)
 ```
 
-#### Step 2: Uninstall Original Conjur OSS Helm Release
+#### Step 2: Uninstall Original Conjur Open Source Helm Release
 
-Run `helm uninstall ...` to delete the original Conjur OSS Helm release
+Run `helm uninstall ...` to delete the original Conjur Open Source Helm release
 and delete any residual, "self-managed" Kubernetes secrets.
 
 **WARNING: This will remove your old certificates!**
@@ -531,7 +531,7 @@ $  helm uninstall -n "$namespace" $helm_chart_name
 $  kubectl delete secrets -n "$namespace" -l release="$helm_chart_name"
 ```
 
-#### Step 3: Helm Install a New Conjur OSS Deployment
+#### Step 3: Helm Install a New Conjur Open Source Deployment
 
 **WARNING: This will possibly change your external service IP!**
 

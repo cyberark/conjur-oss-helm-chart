@@ -1,4 +1,4 @@
-# Conjur OSS Helm Chart
+# Conjur Open Source Helm Chart
 
 [CyberArk Conjur Open Source](https://www.conjur.org) is a powerful secrets management solution,
 tailored specifically to the unique infrastructure requirements of
@@ -24,8 +24,8 @@ Conjur Open Source is part of the CyberArk Privileged Access Security Solution w
   * [Configuring Conjur Accounts](#configuring-conjur-accounts)
   * [Installing Conjur with an External Postgres Database](#installing-conjur-with-an-external-postgres-database)
   * [Auto-Generated Configuration](#auto-generated-configuration)
-- [Upgrading, Modifying, or Migrating a Conjur OSS Helm Deployment](#upgrading-modifying-or-migrating-a-conjur-oss-helm-deployment)
-  * [Modifying environment variables for an existing Conjur OSS Helm Deployment](#modifying-environment-variables-for-an-existing-conjur-oss-helm-deployment)
+- [Upgrading, Modifying, or Migrating a Conjur Open Source Helm Deployment](#upgrading-modifying-or-migrating-a-conjur-open-source-helm-deployment)
+  * [Modifying environment variables for an existing Conjur Open Source Helm Deployment](#modifying-environment-variables-for-an-existing-conjur-open-source-helm-deployment)
     + [Example: Changing Log Level](#example-changing-log-level)
 - [Configuration](#configuration)
   * [Deploying Without Persistent Volume Support (e.g. for MiniKube, KataCoda)](#deploying-without-persistent-volume-support-eg-for-minikube-katacoda)
@@ -278,7 +278,7 @@ database will be deployed along with Conjur.
 
 ### Auto-Generated Configuration
 
-By default, a `helm install` of the Conjur OSS helm chart will include
+By default, a `helm install` of the Conjur Open Source helm chart will include
 automatic generation of the following configuration:
 
 - Postgres database password (for integrated Postgres database only).
@@ -320,20 +320,20 @@ automatic generation of the following configuration:
       --set ssl.key=<your-ssl-key>
   ```
 
-## Upgrading, Modifying, or Migrating a Conjur OSS Helm Deployment
+## Upgrading, Modifying, or Migrating a Conjur Open Source Helm Deployment
 
 This Helm chart supports modifications or upgrades of a Conjur deployment via the
 [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/#helm) command. 
 This includes tasks such as rotating SSL certificates.
 
-For details on how to upgrade or modify an existing Conjur OSS Helm deployment,
-or migrate Conjur configuration from on Conjur OSS Helm deployment to a new,
-separate Conjur OSS Helm deployment, please see the
+For details on how to upgrade or modify an existing Conjur Open Source Helm deployment,
+or migrate Conjur configuration from on Conjur Open Source Helm deployment to a new,
+separate Conjur Open Source Helm deployment, please see the
 [UPGRADING.md](UPGRADING.md) markdown file.
 
-### Modifying environment variables for an existing Conjur OSS Helm Deployment
+### Modifying environment variables for an existing Conjur Open Source Helm Deployment
 
-After deploying the Conjur OSS using the helm chart, you may need to add or modify an 
+After deploying the Conjur Open Source using the helm chart, you may need to add or modify an 
 environment variable within the Conjur container. This task can be performed without needing 
 to tear down your existing deployment by using the `helm upgrade` command. 
 
@@ -356,7 +356,7 @@ $  helm upgrade \
 
 ## Configuration
 
-The following table lists the configurable parameters of the Conjur OSS chart and their default values.
+The following table lists the configurable parameters of the Conjur Open Source chart and their default values.
 
 |Parameter|Description|Default|
 |---------|-----------|-------|
@@ -489,13 +489,13 @@ The following restrictions apply to the PostgreSQL database password:
 
 If you are new to Conjur, you may be interested in learning more about how
 Conjur security policy can be configured and an application can
-be deployed that uses Conjur OSS to safely manage secrets data.
+be deployed that uses Conjur Open Source to safely manage secrets data.
 
 This repository contains a set of scripts that can:
 
 - Create a [Kubernetes-in-Docker](https://github.com/kubernetes-sigs/kind)
   (KinD) cluster on your local machine
-- Helm install a Conjur OSS cluster on that KinD cluster
+- Helm install a Conjur Open Source cluster on that KinD cluster
 - Enable the
   [Conjur Kubernetes Authenticator](https://docs.conjur.org/Latest/en/Content/Operations/Services/k8s_auth.htm)
   (authn-k8s) (as a security admin)

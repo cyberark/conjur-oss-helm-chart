@@ -1,4 +1,4 @@
-# All-in-One Demo: Deploy Kubernetes, Conjur OSS, and Applications that Retrieve Secrets Securely
+# All-in-One Demo: Deploy Kubernetes, Conjur Open Source, and Applications that Retrieve Secrets Securely
 
 ## Table of Contents
   * [What This Demonstration Does](#what-this-demonstration-does)
@@ -17,15 +17,15 @@
   * [Enabling Conjur Debug Logging](#enabling-conjur-debug-logging)
   * [Cleaning Up](#cleaning-up)
     + [Deleting the Kubernetes Conjur Demo Applications](#deleting-the-kubernetes-conjur-demo-applications)
-    + [Uninstalling Conjur OSS via Helm Delete](#uninstalling-conjur-oss-via-helm-delete)
+    + [Uninstalling Conjur Open Source via Helm Delete](#uninstalling-conjur-open-source-via-helm-delete)
     + [Deleting the KinD Cluster](#deleting-the-kind-cluster)
 
 ## What This Demonstration Does
 
 The scripts in this directory can be  used to run an "All-in-One"
-demonstration of how Conjur OSS  can be deployed along with a simple
+demonstration of how Conjur Open Source  can be deployed along with a simple
 [Pet Store](https://github.com/conjurdemos/pet-store-demo/) application
-that securely retrieves application-specific secrets from Conjur OSS.
+that securely retrieves application-specific secrets from Conjur Open Source.
 
 It is not necessary for you to have access to a Kubernetes cluster
 before running the scripts. The scripts conveniently create a local,
@@ -121,7 +121,7 @@ to access application-specific secrets from Conjur.
 ## Let's Run the Demo!
 
 1. Clone the
-   [Conjur OSS Helm Chart](https://github.com/cyberark/conjur-oss-helm-chart)
+   [Conjur Open Source Helm Chart](https://github.com/cyberark/conjur-oss-helm-chart)
    GitHub repository, if you haven't done so already.
 
    <details>
@@ -144,7 +144,7 @@ to access application-specific secrets from Conjur.
 
    That's all there is to it!
 
-   The scripts will create a KinD cluster, install Conjur OSS, load
+   The scripts will create a KinD cluster, install Conjur Open Source, load
    Conjur security policy, and deploy several instances of the `Pet Store`
    applications that use Conjur Kubernetes authentication.
 
@@ -164,7 +164,7 @@ If you followed the steps in the previous section, you should now have:
 
 - A local [Kubernetes-in-Docker (KinD)](https://github.com/kubernetes-sigs/kind)
   cluster that is running:
-  - A [Conjur OSS](https://docs.conjur.org/) server, with a peristent
+  - A [Conjur Open Source](https://docs.conjur.org/) server, with a peristent
     Postgresql backend database, that has the
     [Conjur Kubernetes Authenticator](https://docs.conjur.org/Latest/en/Content/Operations/Services/k8s_auth.htm)
     enabled
@@ -220,7 +220,7 @@ into four phases:
 - Platform Admin Tasks:
   - Create a local, containerized, Kubernetes cluster using
     [KinD](https://github.com/kubernetes-sigs/kind) Kubernetes cluster
-  - Helm install Conjur OSS
+  - Helm install Conjur Open Source
 - Security Admin Tasks:
   - Enable the
     [Conjur Kubernetes Authenticator](https://docs.conjur.org/Latest/en/Content/Operations/Services/k8s_auth.htm)
@@ -276,12 +276,12 @@ To view Kubernetes namespaces that have been created on the `kind` cluster:
 ### Exploring the `conjur-oss` Namespace
 
 This demonstration makes use of the
-[Conjur OSS Helm Chart](https://github.com/cyberark/conjur-oss-helm-chart/tree/master/conjur-oss)
+[Conjur Open Source Helm Chart](https://github.com/cyberark/conjur-oss-helm-chart/tree/master/conjur-oss)
 to install a Conjur cluster on the local KinD cluster.
 
-#### Conjur OSS Pods
+#### Conjur Open Source Pods
 
-To view the Conjur OSS cluster pods that are created by the Helm chart, run:
+To view the Conjur Open Source cluster pods that are created by the Helm chart, run:
 
 ```sh-session
     $ kubectl get pods -n conjur-oss -l release=conjur-oss
@@ -291,11 +291,11 @@ To view the Conjur OSS cluster pods that are created by the Helm chart, run:
     $
 ```
 
-The Helm install of Conjur OSS creates a Conjur OSS master pod and
+The Helm install of Conjur Open Source creates a Conjur Open Source master pod and
 a Postgresql pod to serve as a backend database to persistently store
-Conjur OSS policies and secrets.
+Conjur Open Source policies and secrets.
 
-The Conjur OSS master pod contains two containers:
+The Conjur Open Source master pod contains two containers:
 
 ```sh-session
     $ kubectl get pod -n conjur-oss -l app=conjur-oss -o jsonpath='{.items[*].spec.containers[*].name}'
@@ -303,29 +303,29 @@ The Conjur OSS master pod contains two containers:
     $
 ```
 
-The `conjur-oss` container provides the Conjur OSS server functionality,
+The `conjur-oss` container provides the Conjur Open Source server functionality,
 and the `conjur-oss-nginx` container terminates TLS for secure access to
-the Conjur OSS service.
+the Conjur Open Source service.
 
 #### Kubernetes Authentication ClusterRole
 
-The Conjur OSS Helm Chart includes the deployment of a
+The Conjur Open Source Helm Chart includes the deployment of a
 [Kubernetes ClusterRole](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole)
 resource. A Kubernetes `ClusterRole` contains rules that
 enumerate a set of permissions to access various Kubernetes resources.
 
-In this case, the Conjur OSS authentication `ClusterRole` is used to enumerate
+In this case, the Conjur Open Source authentication `ClusterRole` is used to enumerate
 permissions that may be granted to the Conjur Kubernetes Authenticator
 *on a per-namespace basis* to allow the authenticator to authenticate
 applications based upon
 [Conjur application identity](https://docs.conjur.org/Latest/en/Content/Integrations/Kubernetes_AppIdentity.htm?TocPath=Integrations%7COpenShift%252C%20Kubernetes%252C%20and%20GKE%7C_____2).
 
 Note that the permissions that are included in this `ClusterRole`
-do not take effect until the `ClusterRole` is bound to the Conjur OSS
+do not take effect until the `ClusterRole` is bound to the Conjur Open Source
 service account via a namespace-scoped `RoleBinding`, as described in the
 [Demo Application RoleBinding](#demo-application-rolebinding) section below.
 
-To view the Conjur OSS authentication ClusterRole, run:
+To view the Conjur Open Source authentication ClusterRole, run:
 
 ```sh-session
     kubectl get clusterrole -n conjur-oss -l release=conjur-oss -o yaml
@@ -410,7 +410,7 @@ To view the Conjur OSS authentication ClusterRole, run:
 
 #### Viewing Enabled Conjur Authenticator Plugins
 
-Conjur OSS supports several industry-standard
+Conjur Open Source supports several industry-standard
 [authentication types](https://docs.conjur.org/Latest/en/Content/Operations/Services/authentication-types.htm#SupportedAuthenticators).
 Conjur can be configured to use on or a combination of authenticator types.
 
@@ -420,7 +420,7 @@ the Conjur
 applications based upon
 [Conjur Application Identity](https://docs.conjur.org/Latest/en/Content/Integrations/Kubernetes_AppIdentity.htm?TocPath=Integrations%7COpenShift%252C%20Kubernetes%252C%20and%20GKE%7C_____2).
 
-To view the authenticators that are enabled for Conjur OSS, run:
+To view the authenticators that are enabled for Conjur Open Source, run:
 
 ```sh-session
     $ authn_secret=$(kubectl get secret -n conjur-oss | grep authenticators | awk '{print $1}')
@@ -510,7 +510,7 @@ Or by using the `CONJUR_CMD` environment variable:
 
 The demo scripts render several YAML manifest files that define
 application-specific Conjur security policy. These YAML manifest files
-are loaded into the Conjur OSS server to configure which applications
+are loaded into the Conjur Open Source server to configure which applications
 are permitted to access secrets from Conjur.
 
 **After the demo scripts have been run**, it is possible to view the
@@ -754,9 +754,9 @@ Kubernetes resources can be cleaned up by deleting the `app-test` namespace:
 kubectl delete ns app-test
 ```
 
-### Uninstalling Conjur OSS via Helm Delete
+### Uninstalling Conjur Open Source via Helm Delete
 
-To remove the Conjur OSS deployment from your KinD cluster, run the following:
+To remove the Conjur Open Source deployment from your KinD cluster, run the following:
 
 ```sh-session
 CONJUR_NAMESPACE=conjur-oss
