@@ -74,6 +74,26 @@ fi
 DATABASE_USER="postgres"
 DATABASE_PASSWORD="postgres-password"
 
+function dump_debug_info() {
+  announce "Showing summary of Kubernetes objects in $CONJUR_NAMESPACE namespace"
+  kubectl get all -n "$CONJUR_NAMESPACE"
+
+  announce "Showing Conjur OSS Server logs"
+  kubectl logs -l "app=conjur-oss" -c conjur-oss
+
+  announce "Showing Conjur OSS NGINX logs"
+  kubectl logs -l "app=conjur-oss" -c "$RELEASE_NAME"-nginx
+
+  announce "Showing Postgres logs"
+  kubectl logs -l "app=conjur-oss-postgres"
+
+  announce "Showing Kubernetes nodes"
+  kubectl describe nodes
+
+  announce "Showing details of Kubernetes objects in $CONJUR_NAMESPACE namespace"
+  kubectl get all -n "$CONJUR_NAMESPACE" -o yaml
+}
+
 function delete_release() {
   announce "Deleting Conjur Helm release $RELEASE_NAME"
   echo "HELM_DEL_ARGS: $HELM_DEL_ARGS"
@@ -89,6 +109,11 @@ function delete_release() {
   fi
 }
 
+function dump_debug_and_delete_release() {
+  dump_debug_info
+  delete_release
+}
+
 announce "Installing Conjur OSS, waiting until server is ready..."
 data_key="$(docker run --rm cyberark/conjur data-key generate)"
 echo "RELEASE_NAME: $RELEASE_NAME"
@@ -102,17 +127,19 @@ echo "HELM_INSTALL_ARGS: $HELM_INSTALL_ARGS"
 echo "HELM_INSTALL_TIMEOUT: $HELM_INSTALL_TIMEOUT"
 echo "Helm Version: $(helm version)"
 echo "Kubernetes Version: $(kubectl version)"
+trap dump_debug_info EXIT
 helm install --wait \
              --timeout $HELM_INSTALL_TIMEOUT \
              --set "dataKey=$data_key" \
              $HELM_INSTALL_ARGS \
              $RELEASE_ARG \
              ./conjur-oss
-trap delete_release EXIT
+trap dump_debug_and_delete_release EXIT
 
 announce "Running helm tests"
 echo "HELM_TEST_ARGS: $HELM_TEST_ARGS"
 helm test $HELM_TEST_ARGS "$RELEASE_NAME"
+trap delete_release EXIT
 
 if  [[ (! is_helm_v2) && ("$HELM_TEST_LOGGING" == true) ]]; then
   # Test pod log has been displayed, so it's safe to delete the test pod.
