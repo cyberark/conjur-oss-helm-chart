@@ -76,12 +76,12 @@ Generate self-signed certificate for the backend database
 Return the most recent RBAC API available
 */}}
 {{- define "conjur-oss.rbac-api" -}}
-{{- if .Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1beta1" }}
-{{- printf "rbac.authorization.k8s.io/v1beta1" -}}
-{{- else if .Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1alpha1" }}
-{{- printf "rbac.authorization.k8s.io/v1alpha1" -}}
-{{- else }}
+{{- if .Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1" }}
 {{- printf "rbac.authorization.k8s.io/v1" -}}
+{{- else if .Capabilities.APIVersions.Has "rbac.authorization.k8s.io/v1beta1" }}
+{{- printf "rbac.authorization.k8s.io/v1beta1" -}}
+{{- else }}
+{{- printf "rbac.authorization.k8s.io/v1alpha1" -}}
 {{- end }}
 {{- end }}
 
