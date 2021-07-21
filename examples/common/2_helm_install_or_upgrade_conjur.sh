@@ -29,32 +29,38 @@ fi
 # Helm upgrade. Otherwise, do a Helm install of the Conjur cluster.
 if [ "$(helm list -q -n $CONJUR_NAMESPACE | grep "^$HELM_RELEASE$")" = "$HELM_RELEASE" ]; then
   echo "Helm upgrading existing Conjur cluster. Waiting for upgrade to complete."
-  helm upgrade \
-      -n "$CONJUR_NAMESPACE" \
-      --set account.name="$CONJUR_ACCOUNT" \
-      --set account.create="true" \
-      --set authenticators="authn\,authn-k8s/$AUTHENTICATOR_ID" \
-      --set logLevel="$CONJUR_LOG_LEVEL" \
-      --set service.external.enabled="$CONJUR_LOADBALANCER_SVCS" \
-      --reuse-values \
-      --wait \
-      --timeout 300s \
-      "$HELM_RELEASE" \
-      "../../conjur-oss"
+  args=("upgrade" "--reuse-values" )
 else
   # Helm install a Conjur cluster and create a Conjur account
   echo "Helm installing a Conjur cluster. Waiting for install to complete."
   data_key="$(docker run --rm cyberark/conjur data-key generate)"
-  helm install \
-      -n "$CONJUR_NAMESPACE" \
-      --set dataKey="$data_key" \
-      --set account.name="$CONJUR_ACCOUNT" \
-      --set account.create="true" \
-      --set authenticators="authn\,authn-k8s/$AUTHENTICATOR_ID" \
-      --set logLevel="$CONJUR_LOG_LEVEL" \
-      --set service.external.enabled="$CONJUR_LOADBALANCER_SVCS" \
-      --wait \
-      --timeout 300s \
-      "$HELM_RELEASE" \
-      "../../conjur-oss"
+  args=("install" "--set" "dataKey=$data_key" )
 fi
+
+args+=("-n" "$CONJUR_NAMESPACE" \
+      "--set" "account.name=$CONJUR_ACCOUNT" \
+      "--set" "account.create=true" \
+      "--set" "authenticators=authn\,authn-k8s/$AUTHENTICATOR_ID" \
+      "--set" "logLevel=$CONJUR_LOG_LEVEL" \
+      "--set" "service.external.enabled=$CONJUR_LOADBALANCER_SVCS" \
+      "--wait" \
+      "--timeout" "300s" )
+
+if [[ "$PLATFORM" == "openshift" ]]; then
+  args+=("--set" "image.repository=$IMAGE_REPOSITORY" \
+         "--set" "image.tag=$IMAGE_TAG" \
+         "--set" "nginx.image.repository=$NGINX_REPOSITORY" \
+         "--set" "nginx.image.tag=$NGINX_TAG" \
+         "--set" "postgres.image.repository=$POSTGRES_REPOSITORY" \
+         "--set" "postgres.image.tag=$POSTGRES_TAG" \
+         "--set" "postgres.persistentVolume.create=$POSTGRES_PV_CREATE" \
+         "--set" "rbac.create=true" \
+         "--set" "openshift.enabled=$OPENSHIFT_ENABLED" )
+fi
+
+args+=("$HELM_RELEASE" \
+      "../../conjur-oss")
+
+echo "helm" "${args[@]}"
+
+helm "${args[@]}"

@@ -1,0 +1,75 @@
+#!/bin/bash
+
+set -euo pipefail
+
+minimum_kind_version=0.7.0
+
+. utils.sh
+
+print_usage() {
+  echo "Start Conjur Kubernetes demo on Kubernetes-in-Docker (KinD)."
+  echo "This includes:"
+  echo "  - Create a KinD cluster on your local machine."
+  echo "  - Helm install Conjur OSS on the KinD cluster."
+  echo "  - Load application-specific Conjur security policies."
+  echo "  - Deploy instances of a "Pet Store" application using the"
+  echo "    following Conjur authentication broker/clients:"
+  echo "      - Secretless Broker"
+  echo "      - Conjur Kubernetes Authen Client sidecar container"
+  echo "      - Conjur Kubernetes Authen Client init container"
+  echo
+  echo "Syntax:"
+  echo "$0 [arguments]"
+  echo
+  echo "Options:"
+  echo "-h                        Show help"
+  echo "-c <customize-env-file>   Customization file to use containing"
+  echo "                          environment settings. (Typically a"
+  echo "                          modified copy of 'customize.env'."
+  exit 0
+}
+
+# Default values for 'start'
+customize_file="customize.env"
+env_file="../kubernetes-in-docker/0_export_env_vars.sh"
+
+while getopts 'c:hp:' flag; do
+  case "${flag}" in
+    c) customize_file="${OPTARG}" ;;
+    h) print_usage ;;
+    p) env_file="${OPTARG}" ;;
+    *) print_usage ;;
+  esac
+done
+
+# Source customized environment settings
+announce "Sourcing customized environment in $customize_file"
+. "$customize_file"
+
+announce "Setting demo environment variable defaults"
+
+. "$env_file"
+
+if [ $CREATE_KIND_CLUSTER = "true" ]; then
+  announce "Creating a Kubernetes-in-Docker cluster if necessary"
+  ./1_create_kind_cluster.sh
+fi
+
+if [ $HELM_INSTALL_CONJUR = "true" ]; then
+  announce "Helm installing/upgrading Conjur OSS cluster"
+  ./2_helm_install_or_upgrade_conjur.sh
+
+  # Wait for Conjur pods to become ready (just in case there are old
+  # Conjur pods getting terminated as part of Helm upgrade)
+  announce "Waiting for Conjur to become ready"
+  wait_for_conjur_ready
+fi
+
+announce "Retrieving the Conjur admin password"
+export CONJUR_ADMIN_PASSWORD="$(./3_retrieve_admin_password.sh)"
+
+announce "Enabling the Conjur Kubernetes authenticator if necessary"
+./4_ensure_authn_k8s_enabled.sh
+
+announce "Deploying Conjur demo applications"
+./5_deploy_demo_apps.sh
