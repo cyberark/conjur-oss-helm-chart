@@ -49,6 +49,7 @@ args+=("-n" "$CONJUR_NAMESPACE" \
 if [[ "$PLATFORM" == "openshift" ]]; then
   args+=("--set" "image.repository=$IMAGE_REPOSITORY" \
          "--set" "image.tag=$IMAGE_TAG" \
+         "--set" "fullnameOverride=conjur-oss" \
          "--set" "nginx.image.repository=$NGINX_REPOSITORY" \
          "--set" "nginx.image.tag=$NGINX_TAG" \
          "--set" "postgres.image.repository=$POSTGRES_REPOSITORY" \
