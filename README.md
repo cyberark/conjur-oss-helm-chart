@@ -33,6 +33,10 @@ We store instructions for development and guidelines for how to build and test t
 project in the [CONTRIBUTING.md](CONTRIBUTING.md) - please refer to that document
 if you would like to contribute.
 
+## Testing
+
+This repository includes basic smoke testing on GKE. The Conjur OSS Helm Chart is also exercised more thoroughly by the [cyberark/conjur-authn-k8s-client](https://github.com/cyberark/conjur-authn-k8s-client) project, which clones the OSS Helm Chart repo and uses it while testing across several versions of Kubernetes and OpenShift.
+
 ## License
 
 This repository is licensed under Apache License 2.0 - see [`LICENSE`](LICENSE) for more details.
