@@ -44,3 +44,5 @@ if [[ "USE_DOCKER_LOCAL_REGISTRY" == "false" ]]; then
   check_env_var "DOCKER_PASSWORD"
   check_env_var "DOCKER_EMAIL"
 fi
+
+export AUTNH_STRATEGY="authn-k8s"

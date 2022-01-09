@@ -40,7 +40,7 @@ fi
 args+=("-n" "$CONJUR_NAMESPACE" \
       "--set" "account.name=$CONJUR_ACCOUNT" \
       "--set" "account.create=true" \
-      "--set" "authenticators=authn\,authn-k8s/$AUTHENTICATOR_ID" \
+      "--set" "authenticators=authn\,$AUTHN_STRATEGY/$AUTHENTICATOR_ID" \
       "--set" "logLevel=$CONJUR_LOG_LEVEL" \
       "--set" "service.external.enabled=$CONJUR_LOADBALANCER_SVCS" \
       "--wait" \
