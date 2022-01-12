@@ -16,8 +16,9 @@ export CONJUR_LOG_LEVEL="${CONJUR_LOG_LEVEL:-info}"
 export TEST_APP_DATABASE="${TEST_APP_DATABASE:-postgres}"
 export TEST_APP_NAMESPACE_NAME="${TEST_APP_NAMESPACE_NAME:-app-test}"
 
-# Configuration for Conjur authn-k8s
+# Configuration for Conjur authentication
 export ANNOTATION_BASED_AUTHN="${ANNOTATION_BASED_AUTHN:-true}"
+export AUTHN_STRATEGY="${AUTHN_STATEGY:-authn-k8s}"
 export AUTHENTICATOR_ID="${AUTHENTICATOR_ID:-my-authenticator-id}"
 
 # Conjur OSS Helm chart specific setting for demo scripts
@@ -56,5 +57,3 @@ if [[ "USE_DOCKER_LOCAL_REGISTRY" == "false" ]]; then
   check_env_var "DOCKER_PASSWORD"
   check_env_var "DOCKER_EMAIL"
 fi
-
-export AUTNH_STRATEGY="authn-k8s"

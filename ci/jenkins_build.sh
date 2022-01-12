@@ -24,7 +24,8 @@ source ../utils.sh
 #                         This is useful for local testing whereby you've
 #                         already authenticated with GCP and/or have 'kubectl'
 #                         access to a cluster. Defaults to 'false'.
-#   AUTHN_STRATEGY:       Strategy of authentication. Can be authn-jwt or authn-k8s, defaults to authn-k8s
+#   AUTHN_STRATEGY:       Strategy of authentication. Can be authn-jwt or
+#                         authn-k8s, defaults to authn-k8s
 
 test_id="$(random_string)"
 
@@ -35,7 +36,7 @@ export HELM_VERSION="${HELM_VERSION:-3.1.3}"
 export KUBECTL_VERSION="${KUBECTL_VERSION:-1.16.9}"
 export RELEASE_NAME="$CONJUR_NAMESPACE"
 export SKIP_GCLOUD_LOGIN="${SKIP_GCLOUD_LOGIN:-false}"
-export AUTHN_STRATEGY="authn-k8s"
+export AUTHN_STRATEGY="${AUTHN_STRATEGY:-authn-k8s}"
 
 announce "Building gcloud/kubectl/helm client image..."
 # Build the gcloud/kubectl/helm client container image
