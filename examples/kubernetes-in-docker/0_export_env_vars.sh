@@ -18,7 +18,7 @@ export TEST_APP_NAMESPACE_NAME="${TEST_APP_NAMESPACE_NAME:-app-test}"
 
 # Configuration for Conjur authentication
 export ANNOTATION_BASED_AUTHN="${ANNOTATION_BASED_AUTHN:-true}"
-export AUTHN_STRATEGY="${AUTHN_STATEGY:-authn-k8s}"
+export AUTHN_STRATEGY="${AUTHN_STRATEGY:-authn-k8s}"
 export AUTHENTICATOR_ID="${AUTHENTICATOR_ID:-my-authenticator-id}"
 
 # Conjur OSS Helm chart specific setting for demo scripts
