@@ -42,7 +42,7 @@ spec:
     metadata:
       labels: *AppPostgresLabels
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        checksum/secrets: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
     spec:
       securityContext:
         fsGroup: 999

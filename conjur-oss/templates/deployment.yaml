@@ -25,9 +25,9 @@ spec:
       labels: *AppConjurLabels
       annotations:
         # Automatically roll deployment if dependent secrets have been changed
-        checksum/config: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
-        checksum/config: {{ include (print $.Template.BasePath "/ssl-cert.yaml") . | sha256sum }}
-        checksum/config: {{ include (print $.Template.BasePath "/nginx-configmap.yaml") . | sha256sum }}
+        checksum/secrets: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        checksum/ssl-cert: {{ include (print $.Template.BasePath "/ssl-cert.yaml") . | sha256sum }}
+        checksum/nginx-configmap: {{ include (print $.Template.BasePath "/nginx-configmap.yaml") . | sha256sum }}
     spec:
       serviceAccountName: {{ template "conjur-oss.service-account" . }}
       volumes:
