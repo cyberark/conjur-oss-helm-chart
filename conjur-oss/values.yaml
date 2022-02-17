@@ -68,7 +68,7 @@ image:
   # repository: registry.connect.redhat.com/cyberark/conjur
   # tag: latest
   repository: cyberark/conjur  # https://hub.docker.com/r/cyberark/conjur/
-  tag: 'latest'
+  tag: 'edge'
   pullPolicy: Always
 
 nginx:
