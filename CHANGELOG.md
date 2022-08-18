@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [2.0.5] - 2022-08-17
+
+### Added
+- Support for authn-jwt flow. [cyberark/conjur-oss-helm-chart#169](https://github.com/cyberark/conjur-oss-helm-chart/pull/169)
+
 ## [2.0.4] - 2021-04-12
 
 ### Added
@@ -154,7 +159,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - First version of chart available.
 
-[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.4...HEAD
+[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.5...HEAD
+[2.0.5]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.1...v2.0.2
