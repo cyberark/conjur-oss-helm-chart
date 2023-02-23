@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [2.0.6] - 2023-03-08
+
+### Changed
+- Updated notices to use Conjur CLI v8.0.
+  [cyberark/conjur-oss-helm-chart#179](https://github.com/cyberark/conjur-oss-helm-chart/pull/179)
+
 ## [2.0.5] - 2022-08-17
 
 ### Added
@@ -159,7 +165,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - First version of chart available.
 
-[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.5...HEAD
+[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.6...HEAD
+[2.0.6]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.2...v2.0.3

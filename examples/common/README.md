@@ -469,9 +469,9 @@ export CLI_POD="$(kubectl get pods -n conjur-oss -l app=conjur-cli \
         -o jsonpath='{.items[0].metadata.name}')"
 CONJUR_URL="https://conjur-oss.conjur-oss.svc.cluster.local"
 kubectl exec -n conjur-oss $CLI_POD \
-        -- bash -c "yes yes | conjur init -a $CONJUR_ACCOUNT -u $CONJUR_URL"
-kubectl exec -n conjur-oss $CLI_POD -- conjur authn login \
-        -u admin -p $ADMIN_PASSWORD
+        -- bash -c "yes yes | conjur init -a $CONJUR_ACCOUNT -u $CONJUR_URL --self-signed"
+kubectl exec -n conjur-oss $CLI_POD -- conjur login \
+        -i admin -p $ADMIN_PASSWORD
 ```
 
 And then create a `conjur` alias if your shell supports aliases:
@@ -493,7 +493,7 @@ After that initial setup, Conjur commands can be executed using the `conjur`
 command alias, if you've created one:
 
 ```sh-session
-    $ conjur list variables | grep alice
+    $ conjur list -k variable | grep alice
       "myConjurAccount:user:alice",
     $
 ```
@@ -501,7 +501,7 @@ command alias, if you've created one:
 Or by using the `CONJUR_CMD` environment variable:
 
 ```sh-session
-    $ $CONJUR_CMD list variables | grep alice
+    $ $CONJUR_CMD list -k variable | grep alice
       "myConjurAccount:user:alice",
     $
 ```
