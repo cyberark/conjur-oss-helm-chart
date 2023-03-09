@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
-## [2.0.6] - 2023-03-08
+## [2.0.6] - 2023-03-09
 
 ### Changed
 - Updated notices to use Conjur CLI v8.0.
