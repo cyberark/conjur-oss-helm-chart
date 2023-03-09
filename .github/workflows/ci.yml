@@ -36,21 +36,19 @@ jobs:
     strategy:
       matrix:
         kube-tag:
+          - v1.26.0
           - v1.21.2
-          - v1.18.2
-          - v1.16.9
-          - v1.14.10
     steps:
       - name: Check out code
         uses: actions/checkout@v2
 
       - name: Install Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v3
         with:
           version: v3.2.1
 
       - name: Create k8s KinD Cluster
-        uses: helm/kind-action@v1.2.0
+        uses: helm/kind-action@v1.4.0
         with:
           node_image: "kindest/node:${{ matrix.kube-tag }}"
           cluster_name: kube-${{ matrix.kube-tag }}
@@ -59,7 +57,7 @@ jobs:
         run: ./test-minimal.sh
 
   install-test-helm-v2:
-    name: Install/test Conjur with Helm V2 on KinD Cluster (v1.18.2)
+    name: Install/test Conjur with Helm V2 on KinD Cluster (v1.21.2)
     needs:
       - linter
       - install-test-helm-v3
@@ -74,12 +72,12 @@ jobs:
           version: v2.17.0
 
       - name: Create k8s KinD Cluster
-        uses: helm/kind-action@v1.2.0
+        uses: helm/kind-action@v1.4.0
         with:
-          node_image: "kindest/node:v1.18.2"
-          cluster_name: kube-v1.18.2-helm2
+          node_image: "kindest/node:v1.21.2"
+          cluster_name: kube-v1.21.2-helm2
 
-      - name: Initialise Helm
+      - name: Initialize Helm
         run: |
           # Service account with cluster-admin role for Helm
           echo "
@@ -103,7 +101,7 @@ jobs:
               namespace: kube-system
           " | kubectl create -f -
 
-          # Initialise
+          # Initialize
           helm init --stable-repo-url https://charts.helm.sh/stable --service-account tiller --wait
 
       - name: Run integration tests
