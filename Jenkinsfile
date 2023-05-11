@@ -18,6 +18,11 @@ pipeline {
   }
 
   stages {
+    stage('Changelog') {
+      steps {
+        parseChangelog()
+      }
+    }
 
     stage('GKE Build and Test') {
       environment {

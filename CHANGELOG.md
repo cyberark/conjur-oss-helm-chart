@@ -95,7 +95,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - Postgres database TLS certificate and key
 - Adds mechanism for user to set their own TLS CA and signed certificates
   for Conjur.
- 
+
 ### Changed
 - Pins default Conjur version to current stable release 1.5.
 - Sets default pullPolicy for Nginx and Postgres to `Always`.
@@ -107,7 +107,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   [Commit](https://github.com/cyberark/conjur-oss-helm-chart/commit/9ee5b2b191f118714193861fc75abd5226c94425),
   [Security Bulletin](https://github.com/cyberark/conjur-oss-helm-chart/security/advisories/GHSA-mg2m-623j-wpxw)
 
-## [v1.3.8] - 2019-12-20
+## [1.3.8] - 2019-12-20
 
 ### Added
 - Added basic instructions on how to package the chart
