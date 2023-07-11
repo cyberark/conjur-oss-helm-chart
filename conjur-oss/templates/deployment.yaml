@@ -149,7 +149,7 @@ spec:
         - name: CONJUR_DATA_KEY
           valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-conjur-data-key
+              name: {{ .Values.dataKeySecretRef | default (printf "%s-conjur-data-key" .Release.Name)  }}
               key: key
         - name: DATABASE_URL
           valueFrom:
