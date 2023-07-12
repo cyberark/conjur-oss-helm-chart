@@ -7,7 +7,9 @@
 # rather than setting these in a custom values YAML file. This avoids the
 # risk of leaving around residual values files containing this sensitive
 # information.
-dataKeySecretRef: "conjur-data-key"
+
+# Alternatively use `dataKeySecretRef` to specify the name of the secret
+# dataKeySecretRef: "conjur-data-key"
 
 account:
   # Name of Conjur account to be created. Maps to CONJUR_ACCOUNT env variable
