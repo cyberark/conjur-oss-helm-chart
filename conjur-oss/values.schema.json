@@ -1,5 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
+  "oneOf": [
+    {
+      "required": ["dataKey"]
+    },
+    {
+      "required": ["dataKeySecretRef"]
+    }
+  ],
   "properties": {
     "account": {
       "type": "object",
@@ -30,9 +38,7 @@
         "ssl": {
           "dependencies": {
             "cert": {
-              "required": [
-                "key"
-              ]
+              "required": ["key"]
             }
           },
           "properties": {
@@ -56,10 +62,12 @@
       }
     },
     "dataKeySecretRef": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "dataKey": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "deployment": {
       "properties": {
@@ -91,8 +99,8 @@
             "tag": {
               "type": "string"
             },
-              "pullPolicy": {
-                "type": "string"
+            "pullPolicy": {
+              "type": "string"
             }
           }
         }
@@ -191,11 +199,7 @@
     "ssl": {
       "dependencies": {
         "cert": {
-          "required": [
-            "key",
-            "caCert",
-            "caKey"
-          ]
+          "required": ["key", "caCert", "caKey"]
         }
       },
       "properties": {

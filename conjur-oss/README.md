@@ -81,7 +81,7 @@ $  helm install \
    https://github.com/cyberark/conjur-oss-helm-chart/releases/download/v$VERSION/conjur-oss-$VERSION.tgz
 ```
 
-_Note: You can import conjur data key as a secret existing on your kubernetes cluster using `--set dataKeySecretRef=YOUR_SECRET_NAME` where the secret is contained within the key `key`. Note that it will overwrite usage of dataKey._
+_Note: You can import conjur data key as a secret existing on your kubernetes cluster using `--set dataKeySecretRef=YOUR_SECRET_NAME` where the secret is contained within the key `key`. Note that you can't have dataKey and dataKeySecretRef together._
 
 _Note: The configured data key will be used to encrypt sensitive information
 in Conjur's database. This must be archived in a safe place._
