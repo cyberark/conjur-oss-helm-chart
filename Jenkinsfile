@@ -6,7 +6,7 @@ import groovy.transform.Field
 def TAG = ""
 
 pipeline {
-  agent { label 'executor-v2' }
+  agent { label 'conjur-enterprise-common-agent' }
 
   options {
     timestamps()
@@ -18,9 +18,18 @@ pipeline {
   }
 
   stages {
+
+    stage('Get InfraPool Agent') {
+      steps {
+        script {
+          INFRAPOOL_EXECUTORV2_AGENT_0 = getInfraPoolAgent.connected(type: "ExecutorV2", quantity: 1, duration: 1)[0]
+        }
+      }
+    }
+
     stage('Changelog') {
       steps {
-        parseChangelog()
+        parseChangelog(INFRAPOOL_EXECUTORV2_AGENT_0)
       }
     }
 
@@ -29,14 +38,16 @@ pipeline {
         HELM_VERSION = "3.1.3"
       }
       steps {
-        sh 'cd ci && summon ./jenkins_build.sh'
+        script {
+          INFRAPOOL_EXECUTORV2_AGENT_0.agentSh 'cd ci && summon ./jenkins_build.sh'
+        }
       }
     }
   }
 
   post {
     always {
-      cleanupAndNotify(currentBuild.currentResult)
+      releaseInfraPoolAgent(".infrapool/release_agents")
     }
   }
 }
