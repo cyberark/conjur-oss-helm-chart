@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Changed
+- The default Postgres server version is incremented to 15.4 from 10.16.
+  [cyberark/conjur-oss-helm-chart#185](https://github.com/cyberark/conjur-oss-helm-chart/pull/185)
+
 ## [2.0.6] - 2023-03-09
 
 ### Changed

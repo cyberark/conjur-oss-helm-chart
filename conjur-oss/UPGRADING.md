@@ -77,7 +77,7 @@ to this repository's `CHANGELOG.md` file for the respective current vs. new
 helm chart version._
 
 _**Note 2**: Details on how upgrades involving breaking changes to Conjur, NGINX,
- or PostgreSQL) will be supported in future releases are TBD._
+or PostgreSQL will be supported in future releases are TBD._
 
 ### Running Helm Upgrade
 

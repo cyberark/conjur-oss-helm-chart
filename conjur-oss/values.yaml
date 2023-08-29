@@ -94,7 +94,7 @@ postgres:
     # repository: registry.redhat.io/rhscl/postgresql-10-rhel7
     # tag: latest
     repository: postgres       # https://hub.docker.com/_/postgres/
-    tag: '10.16'
+    tag: '15.4'
     pullPolicy: Always
       
   persistentVolume:
