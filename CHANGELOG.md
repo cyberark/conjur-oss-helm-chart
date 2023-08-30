@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [2.0.7] - 2023-08-30
+
 ### Changed
 - The default Postgres server version is incremented to 15.4 from 10.16.
   [cyberark/conjur-oss-helm-chart#185](https://github.com/cyberark/conjur-oss-helm-chart/pull/185)
@@ -169,7 +171,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - First version of chart available.
 
-[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.6...HEAD
+[Unreleased]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.7...HEAD
+[2.0.7]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/cyberark/conjur-oss-helm-chart/compare/v2.0.3...v2.0.4
