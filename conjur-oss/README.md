@@ -127,7 +127,7 @@ $  helm install \
    --set image.tag=latest \
    --set nginx.image.repository=registry.connect.redhat.com/cyberark/conjur-nginx \
    --set nginx.image.tag=latest \
-   --set postgres.image.repository=registry.redhat.io/rhscl/postgresql-10-rhel7 \
+   --set postgres.image.repository=registry.redhat.io/rhel8/postgresql-15 \
    --set postgres.image.tag=latest \
    --set openshift.enabled=true \
    --set dataKey="$DATA_KEY" \
@@ -271,7 +271,7 @@ setting the equivalent field in a custom values.yaml file):
 ```
 
 The format of a Postgres database connection string is documented
-[here](https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNSTRING).
+[here](https://www.postgresql.org/docs/15/libpq-connect.html#LIBPQ-CONNSTRING).
 
 If this chart value is not explicitly set, then an integrated Postgres
 database will be deployed along with Conjur.
@@ -364,7 +364,7 @@ The following table lists the configurable parameters of the Conjur Open Source 
 |`account.create`|If true, a Conjur account is created automatically after installation|`false`|
 |`authenticators`|List of authenticators that Conjur will whitelist and load.|`"authn"`|
 |`conjurLabels`|Extra Kubernetes labels to apply to Conjur resources|`{}`|
-|`database.url`|PostgreSQL connection string. The format is documented [here](https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNSTRING). If left blank, an integrated PostgreSQL deployment is created.|`""`|
+|`database.url`|PostgreSQL connection string. The format is documented [here](https://www.postgresql.org/docs/15/libpq-connect.html#LIBPQ-CONNSTRING). If left blank, an integrated PostgreSQL deployment is created.|`""`|
 |`database.password`|PostgreSQL database password string. Unused if an external Postgres database is configured. See [PostgreSQL Database Password Restrictions](#postgresql-database-password-restrictions) below.|`""`|
 |`database.ssl.Cert`|PostgreSQL TLS x509 certificate, base64 encoded.|`""`|
 |`database.ssl.key`|PostgreSQL TLS private key, base64 encoded.|`""`|
