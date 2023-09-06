@@ -96,7 +96,8 @@ spec:
           mountPath: /etc/nginx
           readOnly: true
         {{- end }}
-
+        resources:
+{{ toYaml .Values.nginx.resources | indent 12 }}
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}

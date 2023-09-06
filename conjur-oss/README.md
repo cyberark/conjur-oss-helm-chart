@@ -377,6 +377,7 @@ The following table lists the configurable parameters of the Conjur Open Source 
 |`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
 |`nginx.image.tag`|NGINX Docker image tag|`"1.15"`|
 |`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
+|`nginx.resources`|Resource requests and limits for nginx pod|`{}`|
 |`openshift.enabled`|Indicates that Conjur is to be installed on an OpenShift platform|`false`|
 |`postgres.image.pullPolicy`|Pull policy for postgres Docker image|`"IfNotPresent"`|
 |`postgres.image.repository`|postgres Docker image repository|`"postgres"`|
@@ -384,8 +385,10 @@ The following table lists the configurable parameters of the Conjur Open Source 
 |`postgres.persistentVolume.create`|Create a peristent volume to back the PostgreSQL data|`true`|
 |`postgres.persistentVolume.size`|Size of persistent volume to be created for PostgreSQL|`"8Gi"`|
 |`postgres.persistentVolume.storageClass`|Storage class to be used for PostgreSQL persistent volume claim|`nil`|
+|`postgres.resources`|Resource requests and limits for postgres pod|`{}`|
 |`rbac.create`|Controls whether or not RBAC resources are created. This setting is deprecated and will be replaced in the next major release with two separate settings: `rbac.createClusterRole` (defaulting to true) and `rbac.createClusterRoleBinding` (defaulting to false), and the creation of RoleBindings will be recommended over relying on this ClusterRoleBinding.|`true`|
 |`replicaCount`|Number of desired Conjur pods|`1`|
+|`resources`|Resource requests and limits for conjur pod|`{}`|
 |`service.external.annotations`|Annotations for the external LoadBalancer|`[service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp]`|
 |`service.external.enabled`|Expose service to the Internet|`true`|
 |`service.external.port`|Conjur external service port|`443`|
