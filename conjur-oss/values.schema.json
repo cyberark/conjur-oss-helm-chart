@@ -96,6 +96,9 @@
                 "type": "string"
             }
           }
+        },
+        "resources": {
+          "type": "object"
         }
       }
     },
@@ -129,6 +132,9 @@
               "type": "string"
             }
           }
+        },
+        "resources": {
+          "type": "object"
         }
       }
     },

@@ -81,6 +81,16 @@ nginx:
     repository: nginx          # https://hub.docker.com/_/nginx/
     tag: '1.15'
     pullPolicy: Always
+
+  # If you do want to specify resources, uncomment the following lines, adjust
+  # them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+  resources: {}
       
 # nodeSelector (node selection constraints) to apply to the Conjur pod. Refer to:
 # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -102,6 +112,16 @@ postgres:
     size: 8Gi
     # Set storageClass to use a non-default storage class for your platform
     # storageClass:
+
+  # If you do want to specify resources, uncomment the following lines, adjust
+  # them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+  resources: {}
 
 # Additional labels to apply to all postgres-related resources
 postgresLabels: {}
