@@ -1,0 +1,33 @@
+name: Unit Tests
+
+on:
+  # Run this on pushes to main
+  push:
+    branches:
+    - main
+
+  # Or when PR operations are done
+  pull_request:
+    types:
+    - opened
+    - reopened
+    - synchronize
+
+jobs:
+  unittest:
+    name: Run Helm Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.12.0
+
+      - name: Install helm-unittest plugin
+        run: helm plugin install https://github.com/helm-unittest/helm-unittest.git --version 0.3.6
+
+      - name: Run unit tests
+        run: helm unittest ./conjur-oss

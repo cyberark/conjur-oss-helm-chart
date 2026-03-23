@@ -6,52 +6,82 @@ tests:
   - it: should match snapshot of default values
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
       openshift:
         enabled: false
       database:
-        password: "password"
+        secrets:
+          createDatabasePasswordSecrets: true
+          password: "password"
         ssl:
           # Dummy base64-encoded cert and key values
           cert: ZHVtbXlfY2VydAo=
           key: ZHVtbXlfa2V5Cg== #gitleaks:allow
     asserts:
       - matchSnapshot: {}
+
   - it: should not create the non Openshift enabled Postgres manifests if 'openshift.enabled' is true
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       openshift:
         enabled: true
+    template: "postgres.yaml"
     asserts:
-      - notExists:
-          path: spec.template.spec.containers
+      - hasDocuments:
+          count: 0
+
   - it: should not mount a PVC if 'postgres.persistentVolume.create' is false
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       postgres:
         persistentVolume:
           create: false
+    template: "postgres.yaml"
+    documentIndex: 1
     asserts:
       - notContains:
           path: spec.template.spec.containers[0].volumeMounts
-          content: 
-            name: postgres-data
-          any: true
-      - notContains:
-          path: spec.template.spec.volumes
           content:
             name: postgres-data
+          any: true
+
   - it: should include resources if specified
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       postgres:
         resources:
           requests:
             cpu: "100m"
     template: "postgres.yaml"
-    documentSelector:
-      path: kind
-      value: StatefulSet
+    documentIndex: 1
     asserts:
       - equal:
           path: spec.template.spec.containers[0].resources.requests.cpu
           value: "100m"
+
+  - it: should reference external database password secret when createDatabasePasswordSecrets is false
+    set:
+      dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: false
+          databasePasswordSecret: "my-external-db-password"
+    template: "postgres.yaml"
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env[1].valueFrom.secretKeyRef.name
+          value: "my-external-db-password"

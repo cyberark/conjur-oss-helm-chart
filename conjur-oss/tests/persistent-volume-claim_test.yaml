@@ -5,20 +5,34 @@ tests:
   - it: should match snapshot of default values
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
     asserts:
       - matchSnapshot: {}
+
   - it: should not create any PVC if 'postgres.persistentVolume.create' is false
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       postgres:
         persistentVolume:
-          create: false    
+          create: false
     asserts:
-      - notExists:
-          path: metadata.name
+      - hasDocuments:
+          count: 0
+
   - it: should create a PVC with the specified storage class if 'postgres.persistentVolume.storageClass' is set
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       postgres:
         persistentVolume:
           storageClass: "custom-storage-class"

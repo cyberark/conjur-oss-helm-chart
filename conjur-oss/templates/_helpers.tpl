@@ -55,8 +55,8 @@ Use the database password chart value if provided, or generate a
 64-character, random, alphanumeric password for the backend database
 */}}
 {{- define "conjur-oss.database-password" -}}
-{{- if .Values.database.password }}
-{{- $_ := set . "dbPassword" (.Values.database.password | trunc 64) }}
+{{- if .Values.database.secrets.password }}
+{{- $_ := set . "dbPassword" (.Values.database.secrets.password | trunc 64) }}
 {{- else }}
 {{- $_ := set . "dbPassword" (randAlphaNum 64) }}
 {{- end }}

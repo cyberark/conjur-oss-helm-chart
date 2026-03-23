@@ -5,6 +5,10 @@ tests:
   - it: should match snapshot of default values
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       exportAPIkey:
         enabled: true
     asserts:
@@ -12,8 +16,12 @@ tests:
   - it: should not create the ExportAPIKey ConfigMap if exportAPIkey isn't enabled
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       exportAPIkey:
         enabled: false
     asserts:
-      - notExists:
-          path: metadata.name        
+      - hasDocuments:
+          count: 0        

@@ -1,9 +1,17 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
   "required": [
-    "dataKey"
+    "createDataKeySecret"
   ],
   "properties": {
+    "createDataKeySecret": {
+      "type": "boolean"
+    },
+    "dataKeySecretName": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 63
+    },
     "account": {
       "type": "object",
       "properties": {
@@ -26,9 +34,27 @@
       "type": "object"
     },
     "database": {
+      "type": "object",
       "properties": {
-        "password": {
-          "type": "string"
+        "secrets": {
+          "type": "object",
+          "required": [
+            "createDatabasePasswordSecrets"
+          ],
+          "properties": {
+            "createDatabasePasswordSecrets": {
+              "type": "boolean"
+            },
+            "password": {
+              "type": "string"
+            },
+            "databaseUrlSecret": {
+              "type": "string"
+            },
+            "databasePasswordSecret": {
+              "type": "string"
+            }
+          }
         },
         "ssl": {
           "dependencies": {

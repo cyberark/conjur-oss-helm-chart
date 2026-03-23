@@ -8,8 +8,11 @@ tests:
   - it: should match snapshot of default values
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
       database:
-        password: "password"
+        secrets:
+          createDatabasePasswordSecrets: true
+          password: "password"
         ssl:
           # Dummy base64-encoded cert and key values
           cert: ZHVtbXlfY2VydAo=
@@ -22,11 +25,15 @@ tests:
         key: ZHVtbXlfa2V5Cg== #gitleaks:allow
     asserts:
       - matchSnapshot: {}
+
   - it: should have additional volumes if exportAPIkey is enabled
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
       database:
-        password: "password"
+        secrets:
+          createDatabasePasswordSecrets: true
+          password: "password"
       exportAPIkey:
         enabled: true
     template: deployment.yaml
@@ -36,16 +43,21 @@ tests:
           content:
             name: RELEASE-NAME-authn-local-socket-volume
           any: true
+
   - it: should include resources if specified
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       nginx:
         resources:
           requests:
             cpu: "100m"
       resources:
         requests:
-          cpu: "200m"            
+          cpu: "200m"
     template: "deployment.yaml"
     asserts:
       - equal:
@@ -54,3 +66,32 @@ tests:
       - equal:
           path: spec.template.spec.containers[1].resources.requests.cpu
           value: "200m"
+
+  - it: should reference external data key secret when createDataKeySecret is false
+    set:
+      createDataKeySecret: false
+      dataKeySecretName: "my-external-data-key"
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
+          password: "password"
+    template: "deployment.yaml"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[1].env[?(@.name=="CONJUR_DATA_KEY")].valueFrom.secretKeyRef.name
+          value: "my-external-data-key"
+
+  - it: should reference external database URL secret when createDatabasePasswordSecrets is false
+    set:
+      dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: false
+          databaseUrlSecret: "my-external-db-url"
+          databasePasswordSecret: "my-external-db-password"
+    template: "deployment.yaml"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[1].env[?(@.name=="DATABASE_URL")].valueFrom.secretKeyRef.name
+          value: "my-external-db-url"

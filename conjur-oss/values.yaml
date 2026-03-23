@@ -33,10 +33,43 @@ conjurLabels: {}
 logLevel: "info"
 
 database:
-  # PostgreSQL connection password. If left blank, a pseudo-random,
-  # 64-character alphanumeric password will be auto-generated.
-  # Note that this value will be ignored for Helm upgrade operations.
-  password: ""
+  secrets:
+    # Secrets can be generated automatically by Helm or they can be pre-existing secrets
+    # created outside Helm. Benefits to using pre-existing secrets include better support
+    # for ArgoCD or GitOps deployments where the deployer needs to control the secret
+    # lifecycle. Also avoids sync issues where conjur-oss and conjur-postgres can get
+    # out of sync with passwords when changes are made via GitOps.
+
+    # createDatabasePasswordSecrets: boolean
+    # true: create the secrets using either the value in "password" or generate one
+    # false: Use the fields 'databaseUrlSecret' and 'databasePasswordSecret' in the deployment
+    createDatabasePasswordSecrets: true
+
+    # PostgreSQL connection password. If left blank, a pseudo-random,
+    # 64-character alphanumeric password will be auto-generated.
+    # Note that this value will be ignored for Helm upgrade operations.
+    # Also Note: this value will be ignored when createDatabasePasswordSecrets is false
+    password: ""
+
+    # When createDatabasePasswordSecrets is set to false, the following values are used
+    # to reference existing secrets, preventing regeneration of credentials during GitOps.
+    # Also helps with secret rotation and management.
+    #
+    # database url secret should be a secret in the same namespace containing a base64
+    # encoded connection string:
+    # data:
+    #   key: <base64 encoded string>
+    # string format is:
+    #   postgres://postgres:%s@%v-postgres/postgres?sslmode=require
+    # where:
+    # %s = password (same value as `databasePasswordSecret`)
+    # %v = release name (usually <namespace>-<application-name> in GitOps deployments)
+    databaseUrlSecret: "conjur-database-url"
+
+    # Value within secret is a single base64 encoded string with the password.
+    # data:
+    #   key: <base64 encoded password>
+    databasePasswordSecret: "conjur-database-password"
 
   ssl:
     # Backend database SSL certificate and private key. These should be
@@ -54,8 +87,21 @@ database:
 
 # Conjur data key, 32 byte base-64 encoded string for data encryption.
 # Generate one with `docker run --rm cyberark/conjur data-key generate`.
-# This is a required setting.
+
+# Either provide dataKey directly or use dataKeySecretName to reference an existing secret.
+# createDataKeySecret: boolean
+# true: create the secret using the value in 'dataKey' (not recommended for git-committed values.yaml)
+# false: use an existing secret specified by 'dataKeySecretName'
+createDataKeySecret: true
+
+# If createDataKeySecret == true, provide the dataKey value here.
 # dataKey:
+
+# If createDataKeySecret == false, provide the name of an existing secret.
+# Secret must have the following structure:
+# data:
+#   key: <base64 encoded data-key>
+dataKeySecretName: "conjur-data-key"
 
 # Annotations to apply to the Conjur deployment.
 deployment:

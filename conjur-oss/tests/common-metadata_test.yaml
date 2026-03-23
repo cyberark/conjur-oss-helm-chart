@@ -7,6 +7,10 @@ tests:
   - it: "should contain labels metadata in each default template"
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       exportAPIkey:
         enabled: true
     templates:
@@ -31,9 +35,14 @@ tests:
             app.kubernetes.io/name: conjur-oss
             heritage: Helm
             release: conjur-oss
+
   - it: "should contain labels metadata in postgres template"
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       postgres:
         persistentVolume:
           create: true
@@ -54,9 +63,14 @@ tests:
             app.kubernetes.io/component: postgres
             heritage: Helm
             release: conjur-oss
+
   - it: "should contain labels metadata in postgres-ocp templates"
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       openshift:
         enabled: true
     templates:
@@ -75,4 +89,4 @@ tests:
             app.kubernetes.io/name: conjur-oss
             app.kubernetes.io/component: postgres
             heritage: Helm
-            release: conjur-oss            
+            release: conjur-oss

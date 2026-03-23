@@ -5,15 +5,24 @@ tests:
   - it: should match snapshot of default values
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       openshift:
         enabled: true
     asserts:
       - matchSnapshot: {}
+
   - it: should not create the ConfigMap if 'openshift.enabled' is false
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       openshift:
         enabled: false
     asserts:
-      - notExists:
-          path: metadata.name      
+      - hasDocuments:
+          count: 0

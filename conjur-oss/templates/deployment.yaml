@@ -160,12 +160,20 @@ spec:
         - name: CONJUR_DATA_KEY
           valueFrom:
             secretKeyRef:
+{{- if .Values.createDataKeySecret }}
               name: {{ .Release.Name }}-conjur-data-key
+{{- else }}
+              name: {{ .Values.dataKeySecretName }}
+{{- end }}
               key: key
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
+{{- if .Values.database.secrets.createDatabasePasswordSecrets }}
               name: {{ .Release.Name }}-conjur-database-url
+{{- else }}
+              name: {{ .Values.database.secrets.databaseUrlSecret }}
+{{- end }}
               key: key
         - name: CONJUR_ACCOUNT
           value: {{ .Values.account.name }}

@@ -5,14 +5,23 @@ tests:
   - it: should match snapshot of default values
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
     asserts:
       - matchSnapshot: {}
+
   - it: should not create any service if 'service.external.enabled' is false
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       service:
         external:
-          enabled: false      
+          enabled: false
     asserts:
-      - notExists:
-          path: metadata.name
+      - hasDocuments:
+          count: 0

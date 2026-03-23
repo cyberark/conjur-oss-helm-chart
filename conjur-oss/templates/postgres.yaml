@@ -59,7 +59,11 @@ spec:
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
+{{- if .Values.database.secrets.createDatabasePasswordSecrets }}
               name: {{ .Release.Name }}-conjur-database-password
+{{- else }}
+              name: {{ .Values.database.secrets.databasePasswordSecret }}
+{{- end }}
               key: key
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata

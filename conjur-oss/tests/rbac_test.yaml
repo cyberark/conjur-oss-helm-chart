@@ -5,20 +5,30 @@ tests:
   - it: should match snapshot of default values
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
     templates:
       - auth-role.yaml
     asserts:
       - matchSnapshot: {}
+
   - it: should create an additional RBAC rule if exportAPIkey is enabled
     set:
       dataKey: "1234567890"
+      createDataKeySecret: true
+      database:
+        secrets:
+          createDatabasePasswordSecrets: true
       exportAPIkey:
         enabled: true
     template: auth-role.yaml
-    documentSelector:
-      path: kind
-      value: ClusterRole
+    documentIndex: 1
     asserts:
+      - equal:
+          path: kind
+          value: ClusterRole
       - contains:
           path: rules
           content:
